@@ -1,0 +1,91 @@
+<?php
+/**
+ * Smart E-commerce do Brasil Tecnologia LTDA
+ *
+ * INFORMAÇÕES SOBRE LICENÇA
+ *
+ * Open Software License (OSL 3.0).
+ * http://opensource.org/licenses/osl-3.0.php
+ *
+ * DISCLAIMER
+ *
+ * Não edite este arquivo caso você pretenda atualizar este módulo futuramente
+ * para novas versões.
+ *
+ * @category    Esmart
+ * @package     Esmart_PayPalBrasil
+ * @copyright   Copyright (c) 2013 Smart E-commerce do Brasil Tecnologia LTDA. (http://www.e-smart.com.br)
+ * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ *
+ * @author      Thiago H Oliveira <thiago.oliveira@e-smart.com.br>
+ */
+?>
+<?php
+/** @var Mage_Sales_Model_Order_Payment $info */
+$info = $this->getInfo();
+
+$state = $info->getAdditionalInformation('paypal_payment_status');
+?>
+<div class="payflow-settings-notice">
+    <p>
+        <strong><?php echo $this->escapeHtml($this->getMethod()->getTitle()) ?></strong>
+    </p>
+
+    <br>
+    <?php if(strtolower($state)  != 'reversed'): ?>
+    <p>
+        <strong> ID da Transação:</strong>
+        <?php echo $info->getAdditionalInformation('paypal_plus_sale_id'); ?>
+    </p>
+    <?php endif; ?>
+     <p>
+        <strong> Status da Transação : </strong>
+        <?php if(strtolower($state)  == 'completed'): ?>
+            <strong style="color:green;"> Pagamento Aprovado </strong>
+        <?php elseif(strtolower($state)  == 'reversed'): ?>
+            <strong style="color:red;"> Pagamento não Aprovado </strong>
+        <?php else: ?>
+             <strong style="color:orange;"> Pagamento em Análise</strong> 
+             (Esta análise pode levar até 24hrs)
+        <?php endif; ?>
+    </p>
+
+
+    <p>
+        <strong>Token Paypal: </strong><?php echo $info->getAdditionalInformation('paypal_plus_checkout_token'); ?>
+    </p>
+
+ <?php
+        $cards[] = json_decode($info->getAdditionalInformation('paypal_plus_cards'), true);
+    ?>
+    <?php if (!empty($cards[0])): ?>
+        <p>
+            <strong>Dados da Transação :</strong>
+        </p>
+         <strong>Cartão de crédito</strong> <br>
+
+        <?php foreach ($cards as $card): ?>
+
+            <?php if ($card['termQty'] == 1): ?>
+                  
+                <p> Pagamento em: 1x (à vista)</p>
+
+            <?php else: ?>
+
+                <small>
+                    <strong>- Parcela(s): </strong>
+                    <?php echo "{$card['termQty']}x de {$card['termValue']}"; ?> <br>
+                    <strong>- Total: </strong><?php echo $card['total']; ?>
+                </small>
+                <br>
+
+            <?php endif; ?>
+        <?php endforeach; ?>  
+    <?php else: ?>
+      <p>
+            <strong>Dados da Transação :</strong>
+        </p>
+         <strong>Cartão de crédito</strong> <br>
+              <p> Pagamento em: 1x (à vista)</p>
+    <?php endif; ?>
+</div>

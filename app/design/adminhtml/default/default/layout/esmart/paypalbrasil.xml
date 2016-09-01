@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<layout version="0.1.0">
+	<!-- Default layout, loads most of the pages -->
+	<default>
+
+	</default>
+
+	<adminhtml_system_config_edit>
+		<reference name="head">
+			<action method="addCss"><name>esmart/paypalbrasil/css/paypalbrasil.css</name></action>
+		</reference>
+	</adminhtml_system_config_edit>
+
+</layout>

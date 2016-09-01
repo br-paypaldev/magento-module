@@ -1,0 +1,70 @@
+<?php
+/**
+ * Smart E-commerce do Brasil Tecnologia LTDA
+ *
+ * INFORMAÇÕES SOBRE LICENÇA
+ *
+ * Open Software License (OSL 3.0).
+ * http://opensource.org/licenses/osl-3.0.php
+ *
+ * DISCLAIMER
+ *
+ * Não edite este arquivo caso você pretenda atualizar este módulo futuramente
+ * para novas versões.
+ *
+ * @category  Esmart
+ * @package   Esmart_PayPalBrasil
+ * @copyright Copyright (c) 2015 Smart E-commerce do Brasil Tecnologia LTDA. (http://www.e-smart.com.br)
+ * @license   http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ *
+ * @author    Thiago H Oliveira <thiago.oliveira@e-smart.com.br>
+ */
+/** @var Mage_Core_Block_Template $this */
+?>
+<div class="agreementsContainer"></div>
+<a class="agreementsAction" href="#agreementsBox"
+   style="display: none"
+   title="<?php echo $this->__('Terms and Conditions')?>">#</a>
+
+<div id="agreementsBox" style="width:500px; display: none;">
+    <span id="lightbox-close">x</span>
+    <?php echo $this->getBlockHtml('checkout.onepage.agreements') ?>
+    <button id="agreementsContinue" class="button" title="Proceed to Checkout" type="button">
+        <span>
+            <span><?php echo $this->__('Continue')?></span>
+        </span>
+    </button>
+</div>
+
+<script>
+
+function showWindowLightBox(){
+
+    win = new Window({
+        className: "light-term-paypal", 
+        width:0, 
+        height:0,
+        destroyOnClose: true, 
+        recenterAuto:false}
+        );
+
+    win.options.minWidth = 1;
+    win.options.minHeight = 1;
+
+    win.getContent().insert($('agreementsBox'));
+    win.showCenter();
+
+}
+
+$('agreementsContinue').observe('click', function(e){
+    $('agreementsBox').hide();
+    $$(".agreementsContainer")[0].removeClassName('agreemShow');
+    EsmartPayPalBrasilProcessedCheckout();
+});
+
+$('lightbox-close').observe('click', function(e){
+    $('agreementsBox').hide();
+    $$(".agreementsContainer")[0].removeClassName('agreemShow');
+});
+
+</script>

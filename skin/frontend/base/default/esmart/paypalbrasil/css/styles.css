@@ -1,0 +1,162 @@
+/**
+ * Smart E-commerce do Brasil Tecnologia LTDA
+ *
+ * INFORMAÇÕES SOBRE LICENÇA
+ *
+ * Open Software License (OSL 3.0).
+ * http://opensource.org/licenses/osl-3.0.php
+ *
+ * DISCLAIMER
+ *
+ * Não edite este arquivo caso você pretenda atualizar este módulo futuramente
+ * para novas versões.
+ *
+ * @category    Esmart
+ * @package     Esmart_PayPalBrasil
+ * @copyright   Copyright (c) 2013 Smart E-commerce do Brasil Tecnologia LTDA. (http://www.e-smart.com.br)
+ * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ *
+ * @author     	Tiago Sampaio <tiago.sampaio@e-smart.com.br>*
+ * @author     	Thiago H Oliveira <thiago.oliveira@e-smart.com.br>
+ */
+
+.sa_payPal_overlay {
+	visibility:visible;
+	position:fixed;
+	width:100%;
+	height:100%;
+	filter:progid:DXImageTransform.Microsoft.Gradient(GradientType=1, StartColorStr='#88ffffff', EndColorStr='#88ffffff');
+	background:rgba(255,255,255,0.8);
+	top:0;
+	left:0;
+	z-index: 999999;
+}
+
+.sa_payPal_overlay h2 {
+	display: block;
+	float: none;
+	color: #2F6395;
+	font-family: Arial;
+	font-size: 20px;
+	font-weight: bold;
+	text-align: center;
+}
+
+.sa_payPal_overlay_01 {
+	background: #FFF;
+	background-image: linear-gradient(top, #FFFFFF 45%, #E9ECEF 80%);
+	background-image: -o-linear-gradient(top, #FFFFFF 45%, #E9ECEF 80%);
+	background-image: -moz-linear-gradient(top, #FFFFFF 45%, #E9ECEF 80%);
+	background-image: -webkit-linear-gradient(top, #FFFFFF 45%, #E9ECEF 80%);
+	background-image: -ms-linear-gradient(top, #FFFFFF 45%, #E9ECEF 80%);
+	background-image: -webkit-gradient(linear, left top,left bottom,color-stop(0.45, #FFFFFF),color-stop(0.8, #E9ECEF));
+	display: block;
+	margin: auto;
+	position: fixed;
+	margin-left:-220px;
+	left:45%;
+	top: 40%;
+	text-align: center;
+	color: #2F6395;
+	font-family: Arial;
+	padding: 15px;
+	font-size: 15px;
+	font-weight: bold;
+	width: 530px;
+	-webkit-box-shadow: 3px 2px 13px rgba(50, 50, 49, 0.25);
+	box-shadow: rgba(0, 0, 0, 0.2) 0px 0px 0px 5px;
+	border: 1px solid #CFCFCF;
+	border-radius: 6px;
+}
+
+.icon_animated_prog_dkgy {
+	display:block;
+	margin:0 auto 10px;
+}
+
+.sa_payPal_overlay p {
+	font-size:13px;
+	color: #003171;
+	font-weight:400;
+	margin: 10px 0;
+}
+
+div.paypal_plus_loading {
+	border: 0px;
+	height: 32px;
+	width: 100%;
+}
+
+#agreementsBox .agreement-content { background: none; border: 0px; border-bottom: 1px solid #cccccc; color: #2e8ab8; font-size: 20px; }
+
+#agreementsBox {
+	padding: 20px;
+	background: #fff;
+	margin-top: -136px;
+	text-align: center;
+    z-index: 9999999;
+    margin-left: -100px;
+}
+#agreementsBox form { text-align: left; }
+
+
+#lightbox-close {
+    background: #000;
+    border-radius: 15px;
+    color: #fff;
+    float: right;
+    font-size: 18px;
+    font-weight: bold;
+    line-height: 26px;
+    width: 26px;
+    cursor: pointer;
+}
+
+.agreementsContainer { display:none; position:fixed; height: 100%; width: 100%; background: #000; top:0; opacity: 0.4; z-index: 99999; }
+.agreemShow { display: block !important; }
+.dialog { z-index: 999999999 !important; }
+
+#paypal_plus_loading {
+	margin: 60px auto;
+	font-size: 10px;
+	position: relative;
+	text-indent: -9999em;
+	border-color: #2180c0 rgba(0, 0, 0, 0.2) rgba(0, 0, 0, 0.2);
+	border-style: solid;
+	border-width: 8px;
+	/*border-top: 10px solid rgba(33,128,192, 0.2);
+	border-right: 10px solid rgba(33,128,192, 0.2);
+	border-bottom: 10px solid rgba(33,128,192, 0.2);
+	border-left: 10px solid #2180c0;*/
+	-webkit-transform: translateZ(0);
+	-ms-transform: translateZ(0);
+	transform: translateZ(0);
+	-webkit-animation: load8 1.1s infinite linear;
+	animation: load8 0.7s infinite linear;
+}
+#paypal_plus_loading,
+#paypal_plus_loading:after {
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+}
+@-webkit-keyframes load8 {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+@keyframes load8 {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}

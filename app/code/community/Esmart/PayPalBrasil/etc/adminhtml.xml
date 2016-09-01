@@ -1,0 +1,61 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Smart E-commerce do Brasil Tecnologia LTDA
+ *
+ * INFORMAÇÕES SOBRE LICENÇA
+ *
+ * Open Software License (OSL 3.0).
+ * http://opensource.org/licenses/osl-3.0.php
+ *
+ * DISCLAIMER
+ *
+ * Não edite este arquivo caso você pretenda atualizar este módulo futuramente
+ * para novas versões.
+ *
+ * @category    Esmart
+ * @package     Esmart_PayPalBrasil
+ * @copyright   Copyright (c) 2013 Smart E-commerce do Brasil Tecnologia LTDA. (http://www.e-smart.com.br)
+ * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ *
+ * @author     	Tiago Sampaio <tiago.sampaio@e-smart.com.br>
+ */
+-->
+<config>
+	<menu>
+		<paypalbrasil module="esmart_paypalbrasil" translate="title">
+			<title>PayPal Brasil</title>
+			<sort_order>85</sort_order>
+			<children>
+				<configure translate="title">
+					<title>Configure</title>
+					<sort_order>10</sort_order>
+					<action>adminhtml/system_config/edit/section/payment</action>
+				</configure>
+			</children>
+		</paypalbrasil>
+	</menu>
+	 <acl>
+        <resources>
+            <admin>
+                <children>
+                    <system>
+                        <children>
+                            <config>
+                                <children>
+                                    <payment translate="title">
+                                    	<children>
+                                    		<incontext>
+                                        		<title>Paypal Express Checkout In-Context</title>
+                                        	</incontext>
+                                        </children>
+                                    </payment>
+                                </children>
+                            </config>
+                        </children>
+                    </system>
+                </children>
+            </admin>
+        </resources>
+    </acl>
+</config>

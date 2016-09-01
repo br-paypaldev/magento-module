@@ -1,0 +1,225 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Smart E-commerce do Brasil Tecnologia LTDA
+ *
+ * INFORMAÇÕES SOBRE LICENÇA
+ *
+ * Open Software License (OSL 3.0).
+ * http://opensource.org/licenses/osl-3.0.php
+ *
+ * DISCLAIMER
+ *
+ * Não edite este arquivo caso você pretenda atualizar este módulo futuramente
+ * para novas versões.
+ *
+ * @category    Esmart
+ * @package     Esmart_PayPalBrasil
+ * @copyright   Copyright (c) 2013 Smart E-commerce do Brasil Tecnologia LTDA. (http://www.e-smart.com.br)
+ * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ *
+ * @author      Tiago Sampaio <tiago.sampaio@e-smart.com.br>
+ * @author      Thiago Oliveira <thiago.oliveira@e-smart.com.br>
+ */
+-->
+<config>
+    <modules>
+        <Esmart_PayPalBrasil>
+            <version>0.4.5.0</version>
+        </Esmart_PayPalBrasil>
+    </modules>
+    <global>
+        <events>
+            <admin_system_config_changed_section_payment>
+                <observers>
+                    <esmart_paypalbrasil>
+                        <class>esmart_paypalbrasil/observer</class>
+                        <method>createWebProfilerPaypalPlus</method>
+                    </esmart_paypalbrasil>
+                </observers>
+            </admin_system_config_changed_section_payment>
+            <core_block_abstract_to_html_after>
+                <observers>
+                    <belvg_jquery_prepare_layout_before>
+                        <class>esmart_paypalbrasil/observer</class>
+                        <method>appendJsEvents</method>
+                    </belvg_jquery_prepare_layout_before>
+                </observers>
+            </core_block_abstract_to_html_after>
+            <controller_action_predispatch_checkout_onepage_index>
+                <observers>
+                    <belvg_jquery_prepare_layout_before>
+                        <class>esmart_paypalbrasil/observer</class>
+                        <method>deletePaymentMethodExistent</method>
+                    </belvg_jquery_prepare_layout_before>
+                </observers>
+            </controller_action_predispatch_checkout_onepage_index>
+            <checkout_controller_onepage_save_shipping_method>
+                <observers>
+                    <belvg_jquery_prepare_layout_before>
+                        <class>esmart_paypalbrasil/observer</class>
+                        <method>deletePaymentMethodExistent</method>
+                    </belvg_jquery_prepare_layout_before>
+                </observers>
+            </checkout_controller_onepage_save_shipping_method>
+            <sales_order_place_after>
+                 <observers>
+                    <paypal_cancel_order_declined>
+                        <class>esmart_paypalbrasil/observer</class>
+                        <method>PaypalDeclinedOrder</method>
+                    </paypal_cancel_order_declined>
+                </observers>
+            </sales_order_place_after>
+        </events>
+        <models>
+            <esmart_paypalbrasil>
+                <class>Esmart_PayPalBrasil_Model</class>
+                <resourceModel>esmart_paypalbrasil_resource</resourceModel>
+            </esmart_paypalbrasil>
+            <esmart_paypalbrasil_resource>
+                <class>Esmart_PayPalBrasil_Model_Resource</class>
+            </esmart_paypalbrasil_resource>
+            <paypal>
+                <rewrite>
+                    <config>Esmart_PayPalBrasil_Model_Config</config>
+                    <api_nvp>Esmart_PayPalBrasil_Model_Api_Nvp</api_nvp>]
+                    <info>Esmart_PayPalBrasil_Model_Info</info>
+                </rewrite>
+            </paypal>
+        </models>
+        <resources>
+            <esmart_paypalbrasil_setup>
+                <setup>
+                    <module>Esmart_PayPalBrasil</module>
+                </setup>
+            </esmart_paypalbrasil_setup>
+        </resources>
+        <helpers>
+            <esmart_paypalbrasil>
+                <class>Esmart_PayPalBrasil_Helper</class>
+            </esmart_paypalbrasil>
+        </helpers>
+        <blocks>
+            <esmart_paypalbrasil>
+                <class>Esmart_PayPalBrasil_Block</class>
+            </esmart_paypalbrasil>
+            <paypal>
+                <rewrite>
+                    <express_shortcut>Esmart_PayPalBrasil_Block_Express_Shortcut</express_shortcut>
+                </rewrite>
+            </paypal>
+        </blocks>
+    </global>
+    <adminhtml>
+        <layout>
+            <updates>
+                <esmart_paypalbrasil>
+                    <file>esmart/paypalbrasil.xml</file>
+                </esmart_paypalbrasil>
+            </updates>
+        </layout>
+        <translate>
+            <modules>
+                <esmart_paypalbrasil>
+                    <files>
+                        <default>Esmart_PayPalBrasil.csv</default>
+                    </files>
+                </esmart_paypalbrasil>
+            </modules>
+        </translate>
+    </adminhtml>
+    <frontend>
+        <layout>
+            <updates>
+                <esmart_paypalbrasil>
+                    <file>esmart/paypalbrasil.xml</file>
+                </esmart_paypalbrasil>
+            </updates>
+        </layout>
+        <translate>
+            <modules>
+                <esmart_paypalbrasil>
+                    <files>
+                        <default>Esmart_PayPalBrasil.csv</default>
+                    </files>
+                </esmart_paypalbrasil>
+            </modules>
+        </translate>
+        <routers>
+            <esmart_paypalbrasil>
+                <use>standard</use>
+                <args>
+                    <module>Esmart_PayPalBrasil</module>
+                    <frontName>paypalbrasil</frontName>
+                </args>
+            </esmart_paypalbrasil>
+            <paypal>
+                <args>
+                    <modules>
+                        <esmart_paypalbrasil before="Mage_Paypal">Esmart_PayPalBrasil</esmart_paypalbrasil>
+                    </modules>
+                </args>
+            </paypal>
+        </routers>
+    </frontend>
+    <default>
+        <paypal>
+            <general>
+                <merchant_country>BR</merchant_country>
+            </general>
+        </paypal>
+        <payment>
+            <paypal_standard>
+                <title>Pague com PayPal</title>
+                <sort_order>10</sort_order>
+                <payment_action>Sale</payment_action>
+            </paypal_standard>
+            <paypal_express>
+                <title>Pague com PayPal Express</title>
+                <sort_order>10</sort_order>
+                <payment_action>Sale</payment_action>
+                <transfer_shipping_options>1</transfer_shipping_options>
+                <avoid_review_page>1</avoid_review_page>
+            </paypal_express>
+            <paypal_billing_agreement>
+                <active>0</active>
+                <sort_order>10</sort_order>
+                <title>Aceite de Cobrança PayPal</title>
+            </paypal_billing_agreement>
+            <paypal_plus>
+                <model>esmart_paypalbrasil/plus</model>
+                <title>Paypal Transparente</title>
+                <group>paypal</group>
+                <payment_action>order</payment_action>
+                <order_status>processing</order_status>
+                <order_failure>0</order_failure>
+                <js_address>https://www.paypalobjects.com/webstatic/ppplusdcc/ppplusdcc.min.js</js_address>
+                <paypal_custom><![CDATA[<<Nome da Loja>>]]></paypal_custom>
+                <firstname>firstname</firstname>
+                <lastname>lastname</lastname>
+                <email>email</email>
+                <cpf>taxvat</cpf>
+                <cnpj>taxvat</cnpj>
+                <phone>telephone</phone>
+                <recipient_firstname>firstname</recipient_firstname>
+                <recipient_lastname>lastname</recipient_lastname>
+                <address_line_1_p1>street</address_line_1_p1>
+                <address_line_1_p2>empty</address_line_1_p2>
+                <address_line_1_p3>empty</address_line_1_p3>
+                <address_line_2>empty</address_line_2>
+                <city>city</city>
+                <country_code>country_id</country_code>
+                <postal_code>postcode</postal_code>
+                <state>region</state>
+                <checkout_payment_info><![CDATA[Cartão de Crédito <br>
+Parcela(s): {parcela_qtde}x de {parcela_valor}]]></checkout_payment_info>
+                <debug_mode>0</debug_mode>
+            </paypal_plus>
+        </payment>
+        <paypal>
+            <style>
+                <logo>compra_segura_horizontal</logo>
+            </style>
+        </paypal>
+    </default>
+</config>

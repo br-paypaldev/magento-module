@@ -1,0 +1,136 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Smart E-commerce do Brasil Tecnologia LTDA
+ *
+ * INFORMAÇÕES SOBRE LICENÇA
+ *
+ * Open Software License (OSL 3.0).
+ * http://opensource.org/licenses/osl-3.0.php
+ *
+ * DISCLAIMER
+ *
+ * Não edite este arquivo caso você pretenda atualizar este módulo futuramente
+ * para novas versões.
+ *
+ * @category    Esmart
+ * @package     Esmart_PayPalBrasil
+ * @copyright   Copyright (c) 2013 Smart E-commerce do Brasil Tecnologia LTDA. (http://www.e-smart.com.br)
+ * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ *
+ * @author     	Tiago Sampaio <tiago.sampaio@e-smart.com.br>
+ */
+-->
+<layout version="0.1.0">
+
+	<checkout_cart_index>
+		<reference name="checkout.cart.methods.paypal_express.top">
+			<action method="setTemplate"><template>esmart/paypalbrasil/express/shortcut.phtml</template></action>
+		</reference>
+		<reference name="checkout.cart.methods.paypal_express.bottom">
+			<action method="setTemplate"><template>esmart/paypalbrasil/express/shortcut.phtml</template></action>
+		</reference>
+
+		<reference name="head">			
+			<action method="addJs" ifconfig="payment/incontext/enable">
+				<script>esmart/paypalbrasil/iwd-jquery-2.1.3.min.js</script>
+			</action>
+			<action method="addJs" ifconfig="payment/incontext/enable">
+				<script>esmart/paypalbrasil/paypal-in-context-cart-product.js</script>
+			</action>	
+		</reference>
+
+		<reference name="before_body_end">
+			<block type="esmart_paypalbrasil/express_shortcut_incontext_js" name="paypal.incontext.js"></block>
+		</reference>
+
+		<update handle="PayPalBrasil_Append_Blocks"/>
+		<update handle="PayPalBrasil_SHORTCUT_popup"/>
+	</checkout_cart_index>
+
+	<catalog_product_view>
+		<reference name="product.info.addtocart.paypal">
+			<action method="setTemplate"><template>esmart/paypalbrasil/express/shortcut.phtml</template></action>
+		</reference>
+		
+		<update handle="PayPalBrasil_Append_Blocks"/>
+		<update handle="PayPalBrasil_SHORTCUT_popup"/>
+	</catalog_product_view>
+
+	<PayPalBrasil_SHORTCUT_popup>
+		<reference name="head">
+			<action method="addCss">
+				<name>esmart/paypalbrasil/css/styles.css</name>
+			</action>
+			<action method="addItem">
+				<type>js_css</type>
+				<name>prototype/windows/themes/default.css</name>
+			</action>
+			<action method="addJs">
+				<script>prototype/window.js</script>
+			</action>
+		</reference>
+	</PayPalBrasil_SHORTCUT_popup>
+
+	<PayPalBrasil_Append_Blocks>
+		<block type="checkout/agreements" name="checkout.onepage.agreements" as="agreements" template="checkout/onepage/agreements.phtml"/>
+
+		<block type="paypal/express_shortcut" name="paypalbrasil.express.loader" template="esmart/paypalbrasil/express/shortcut/loader.phtml">
+			<action method="setLoaderId"><loader_id>paypalbrasil.express.loader</loader_id></action>
+		</block>
+
+		<block type="paypal/express_shortcut" name="paypalbrasil.express.agreements" template="esmart/paypalbrasil/express/shortcut/agreements.phtml">
+			<action method="setAgreements"><loader_id>paypalbrasil.express.agreements</loader_id></action>
+		</block>
+
+		<reference name="before_body_end">
+			<action method="append"><block>paypalbrasil.express.loader</block></action>
+			<action method="append"><block>paypalbrasil.express.agreements</block></action>
+		</reference>
+	</PayPalBrasil_Append_Blocks>
+
+	<PayPalBrasil_Append_Checkouts>
+		<reference name="head">
+			<action method="addJs" ifconfig="payment/incontext/enable">
+				<script>esmart/paypalbrasil/iwd-jquery-2.1.3.min.js</script>
+			</action>	
+			<action method="addJs" ifconfig="payment/incontext/enable">
+				<script>esmart/paypalbrasil/paypal-in-context.js</script>
+			</action>
+			<action method="addCss" ifconfig="payment/paypal_plus/active">
+				<name>esmart/paypalbrasil/css/styles.css</name>
+			</action>		
+		</reference>
+		
+		<reference name="before_body_end">
+			<block type="esmart_paypalbrasil/express_shortcut_incontext_js" name="paypal.incontext.js"></block>
+		</reference>
+
+		<reference name="checkout.onepage.payment">
+			<action method="setTemplate" ifconfig="payment/incontext/enable">
+                <template>esmart/paypalbrasil/onepage/payment.phtml</template>
+            </action>
+		</reference>
+	</PayPalBrasil_Append_Checkouts>
+
+	<!-- FireCheckout Handle -->
+	<firecheckout_index_index>
+		<update handle="PayPalBrasil_Append_Checkouts"/>
+	</firecheckout_index_index>
+	
+	<!-- SmartCheckout Handle -->
+	<esmart_smartcheckout_index_index>
+		<update handle="PayPalBrasil_Append_Checkouts"/>
+	</esmart_smartcheckout_index_index>
+
+	<!-- Amasty/Default/MOIP checkout -->
+	<checkout_onepage_index>
+		<update handle="PayPalBrasil_Append_Checkouts"/>
+	</checkout_onepage_index>
+
+	<!-- Innovarti checkout -->
+	<onestepcheckout_index_index>
+		<update handle="PayPalBrasil_Append_Checkouts"/>
+	</onestepcheckout_index_index>
+
+</layout>

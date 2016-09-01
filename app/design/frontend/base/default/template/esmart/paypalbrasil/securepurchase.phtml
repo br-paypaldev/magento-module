@@ -1,0 +1,33 @@
+<?php
+/**
+ * Smart E-commerce do Brasil Tecnologia LTDA
+ *
+ * INFORMAÇÕES SOBRE LICENÇA
+ *
+ * Open Software License (OSL 3.0).
+ * http://opensource.org/licenses/osl-3.0.php
+ *
+ * DISCLAIMER
+ *
+ * Não edite este arquivo caso você pretenda atualizar este módulo futuramente
+ * para novas versões.
+ *
+ * @category    Esmart
+ * @package     Esmart_PayPalBrasil
+ * @copyright   Copyright (c) 2013 Smart E-commerce do Brasil Tecnologia LTDA. (http://www.e-smart.com.br)
+ * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ *
+ * @author     	Tiago Sampaio <tiago.sampaio@e-smart.com.br>
+ */
+?>
+<?php
+/**
+ * @var Esmart_PayPalBrasil_Helper_Data
+ */
+$_helper = Mage::helper('esmart_paypalbrasil');
+?>
+<div class="paypal-logo">
+	<a onclick="javascript:window.open('https://www.paypal.com/br/cgi-bin/webscr?cmd=xpt/Marketing/popup/OLCWhatIsPayPal-outside','paypal','width=600,height=350,left=0,top=0,location=no,status=yes,scrollbars=yes,resizable=yes'); return false;" href="javascript:void(0);" title="<?php echo $_helper->__('Purchase Securely with PayPal Brazil') ?>">
+		<img src="<?php echo $_helper->getLogoCenterImageUrl('compra_segura_horizontal', 'png') ?>" alt="Compra Segura com PayPal Brasil"/>
+	</a>
+</div>

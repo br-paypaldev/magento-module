@@ -1,0 +1,24 @@
+/**
+ * Smart E-commerce do Brasil Tecnologia LTDA
+ *
+ * INFORMAÇÕES SOBRE LICENÇA
+ *
+ * Open Software License (OSL 3.0).
+ * http://opensource.org/licenses/osl-3.0.php
+ *
+ * DISCLAIMER
+ *
+ * Não edite este arquivo caso você pretenda atualizar este módulo futuramente
+ * para novas versões.
+ *
+ * @category    Esmart
+ * @package     Esmart_PayPalBrasil
+ * @copyright   Copyright (c) 2013 Smart E-commerce do Brasil Tecnologia LTDA. (http://www.e-smart.com.br)
+ * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ *
+ * @author     	Tiago Sampaio <tiago.sampaio@e-smart.com.br>
+ */
+
+.pp-method-express > .config-heading .button-container { background: url("../images/finalizecom_paypal.png") no-repeat -10px -6px transparent; height: 29px; padding: 0 0 0 200px; width: 90px; }
+.pp-method-general > .config-heading .button-container { background: url("../images/aceitacao_paypal.png") no-repeat -8px 2px transparent; height: 28px; padding: 8px 0 0 180px; }
+.pp-method-ppplus> .config-heading .heading strong{ background: url("../../../images/paypal/logo-paypal.png") no-repeat scroll 0 2px rgba(0, 0, 0, 0);  padding-left: 56px; }

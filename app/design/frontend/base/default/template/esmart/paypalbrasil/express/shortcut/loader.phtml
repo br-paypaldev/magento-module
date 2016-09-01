@@ -1,0 +1,35 @@
+<?php
+/**
+ * Smart E-commerce do Brasil Tecnologia LTDA
+ *
+ * INFORMAÇÕES SOBRE LICENÇA
+ *
+ * Open Software License (OSL 3.0).
+ * http://opensource.org/licenses/osl-3.0.php
+ *
+ * DISCLAIMER
+ *
+ * Não edite este arquivo caso você pretenda atualizar este módulo futuramente
+ * para novas versões.
+ *
+ * @category    Esmart
+ * @package     Esmart_PayPalBrasil
+ * @copyright   Copyright (c) 2013 Smart E-commerce do Brasil Tecnologia LTDA. (http://www.e-smart.com.br)
+ * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ *
+ * @author     	Tiago Sampaio <tiago.sampaio@e-smart.com.br>
+ */
+?>
+<div id="<?php echo $this->getLoaderId() ?>" style="display:none;">
+	<div class="sa_payPal_overlay">
+		<div class="sa_payPal_overlay_01">
+			<img class="icon_animated_prog_dkgy" src="https://www.paypalobjects.com/en_US/i/icon/icon_animated_prog_dkgy_42wx42h.gif"/>
+			<h2>Aguarde alguns segundos.</h2>
+			<p>Você está sendo redirecionado para um ambiente seguro do PayPal
+				<br /> para finalizar seu pagamento.</p>
+			<div style="margin:15px auto 0;width:30%;">
+				<img src="<?php echo $this->getSkinUrl('esmart/paypalbrasil/image/paypal_rgb.png'); ?>" style="max-width: 100%;display: block"/>
+			</div>
+		</div>
+	</div>
+</div>
