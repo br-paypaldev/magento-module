@@ -106,6 +106,7 @@
             <paypal>
                 <rewrite>
                     <express_shortcut>Esmart_PayPalBrasil_Block_Express_Shortcut</express_shortcut>
+                    <express_form>Esmart_PayPalBrasil_Block_Express_Form</express_form>
                 </rewrite>
             </paypal>
         </blocks>

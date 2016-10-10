@@ -560,9 +560,7 @@ class Esmart_PayPalBrasil_Model_Plus_Iframe extends Mage_Payment_Block_Form
             $ship_phone = $helper->getDataFromObject($addressShipping, $this->nonPersistedData, $ship_phone);
         }
 
-        if (empty($line1_p1) || empty($line1_p2) || empty($ship_phone)) {
-            throw new Exception('Prezado cliente, favor preencher os dados dos passos anteriores antes de selecionar a Forma de Pagamento.');
-        }
+       
          
         $shipping->setRecipientName("{$firstname} {$lastname}")
             ->setCity($city)
@@ -584,6 +582,10 @@ class Esmart_PayPalBrasil_Model_Plus_Iframe extends Mage_Payment_Block_Form
             'State'          => $shipping->getState(),
         );
         Esmart_PayPalBrasil_Model_Debug::appendContent('[SHIPPING ADDRESS]', 'createPayment', $data);
+
+        if (empty($line1_p1) || empty($line1_p2) || empty($ship_phone)) {
+            throw new Exception('Prezado cliente, favor preencher os dados dos passos anteriores antes de selecionar a Forma de Pagamento.');
+        }
 
         #Esmart_PayPalBrasil_Model_Debug::appendContent('[MAGENTO ADDRESS DATA]', 'createPayment', $addressShipping->toArray());
 

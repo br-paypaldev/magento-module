@@ -23,6 +23,29 @@
 -->
 <layout version="0.1.0">
 
+	<customer_account_login translate="label">        
+        <reference name="content">
+        	 <block type="esmart_paypalbrasil/express_shortcut_login" name="checkout.login.paypal_express.login_account" template="esmart/paypalbrasil/express/shortcut/login.phtml"/>
+        </reference>
+
+        <update handle="PayPalBrasil_Append_Blocks"/>
+		<update handle="PayPalBrasil_SHORTCUT_popup"/>
+    </customer_account_login>
+
+    <customer_account_create translate="label">        
+        <reference name="content">
+        	 <block type="esmart_paypalbrasil/express_shortcut_login" name="checkout.login.paypal_express.create_account" before="-" template="esmart/paypalbrasil/express/shortcut/login.phtml"/>
+        </reference>
+
+        <update handle="PayPalBrasil_Append_Blocks"/>
+		<update handle="PayPalBrasil_SHORTCUT_popup"/>
+    </customer_account_create>
+
+    <esmart_paypalbrasil_login_review>
+    	<update handle="paypal_express_review"/>
+    </esmart_paypalbrasil_login_review>
+
+
 	<checkout_cart_index>
 		<reference name="checkout.cart.methods.paypal_express.top">
 			<action method="setTemplate"><template>esmart/paypalbrasil/express/shortcut.phtml</template></action>
@@ -32,9 +55,6 @@
 		</reference>
 
 		<reference name="head">			
-			<action method="addJs" ifconfig="payment/incontext/enable">
-				<script>esmart/paypalbrasil/iwd-jquery-2.1.3.min.js</script>
-			</action>
 			<action method="addJs" ifconfig="payment/incontext/enable">
 				<script>esmart/paypalbrasil/paypal-in-context-cart-product.js</script>
 			</action>	
@@ -92,14 +112,15 @@
 	<PayPalBrasil_Append_Checkouts>
 		<reference name="head">
 			<action method="addJs" ifconfig="payment/incontext/enable">
-				<script>esmart/paypalbrasil/iwd-jquery-2.1.3.min.js</script>
-			</action>	
-			<action method="addJs" ifconfig="payment/incontext/enable">
 				<script>esmart/paypalbrasil/paypal-in-context.js</script>
 			</action>
 			<action method="addCss" ifconfig="payment/paypal_plus/active">
 				<name>esmart/paypalbrasil/css/styles.css</name>
-			</action>		
+			</action>
+
+			<!-- <action method="addJs" ifconfig="payment/paypal_plus/active">
+				<script>esmart/paypalbrasil/Esmart_PaypalBrasilPrototype.js</script>
+			</action> -->			
 		</reference>
 		
 		<reference name="before_body_end">
@@ -116,6 +137,13 @@
 	<!-- FireCheckout Handle -->
 	<firecheckout_index_index>
 		<update handle="PayPalBrasil_Append_Checkouts"/>
+		<!-- <reference name="before_body_end">
+			<block type="page/html_head" name="paypalbrasil.checkout.js">
+			    <action method="addJs" ifconfig="payment/paypal_plus/active">
+					<script>esmart/paypalbrasil/Esmart_PaypalBrasilPrototype.events.firecheckout.js</script>
+				</action>
+			</block>
+		</reference> -->
 	</firecheckout_index_index>
 	
 	<!-- SmartCheckout Handle -->
@@ -126,6 +154,11 @@
 	<!-- Amasty/Default/MOIP checkout -->
 	<checkout_onepage_index>
 		<update handle="PayPalBrasil_Append_Checkouts"/>
+        <update handle="PayPalBrasil_Append_Blocks"/>
+		<update handle="PayPalBrasil_SHORTCUT_popup"/>
+		<reference name="content">
+        	 <block type="esmart_paypalbrasil/express_shortcut_login" name="checkout.login.paypal_express" before="-" template="esmart/paypalbrasil/express/shortcut/login.phtml"/>
+		</reference>
 	</checkout_onepage_index>
 
 	<!-- Innovarti checkout -->
