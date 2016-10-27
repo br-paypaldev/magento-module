@@ -7,7 +7,7 @@
  *  
  * @package     js
  */
-
+$('p_method_paypal_plus').stopObserving('click');
 // clean all radio buttons when Dom:load
 $('checkout-payment-method-load').select('input.radio').each(function(el){ el.checked = false});
 

@@ -67,31 +67,28 @@ class Esmart_PayPalBrasil_ExpressController extends Esmart_PayPalBrasil_Controll
         $errors = array();
 
         try {
+
             $payerInfo   = $model->getCustomerInformation();
             $approvalUrl = $model->getApprovalUrlPaypalPlus();
 
             $data = array_merge($payerInfo, $approvalUrl);
-
-            $isValid = true;
-
-            foreach ($data as $key => $value) {
-                if (is_null($value) && $key !== 'rememberedCards') {
-                    $isValid = false;
-                    $errors[] = Mage::helper('esmart_paypalbrasil')->__("Field '%s' is empty.", $key);
-                }
-            }
-
-            if ($isValid === false) {
-                throw new Exception('Prezado cliente, favor preencher os dados dos passos anteriores antes de selecionar a Forma de Pagamento.');
-            }
-
+            if(empty($data['approvalUrl'])){ throw new Exception('Ocorreu um erro inesperado, tente novamente, caso o problema persista por favor entre em contato.',3); }
             $return     = array('success' => $data);
 
         } catch (Exception $exception) {
+
             Mage::helper('esmart_paypalbrasil')->logException(__FILE__, __CLASS__, __FUNCTION__, __LINE__, self::LOG_FILENAME, null, $data);
+
+           if ($exception->getCode() == 3){
+               $general_message = $exception->getMessage();
+           }else{
+               $general_message = 'Prezado cliente, favor preencher e/ou validar os dados dos passos anteriores antes de selecionar a Forma de Pagamento. Caso o problema persista por favor entre em contato.';
+           }
+
+
             $return = array(
-                'error'  => true,
-                'message' => $exception->getMessage()
+                'error'  => $exception->getCode(),
+                'message' => $general_message
             );
         }
 

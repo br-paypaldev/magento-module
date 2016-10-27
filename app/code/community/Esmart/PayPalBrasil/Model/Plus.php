@@ -277,7 +277,7 @@ class Esmart_PayPalBrasil_Model_Plus extends Mage_Payment_Model_Method_Abstract
     {
         $inputFields = new \PayPal\Api\InputFields();
 
-        $inputFields->setNoShipping(1)
+        $inputFields->setNoShipping(0)
             ->setAddressOverride(1);
 
         return $inputFields;

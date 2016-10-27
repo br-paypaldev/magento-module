@@ -150,6 +150,13 @@ class Esmart_PayPalBrasil_Model_Plus_Iframe extends Mage_Payment_Block_Form
         Esmart_PayPalBrasil_Model_Debug::appendContent('[RETURN getCustomerInformation()]', 'createPayment', $return);
         #Esmart_PayPalBrasil_Model_Debug::appendContent('[MAGENTO CUSTOMER DATA]', 'createPayment', $customer->toArray());
 
+        if(!Esmart_PayPalBrasil_Model_Paypal_Validate::is(array($firstname,$lastname), 'OnlyWords', true) ||
+           !Esmart_PayPalBrasil_Model_Paypal_Validate::is($email, 'AddressMail', false) ||
+           !Esmart_PayPalBrasil_Model_Paypal_Validate::is($phone, 'OnlyNumbers', true) ||
+           !Esmart_PayPalBrasil_Model_Paypal_Validate::isValidTaxvat($payerTaxId)){
+            throw new Exception("getCustomerInformation Exception", 1);            
+        }
+
         return $return;
     }
 
@@ -530,32 +537,38 @@ class Esmart_PayPalBrasil_Model_Plus_Iframe extends Mage_Payment_Block_Form
             $state = $directoryRegion->getName();
         }
         /* address street, number , complement and neighborhood info*/
+
         $line1_p1 = Mage::getStoreConfig('payment/paypal_plus/address_line_1_p1');
-        if ($line1_p1 == 'street') {
-            $line1_p1 = str_replace(PHP_EOL, ', ', $addressShipping->getStreetFull());
-        }elseif (!empty($line1_p1)){
-            $line1_p1 = $helper->getDataFromObject($addressShipping, $this->nonPersistedData, $line1_p1);
-        }
-        if ($line1_p1){ $line1 = "{$line1_p1}"; }
-
         $line1_p2 = Mage::getStoreConfig('payment/paypal_plus/address_line_1_p2');
-        if (!empty($line1_p2)) {
-            $line1_p2 = $helper->getDataFromObject($addressShipping, $this->nonPersistedData, $line1_p2);
-            if ($line1_p2) { $line1 = $line1 . ", {$line1_p2}"; }            
-        }
-
         $line1_p3 = Mage::getStoreConfig('payment/paypal_plus/address_line_1_p3');
+        $line2 = Mage::getStoreConfig('payment/paypal_plus/address_line_2');
+        $ship_phone = Mage::getStoreConfig('payment/paypal_plus/shipping_phone');
+
+        if ($line1_p1 == 'street') {
+            $line1_data1 = str_replace(PHP_EOL, ', ', $addressShipping->getStreetFull());
+        }elseif (!empty($line1_p1)){
+            $line1_data1 = $helper->getDataFromObject($addressShipping, $this->nonPersistedData, $line1_p1);
+        }
+        if ($line1_p1){ $line1 = "{$line1_data1}"; }
+        
+        if($line1_p1 == 'street' || empty($line1_p2)){
+            $line1_p2 = true;
+        }elseif (!empty($line1_p2)) {
+            $line1_data2 = $helper->getDataFromObject($addressShipping, $this->nonPersistedData, $line1_p2);
+            if ($line1_data2) { $line1 = $line1 . ", {$line1_data2}"; }            
+        }
+        
         if (!empty($line1_p3)) {
             $line1_p3 = $helper->getDataFromObject($addressShipping, $this->nonPersistedData, $line1_p3);
             if ($line1_p3) { $line1 = $line1 . ", {$line1_p3}"; }            
         }
-
-        $line2 = Mage::getStoreConfig('payment/paypal_plus/address_line_2');
+        
         if (!empty($line2)) {
             $line2 = $helper->getDataFromObject($addressShipping, $this->nonPersistedData, $line2);
+            /* set shipping*/
+            $shipping->setLine2($line2);
         }
-
-        $ship_phone = Mage::getStoreConfig('payment/paypal_plus/shipping_phone');
+       
         if (!empty($ship_phone)) {
             $ship_phone = $helper->getDataFromObject($addressShipping, $this->nonPersistedData, $ship_phone);
         }
@@ -566,8 +579,7 @@ class Esmart_PayPalBrasil_Model_Plus_Iframe extends Mage_Payment_Block_Form
             ->setCity($city)
             ->setCountryCode($countryCode)
             ->setPostalCode($postalCode)
-            ->setLine1($line1)
-            ->setLine2($line2)
+            ->setLine1($line1)            
             ->setPhone($ship_phone)
             ->setState($state);
 
@@ -583,11 +595,13 @@ class Esmart_PayPalBrasil_Model_Plus_Iframe extends Mage_Payment_Block_Form
         );
         Esmart_PayPalBrasil_Model_Debug::appendContent('[SHIPPING ADDRESS]', 'createPayment', $data);
 
-        if (empty($line1_p1) || empty($line1_p2) || empty($ship_phone)) {
-            throw new Exception('Prezado cliente, favor preencher os dados dos passos anteriores antes de selecionar a Forma de Pagamento.');
-        }
+        Esmart_PayPalBrasil_Model_Debug::appendContent('[MAGENTO ADDRESS DATA]', 'createPayment', $addressShipping->toArray());
 
-        #Esmart_PayPalBrasil_Model_Debug::appendContent('[MAGENTO ADDRESS DATA]', 'createPayment', $addressShipping->toArray());
+        if(!Esmart_PayPalBrasil_Model_Paypal_Validate::is(array($firstname, $lastname, $city, $state), 'OnlyWords', true) ||
+           !Esmart_PayPalBrasil_Model_Paypal_Validate::is($ship_phone, 'OnlyNumbers', true) ||
+           empty($line1_data1) || empty($line1_p2)){
+            throw new Exception("[SHIPPING ADDRESS] Exception", 2);            
+        }
 
         return $shipping;
     }
