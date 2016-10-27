@@ -63,6 +63,11 @@ if (typeof window.paypalCheckoutReady === "undefined"){
 				environment: PayPalLightboxConfig.environment,
 				button: IDS,
 				click: function (e) { 
+
+					if (payment.currentMethod != 'paypal_express'){
+						return;
+					}
+
 					e.preventDefault();				
 					
 					var urlConnect = PayPalLightboxConfig.setExpressCheckout

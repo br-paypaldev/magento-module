@@ -170,6 +170,9 @@ class Esmart_PayPalBrasil_Model_Config extends Mage_Paypal_Model_Config
             case Esmart_PayPalBrasil_Model_Plus::CODE:
                 $path = $this->_mapPlusFieldset($fieldName);
                 break;
+            case Esmart_PayPalBrasil_Model_Invoice::CODE:
+                $path = $this->_mapInvoiceFieldset($fieldName);
+                break;
             default:
                 return parent::_getSpecificConfigPath($fieldName);
                 break;
@@ -209,6 +212,23 @@ class Esmart_PayPalBrasil_Model_Config extends Mage_Paypal_Model_Config
         }
     }
 
+    /**
+     * Map PayPal Standard config fields
+     *
+     * @param string $fieldName
+     * @return string|null
+     */
+    protected function _mapInvoiceFieldset($fieldName)
+    {
+        switch ($fieldName)
+        {
+            case 'sandbox_flag':
+                return 'payment/' . Esmart_PayPalBrasil_Model_Invoice::CODE . "/{$fieldName}";
+            default:
+                return $this->_mapMethodFieldset($fieldName);
+        }
+    }
+
     /* return a payment methods accepted on country */
     public function getCountryMethods($countryCode = null)
     {
@@ -218,7 +238,8 @@ class Esmart_PayPalBrasil_Model_Config extends Mage_Paypal_Model_Config
                 self::METHOD_WPS,
                 self::METHOD_WPP_EXPRESS,
                 self::METHOD_BILLING_AGREEMENT,
-                Esmart_PayPalBrasil_Model_Plus::CODE
+                Esmart_PayPalBrasil_Model_Plus::CODE,
+                Esmart_PayPalBrasil_Model_Invoice::CODE
             )
         );
 

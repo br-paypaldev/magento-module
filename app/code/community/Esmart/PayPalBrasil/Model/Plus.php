@@ -403,9 +403,9 @@ class Esmart_PayPalBrasil_Model_Plus extends Mage_Payment_Model_Method_Abstract
 
              $order->addRelatedObject($invoice); /* better than Mage::getModel('core/resource_transaction')*/
 
-
             /* logic of "payment review" */
             if ($state == 'pending') {
+                Mage::getSingleton('core/session')->addNotice(Mage::helper('core')->__('Your Payment is being reviewed.'));
                 $payment->setIsTransactionClosed(false);
                 $payment->setIsTransactionPending(true);
                 return $this;

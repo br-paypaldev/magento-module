@@ -84,6 +84,7 @@
                     <config>Esmart_PayPalBrasil_Model_Config</config>
                     <api_nvp>Esmart_PayPalBrasil_Model_Api_Nvp</api_nvp>]
                     <info>Esmart_PayPalBrasil_Model_Info</info>
+                    <ipn>Esmart_PayPalBrasil_Model_Ipn</ipn>
                 </rewrite>
             </paypal>
         </models>
@@ -216,6 +217,12 @@
 Parcela(s): {parcela_qtde}x de {parcela_valor}]]></checkout_payment_info>
                 <debug_mode>0</debug_mode>
             </paypal_plus>
+             <paypal_invoice>
+                <model>esmart_paypalbrasil/invoice</model>
+                <title>Paypal Invoice</title>
+                <group>paypal</group>
+                <payment_action>authorize</payment_action>           
+            </paypal_invoice>
         </payment>
         <paypal>
             <style>

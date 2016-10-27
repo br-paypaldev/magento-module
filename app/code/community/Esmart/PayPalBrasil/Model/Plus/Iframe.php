@@ -309,11 +309,18 @@ class Esmart_PayPalBrasil_Model_Plus_Iframe extends Mage_Payment_Block_Form
 
         try {
             Esmart_PayPalBrasil_Model_Debug::appendContent(
-                '[TRANSACTION REQUEST]', 'createPayment',
+                '[CREATE PAYMENT REQUEST]', 'createPayment',
                 array(var_export($payment->toArray(), true))
             );
-            Esmart_PayPalBrasil_Model_Debug::writeLog();
+            
             $payment->create($this->getApiContext());
+
+             Esmart_PayPalBrasil_Model_Debug::appendContent(
+                '[CREATE PAYMENT RESPONSE]', 'createPayment',
+                array(var_export($payment->toArray(), true))
+            );
+
+            Esmart_PayPalBrasil_Model_Debug::writeLog();
 
             $quote->getPayment()
                 ->setAdditionalInformation('paypal_plus_payment_id', $payment->getId())
@@ -593,7 +600,8 @@ class Esmart_PayPalBrasil_Model_Plus_Iframe extends Mage_Payment_Block_Form
             'Country Code'   => $shipping->getCountryCode(),
             'State'          => $shipping->getState(),
         );
-        Esmart_PayPalBrasil_Model_Debug::appendContent('[SHIPPING ADDRESS]', 'createPayment', $data);
+        
+        Esmart_PayPalBrasil_Model_Debug::appendContent('[PAYPAL SHIPPING ADDRESS]', 'createPayment', $data);
 
         Esmart_PayPalBrasil_Model_Debug::appendContent('[MAGENTO ADDRESS DATA]', 'createPayment', $addressShipping->toArray());
 

@@ -22,3 +22,5 @@
 .pp-method-express > .config-heading .button-container { background: url("../images/finalizecom_paypal.png") no-repeat -10px -6px transparent; height: 29px; padding: 0 0 0 200px; width: 90px; }
 .pp-method-general > .config-heading .button-container { background: url("../images/aceitacao_paypal.png") no-repeat -8px 2px transparent; height: 28px; padding: 8px 0 0 180px; }
 .pp-method-ppplus> .config-heading .heading strong{ background: url("../../../images/paypal/logo-paypal.png") no-repeat scroll 0 2px rgba(0, 0, 0, 0);  padding-left: 56px; }
+
+label[for="p_method_paypal_invoice"] { background: url('../../../images/paypal/logo-paypal.png') no-repeat; padding-left: 56px;}
