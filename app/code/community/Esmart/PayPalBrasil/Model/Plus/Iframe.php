@@ -50,7 +50,7 @@ class Esmart_PayPalBrasil_Model_Plus_Iframe extends Mage_Payment_Block_Form
      * Code payment method
      * @const string
      */
-    const LOG_FILENAME = 'ppplusbrasil_iframe_exception.log';
+    const LOG_FILENAME = 'ppplusbrasil_exception.log';
 
     /**
      * Payment method default
@@ -320,14 +320,13 @@ class Esmart_PayPalBrasil_Model_Plus_Iframe extends Mage_Payment_Block_Form
                 array(var_export($payment->toArray(), true))
             );
 
-            Esmart_PayPalBrasil_Model_Debug::writeLog();
-
             $quote->getPayment()
                 ->setAdditionalInformation('paypal_plus_payment_id', $payment->getId())
                 ->setAdditionalInformation('paypal_plus_payment_state', $payment->getState())
                 ->save();
+                
         } catch (Exception $e) {
-            $helper->logException(__FILE__, __CLASS__, __FUNCTION__, __LINE__, self::LOG_FILENAME, $e);
+            throw new Exception("Call createPayment Exception", 1);
         }
 
         return $payment;
@@ -665,6 +664,7 @@ class Esmart_PayPalBrasil_Model_Plus_Iframe extends Mage_Payment_Block_Form
         );
 
         $apiContext->setConfig($mode);
+        $apiContext->addRequestHeader("PayPal-Partner-Attribution-Id" , 'Magento_Cart_CE_BR_PPPlus');
 
         Esmart_PayPalBrasil_Model_Debug::appendContent('[OPERATION MODE]', 'default', $mode);
 

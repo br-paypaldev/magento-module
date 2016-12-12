@@ -173,6 +173,7 @@ class Esmart_PayPalBrasil_Model_Plus extends Mage_Payment_Model_Method_Abstract
         );
 
         $apiContext->setConfig($mode);
+        $apiContext->addRequestHeader("PayPal-Partner-Attribution-Id" , 'Magento_Cart_CE_BR_PPPlus');
 
         Esmart_PayPalBrasil_Model_Debug::appendContent('[OPERATION MODE]', 'default', $mode);
 
@@ -428,7 +429,8 @@ class Esmart_PayPalBrasil_Model_Plus extends Mage_Payment_Model_Method_Abstract
             if ($createFailure && $cancel->cancelOrder($payment)) {
                 return $this;
             }
-
+            $errorData['invoice_number'] = $order->getIncrementId();
+            $e->setData(json_encode($errorData));
             $helper->logException(__FILE__, __CLASS__, __FUNCTION__, __LINE__, self::LOG_FILENAME, $e);
             
             Esmart_PayPalBrasil_Model_Debug::writeLog();

@@ -166,6 +166,7 @@
     </frontend>
     <default>
         <paypal>
+            <bncode>Magento_Cart_CE_BR_ECS</bncode>
             <general>
                 <merchant_country>BR</merchant_country>
             </general>

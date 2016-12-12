@@ -77,6 +77,10 @@ class Esmart_PayPalBrasil_ExpressController extends Esmart_PayPalBrasil_Controll
 
         } catch (Exception $exception) {
 
+            $helper = Mage::helper('esmart_paypalbrasil');
+
+            $quote = $helper->getQuote(null);
+            $data['invoice_number'] = $quote->getReservedOrderId();
             Mage::helper('esmart_paypalbrasil')->logException(__FILE__, __CLASS__, __FUNCTION__, __LINE__, self::LOG_FILENAME, null, $data);
 
            if ($exception->getCode() == 3){

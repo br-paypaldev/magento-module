@@ -38,6 +38,10 @@ class Esmart_PayPalBrasil_Block_Express_Shortcut_Incontext_Js extends Mage_Core_
         Mage::getSingleton('core/session')->unsIdsButtons();
         
         return Mage::helper('core')->jsonEncode($buttonlist);
-     }
-   
+    }
+    
+    public function isInContextActive()
+    {
+        return  Mage::getStoreConfig('payment/incontext/enable');
+    }
 }

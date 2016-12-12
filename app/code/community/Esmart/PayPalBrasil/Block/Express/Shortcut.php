@@ -16,6 +16,11 @@ class Esmart_PayPalBrasil_Block_Express_Shortcut extends Mage_Paypal_Block_Expre
         }
         $list = array_unique($list);
         Mage::getSingleton('core/session')->setIdsButtons($list);
+
+        /* set # in href button */
+        if ($this->isActiveIncontext()) {
+           $this->setCheckoutUrl('#');
+        }
     }
 
     public function isActiveIncontext()

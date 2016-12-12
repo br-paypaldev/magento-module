@@ -18,8 +18,16 @@ document.observe("dom:loaded", function() {
 				environment: PayPalLightboxConfig.environment,
 				button: IDS,
 				click: function (e) { 
-					e.preventDefault();				
-					
+					e.preventDefault();	
+
+					/* to incontext Works needs a product on cart */
+					if ($('product_addtocart_form')) {
+						new Ajax.Request($('product_addtocart_form').action,{              
+			               	method: 'post',	                     
+			                async: false			               
+			            });
+					}
+
 					var urlConnect = PayPalLightboxConfig.setExpressCheckout
 
 					paypal.checkout.initXO();

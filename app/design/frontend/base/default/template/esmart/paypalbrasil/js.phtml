@@ -1,3 +1,5 @@
+<?php if ($this->isInContextActive()): ?>
+<?php $uniq = md5(uniqid(rand(), true)); ?>
 <script>
 
 	var PayPalLightboxConfig = '<?php echo $this->getJsonConfig(); ?>';
@@ -5,4 +7,5 @@
 	var IDS = <?php echo $this->getJButtonsIds(); ?>
 
 </script>
-<script type="text/javascript" src="//www.paypalobjects.com/api/checkout.js" async></script>
+<script type="text/javascript" src="//www.paypalobjects.com/api/checkout.js?<?php echo $uniq ?>" async></script>
+<?php endif; ?>

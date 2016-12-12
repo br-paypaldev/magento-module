@@ -250,6 +250,8 @@ class Esmart_PayPalBrasil_Model_Invoice extends Mage_Payment_Model_Method_Abstra
 
         $apiContext  = new PayPal\Rest\ApiContext($oAuthToken);
 
+        $apiContext->addRequestHeader("PayPal-Partner-Attribution-Id" , 'Magento_Cart_CE_BR_Invoice');
+
         if(Mage::getStoreConfig('payment/paypal_invoice/sandbox_flag')){
 
           $apiContext->setConfig(array('mode' => 'sandbox'));
