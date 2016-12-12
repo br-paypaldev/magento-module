@@ -13,7 +13,7 @@ Welcome to Official PayPal Brazil Magento Repository
 - PayPal Express Checkout (Includes In-Context & Shortcut)
 - PayPal Plus (Unbranded Credit Card) NOTE: PayPal Plus requires vetting
 - PayPal Invoice (Directly from Magento order creation)
-- PayPal Log-in & Purchase (Enable customer without store account to purchase)  
+- PayPal Log-in (Enable customer without store account to purchase and expedite the checkout)  
 
 ## Prerequisites
 
