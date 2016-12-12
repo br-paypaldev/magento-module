@@ -17,13 +17,12 @@ Welcome to Official PayPal Brazil Magento Repository
 
 ## Prerequisites
 
-- Magento =>1.7.2 (Not compatible with Magento 2.0)
+- Magento => 1.7.2 (Not compatible with Magento 2.0)
 - Compiler mode off
 
 ## Compatibilites
 
 - Compatible with the following OSC's extensions: OSC 6 Brasil, MOIP, Firecheckout
-- Magento 1.7.2.0 <= 1.9.3.1
 
 ## Latest Updates
 
