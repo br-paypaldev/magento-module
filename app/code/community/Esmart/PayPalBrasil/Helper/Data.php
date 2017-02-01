@@ -70,6 +70,12 @@ class Esmart_PayPalBrasil_Helper_Data extends Mage_Core_Helper_Data
     const JS_EVENTS_SMARTCHECKOUT = 'esmart/paypalbrasil/Esmart_PaypalBrasilPrototype.events.smartcheckout.js';
 
     /**
+     * JS events AHEADWORKS
+     * @const string
+     */
+    const JS_EVENTS_AHEADWORKS = 'esmart/paypalbrasil/Esmart_PaypalBrasilPrototype.events.aheadworks.js';
+
+    /**
      * @var string
      */
     protected $_ppbUrl = 'https://www.paypal-brasil.com.br';
@@ -91,7 +97,7 @@ class Esmart_PayPalBrasil_Helper_Data extends Mage_Core_Helper_Data
      */
     public function getLogoCenterUrl()
     {
-        return implode('/', array($this->getPPBUrl(), 'logocenter', 'util', 'img'));
+        return implode('/', array(Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_SKIN), 'frontend', 'base', 'default', 'esmart', 'paypalbrasil', 'image', 'logos'));
     }
 
     /**

@@ -1,0 +1,85 @@
+/* IFRAME PAYPAL PLUS */
+#paypal_plus_iframe {
+    max-height: 510px;
+}
+
+/* EXPRESS SHORCUT LOGIN PAYPAL */
+
+#paypal-login {
+    padding: 20px;
+    margin: 0 auto;
+    background: #fbfaf6;
+    border: 1px solid #bbafa0;
+    border-bottom: 0;
+    width: 858px;
+    box-sizing: content-box;
+    -moz-box-sizing: content-box;
+    -webkit-box-sizing: content-box;
+}
+
+/* PLACE ORDER BUTTON */
+
+.aw-onestepcheckout-place-order-button,
+.aw-onestepcheckout-place-order-button:visited {
+    background: #ff832f url(../images/button-background.png) repeat-x;
+    display: inline-block;
+    text-decoration: none;
+    border-radius: 5px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+    -moz-box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+    -webkit-box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+    text-shadow: 0 -1px 1px rgba(0,0,0,0.25);
+    border: none;
+    border-bottom: 1px solid rgba(0,0,0,0.25);
+    position: relative;
+    cursor: pointer;
+    width: 266px;
+    color: white;
+    z-index: 6;
+}
+.aw-onestepcheckout-place-order-button:hover{
+    background-color: #fc732e;
+}
+.aw-onestepcheckout-place-order-button:active{
+    top: 1px;
+}
+.aw-onestepcheckout-place-order-button span{
+    display: block;
+    line-height: normal;
+}
+.aw-onestepcheckout-place-order-button .aw-onestepcheckout-place-order-grand-total{
+    font-size: 20px;
+    padding: 10px 0 8px;
+}
+.aw-onestepcheckout-place-order-button .aw-onestepcheckout-place-order-grand-total .aw-onestepcheckout-place-order-label,
+.aw-onestepcheckout-place-order-button .aw-onestepcheckout-place-order-grand-total .aw-onestepcheckout-place-order-amount,
+.aw-onestepcheckout-place-order-button .aw-onestepcheckout-place-order-grand-total .aw-onestepcheckout-place-order-process{
+    display: inline;
+}
+.aw-onestepcheckout-place-order-button .aw-onestepcheckout-place-order-grand-total .aw-onestepcheckout-place-order-process img{
+    width: 15px;
+    height: 15px;
+}
+.aw-onestepcheckout-place-order-button .aw-onestepcheckout-place-order-title{
+    font-size: 35px;
+    font-weight: bold;
+    padding: 0 0 12px;
+}
+.aw-onestepcheckout-place-order-button:disabled,
+#esmart-paypalbrasil-btn-submit:disabled {
+    background-color: #cccccc;
+    color: #f8f8ff;
+}
+.aw-onestepcheckout-place-order-button.aw-onestepcheckout-place-order-button-disabled span{
+    background-color: transparent !important;
+}
+.aw-onestepcheckout-place-order-button.aw-onestepcheckout-place-order-button-disabled:hover{
+    top: 0px;
+}
+
+#aw-onestepcheckout-place-order .aw-onestepcheckout-place-order-please-wait {
+    top: 0;
+    display: none;
+}

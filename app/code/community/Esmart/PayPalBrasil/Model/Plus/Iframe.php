@@ -326,6 +326,10 @@ class Esmart_PayPalBrasil_Model_Plus_Iframe extends Mage_Payment_Block_Form
                 ->save();
                 
         } catch (Exception $e) {
+            Esmart_PayPalBrasil_Model_Debug::appendContent(
+                '[CREATE PAYMENT RESPONSE]', 'createPayment',
+                array(var_export(json_decode($e->getData(), true), true))
+            );
             throw new Exception("Call createPayment Exception", 1);
         }
 

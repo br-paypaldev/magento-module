@@ -37,6 +37,7 @@ class Esmart_PayPalBrasil_Model_Adminhtml_OscOptions
             array('value'=> Esmart_PayPalBrasil_Helper_Data::JS_EVENTS_FIRECHECKOUT, 'label'=>  $helper->__('TM_FireCheckout')),
             array('value'=> Esmart_PayPalBrasil_Helper_Data::JS_EVENTS_AMASTY, 'label'=>  $helper->__('Amasty_Scheckout')),
             array('value'=> Esmart_PayPalBrasil_Helper_Data::JS_EVENTS_SMARTCHECKOUT, 'label'=>  $helper->__('Esmart_SmartCheckout')),
+            array('value'=> Esmart_PayPalBrasil_Helper_Data::JS_EVENTS_AHEADWORKS, 'label'=>  $helper->__('AW_OneStepCheckout')),
         );
     }
 }

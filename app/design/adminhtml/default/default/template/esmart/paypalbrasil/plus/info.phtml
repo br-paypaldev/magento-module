@@ -23,7 +23,7 @@
 <?php
 /** @var Mage_Sales_Model_Order_Payment $info */
 $info = $this->getInfo();
-
+$orderStatus = Mage::getModel('sales/order')->load($info->getParentId())->getStatus();
 $state = $info->getAdditionalInformation('paypal_payment_status');
 ?>
 <div class="payflow-settings-notice">
@@ -41,7 +41,11 @@ $state = $info->getAdditionalInformation('paypal_payment_status');
      <p>
         <strong> Status da Transação : </strong>
         <?php if(strtolower($state)  == 'completed'): ?>
-            <strong style="color:green;"> Pagamento Aprovado </strong>
+            <?php if(strtolower($orderStatus) == 'paypal_reversed'): ?>
+                <strong style="color:red;"> Pagamento revertido por suspeita de fraude </strong>
+            <?php else:?>
+                <strong style="color:green;"> Pagamento Aprovado </strong>
+            <?php endif;?>
         <?php elseif(strtolower($state)  == 'reversed'): ?>
             <strong style="color:red;"> Pagamento não Aprovado </strong>
         <?php else: ?>

@@ -103,26 +103,30 @@ class Esmart_PayPalBrasil_Model_Config extends Mage_Paypal_Model_Config
 		$bw = $this->_helper()->__('Black and White');
 
 		return array(
-            'selo_aceitacao_horizontal'             => $this->_helper()->__('Now Accepting PayPal Logo (%s, %s)', $hz, $cl),
-            'selo_aceitacao_vertical'               => $this->_helper()->__('Now Accepting PayPal Logo (%s, %s)', $vt, $cl),
-
-            'selo_aceitacao_horizontal_pb'          => $this->_helper()->__('Now Accepting PayPal Logo (%s, %s)', $hz, $bw),
-            'selo_aceitacao_vertical_pb'            => $this->_helper()->__('Now Accepting PayPal Logo (%s, %s)', $vt, $bw),
-
-            'selo-preferencia_loja_horizontal'      => $this->_helper()->__('This Store Prefer PayPal Logo (%s, %s)', $hz, $cl),
-            'selo-preferencia_loja_vertical'        => $this->_helper()->__('This Store Prefer PayPal Logo (%s, %s)', $vt, $cl),
-
-            'selo-preferencia_sbandeira_horizontal' => $this->_helper()->__('We Prefer PayPal Logo (%s, %s)', $hz, $cl),
-            'selo-preferencia_sbandeira_vertical'   => $this->_helper()->__('We Prefer PayPal Logo (%s, %s)', $vt, $cl),
-
-            'selo-preferencia_site_horizontal'      => $this->_helper()->__('This Website Prefer PayPal Logo (%s, %s)', $hz, $cl),
-            'selo-preferencia_site_vertical'        => $this->_helper()->__('This Website Prefer PayPal Logo (%s, %s)', $vt, $cl),
-
-            'compra_segura_horizontal'              => $this->_helper()->__('Secure Purchase PayPal Logo (%s, %s)', $hz, $cl),
-            'compra_segura_vertical'                => $this->_helper()->__('Secure Purchase PayPal Logo (%s, %s)', $vt, $cl),
-
-            'compra_segura_horizontal_pb'           => $this->_helper()->__('Secure Purchase PayPal Logo (%s, %s)', $hz, $bw),
-            'compra_segura_vertical_pb'             => $this->_helper()->__('Secure Purchase PayPal Logo (%s, %s)', $vt, $bw),
+             'selo_pp_parcelado10x_01' =>  $this->_helper()->__('selo_pp_parcelado10x_01'),
+             'selo_pp_parcelado10x_02' =>  $this->_helper()->__('selo_pp_parcelado10x_02'),
+             'selo_pp_parcelado11x_01' =>  $this->_helper()->__('selo_pp_parcelado11x_01'),
+             'selo_pp_parcelado11x_02' =>  $this->_helper()->__('selo_pp_parcelado11x_02'),
+             'selo_pp_parcelado12x_01' =>  $this->_helper()->__('selo_pp_parcelado12x_01'),
+             'selo_pp_parcelado12x_02' =>  $this->_helper()->__('selo_pp_parcelado12x_02'),
+             'selo_pp_parcelado2x_01' =>  $this->_helper()->__('selo_pp_parcelado2x_01'),
+             'selo_pp_parcelado2x_02' =>  $this->_helper()->__('selo_pp_parcelado2x_02'),
+             'selo_pp_parcelado3x_01' =>  $this->_helper()->__('selo_pp_parcelado3x_01'),
+             'selo_pp_parcelado3x_02' =>  $this->_helper()->__('selo_pp_parcelado3x_02'),
+             'selo_pp_parcelado4x_01' =>  $this->_helper()->__('selo_pp_parcelado4x_01'),
+             'selo_pp_parcelado4x_02' =>  $this->_helper()->__('selo_pp_parcelado4x_02'),
+             'selo_pp_parcelado5x_01' =>  $this->_helper()->__('selo_pp_parcelado5x_01'),
+             'selo_pp_parcelado5x_02' =>  $this->_helper()->__('selo_pp_parcelado5x_02'),
+             'selo_pp_parcelado6x_01' =>  $this->_helper()->__('selo_pp_parcelado6x_01'),
+             'selo_pp_parcelado6x_02' =>  $this->_helper()->__('selo_pp_parcelado6x_02'),
+             'selo_pp_parcelado7x_01' =>  $this->_helper()->__('selo_pp_parcelado7x_01'),
+             'selo_pp_parcelado7x_02' =>  $this->_helper()->__('selo_pp_parcelado7x_02'),
+             'selo_pp_parcelado8x_01' =>  $this->_helper()->__('selo_pp_parcelado8x_01'),
+             'selo_pp_parcelado8x_02' =>  $this->_helper()->__('selo_pp_parcelado8x_02'),
+             'selo_pp_parcelado9x_01' =>  $this->_helper()->__('selo_pp_parcelado9x_01'),
+             'selo_pp_parcelado9x_02' =>  $this->_helper()->__('selo_pp_parcelado9x_02'),
+             'selo_pp_rodape_01' =>  $this->_helper()->__('selo_pp_rodape_01'),
+             'selo_pp_rodape_02' =>  $this->_helper()->__('selo_pp_rodape_02'),
         );
     }
 
@@ -137,7 +141,13 @@ class Esmart_PayPalBrasil_Model_Config extends Mage_Paypal_Model_Config
      */
     public function getAdditionalOptionsLogoUrl($localeCode, $type = false)
     {
-        $configType = Mage::getStoreConfig($this->_mapGenericStyleFieldset('logo'), $this->_storeId);
+        if ($type) {
+            $configType = Mage::getStoreConfig($this->_mapGenericStyleFieldset($type), $this->_storeId);
+            $type = null;
+        }else{
+            $configType = Mage::getStoreConfig($this->_mapGenericStyleFieldset('logo'), $this->_storeId);
+        }
+     
         if (!$configType) {
             return false;
         }
@@ -148,9 +158,31 @@ class Esmart_PayPalBrasil_Model_Config extends Mage_Paypal_Model_Config
             $type = self::DEFAULT_LOGO_TYPE;
         }
 
-        return $this->_helper()->getLogoCenterImageUrl($type, 'png');
+        return $this->_helper()->getLogoCenterImageUrl($type, 'jpg');
     }
 
+        /**
+     * Map PayPal common style config fields
+     *
+     * @param string $fieldName
+     * @return string|null
+     */
+    protected function _mapGenericStyleFieldset($fieldName)
+    {
+        switch ($fieldName) {
+            case 'logo':
+            case 'logo_footer':
+            case 'logo_productview':
+            case 'page_style':
+            case 'paypal_hdrimg':
+            case 'paypal_hdrbackcolor':
+            case 'paypal_hdrbordercolor':
+            case 'paypal_payflowcolor':
+                return "paypal/style/{$fieldName}";
+            default:
+                return null;
+        }
+    }
 
 	/**
 	 * Gets the helper singleton instance

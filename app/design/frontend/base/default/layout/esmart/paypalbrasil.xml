@@ -23,6 +23,7 @@
 -->
 <layout version="0.1.0">
 
+
 	<default>
 		<reference name="head">			
 			<action method="addJs" ifconfig="payment/incontext/enable">
@@ -32,6 +33,11 @@
 
 		<reference name="before_body_end">
 			<block type="esmart_paypalbrasil/express_shortcut_incontext_js" ifconfig="payment/incontext/enable" name="paypal.incontext.js"></block>
+		</reference>
+		<reference name="footer">
+		 	<block type="esmart_paypalbrasil/logo" name="paypal.footer.logo" template="esmart/paypalbrasil/footer_logo.phtml">
+		 	 	<action ifconfig="payment/paypal_express/active" method="setLogoType"><LogoType>logo_footer</LogoType></action>
+            </block>
 		</reference>
 
 		<update handle="PayPalBrasil_Append_Blocks"/>
@@ -97,6 +103,14 @@
 		</reference>
 	</PayPalBrasil_Append_Checkouts>
 
+	<PayPalBrasil_Append_AW_OneStepCheckout>
+		<reference name="head">
+			<action method="addCss" ifconfig="payment/paypal_plus/active">
+				<name>esmart/paypalbrasil/css/aw_onestepcheckout.css</name>
+			</action>
+		</reference>
+	</PayPalBrasil_Append_AW_OneStepCheckout>
+
 	<customer_account_login translate="label">        
         <reference name="content">
         	 <block type="esmart_paypalbrasil/express_shortcut_login" name="checkout.login.paypal_express.login_account" template="esmart/paypalbrasil/express/shortcut/login.phtml"/>
@@ -127,6 +141,11 @@
 		<reference name="product.info.addtocart.paypal">
 			<action method="setTemplate"><template>esmart/paypalbrasil/express/shortcut.phtml</template></action>
 		</reference>
+		<reference name="product.info.extrahint">
+		 	 <block type="esmart_paypalbrasil/logo" name="paypal.productview.logo" after="-" template="esmart/paypalbrasil/product_logo.phtml">
+		 	 		<action ifconfig="payment/paypal_express/active" method="setLogoType"><LogoType>logo_productview</LogoType></action>
+            </block>
+		</reference>
 	</catalog_product_view>
 
 	<!-- FireCheckout Handle -->
@@ -148,5 +167,11 @@
 	<onestepcheckout_index_index>
 		<update handle="PayPalBrasil_Append_Checkouts"/>
 	</onestepcheckout_index_index>
+
+	<!-- AheadWorks checkout -->
+	<aw_onestepcheckout_index_index>
+		<update handle="PayPalBrasil_Append_Checkouts"/>
+		<update handle="PayPalBrasil_Append_AW_OneStepCheckout"/>
+	</aw_onestepcheckout_index_index>
 
 </layout>

@@ -160,3 +160,15 @@ div.paypal_plus_loading {
     transform: rotate(360deg);
   }
 }
+.paypal-logo-product {
+	float: right;
+}
+.paypal-logo-product .label {
+	margin-top: 4px;
+}
+.paypal-logo-product .label a {
+	font-size: 12px;
+	line-height: 1.5;
+}
+
+.paypal-logo-product { float: left; }

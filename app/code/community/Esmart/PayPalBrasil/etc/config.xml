@@ -228,6 +228,8 @@ Parcela(s): {parcela_qtde}x de {parcela_valor}]]></checkout_payment_info>
         <paypal>
             <style>
                 <logo>compra_segura_horizontal</logo>
+                <logo_footer>selo_pp_rodape_02</logo_footer>
+                <logo_productview>selo_pp_rodape_02</logo_productview>
             </style>
         </paypal>
     </default>
