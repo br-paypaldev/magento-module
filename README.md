@@ -22,10 +22,13 @@ Welcome to Official PayPal Brazil Magento Repository
 
 ## Compatibilites
 
-- Compatible with the following OSC's extensions: OSC 6 Brasil, MOIP, Firecheckout
+- Compatible with the following OSC's extensions: OSC 6 Brasil, MOIP, Firecheckout, AW OSC, Amasty and E-Smart Checkou
 
 ## Latest Updates
 
 - Bug fixes
 - Included Invoice solution
-- In-context solution now works on product page and the mini-cart shortcut button.
+- In-context solution now works on product page and the mini-cart shortcut button
+- Inclusion of AFR risk analysis for PayPal Plus
+- Refund now works for PayPal Plus
+
