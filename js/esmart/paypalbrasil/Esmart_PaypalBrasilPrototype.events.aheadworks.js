@@ -8,8 +8,8 @@
  * @package     js
  */
  $('p_method_paypal_plus').stopObserving('click');
-// clean all radio buttons when Dom:load
-$('checkout-payment-method-load').select('input.radio').each(function(el){ el.checked = false});
+// clean paypal radio buttons when Dom:load
+if($('p_method_paypal_plus').checked){ $('p_method_paypal_plus').checked = false };
 
 // listen all click events and a condition to id element
 $('p_method_paypal_plus').on('click', 'input.radio', function(event, element) {

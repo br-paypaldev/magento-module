@@ -122,7 +122,6 @@
 "If this option is enabled, customer can change shipping address and shipping method on PayPal website. In live mode works via HTTPS protocol only.","Se esta opções estiver habilitada, o cliente poderá alterar o endereço de entrega e o método de entrega no website do PayPal. Em produção funciona apenas em protocolo HTTPS."
 "This option allow customer to avoid review page when all information is provided from PayPal website.","Esta opção permite que cliente não passe pela página de revisão quando todas as informações necessárias são enviadas pelo PayPal."
 "Application Settings","Configurações da Aplicação"
-"Use a Invoice solution to create accounts in a backend.", "Use a solução de Invoice para solicitar pagamentos via admin."
 "Use a transparent solution and your customer no longer need to leave your store to make a payment.","Use a solução transparente e seu cliente não precisará mais sair da sua loja para realizar um pagamento."
 "Create Order With Failure","Criar pedido mesmo com pagamento não aprovado"
 "Empty","Não se aplica"
