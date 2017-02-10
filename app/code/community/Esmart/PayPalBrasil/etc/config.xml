@@ -191,7 +191,7 @@
             </paypal_billing_agreement>
             <paypal_plus>
                 <model>esmart_paypalbrasil/plus</model>
-                <title>Paypal Transparente</title>
+                <title>Cartão de Crédito</title>
                 <group>paypal</group>
                 <payment_action>order</payment_action>
                 <order_status>processing</order_status>
@@ -207,8 +207,8 @@
                 <recipient_firstname>firstname</recipient_firstname>
                 <recipient_lastname>lastname</recipient_lastname>
                 <address_line_1_p1>street</address_line_1_p1>
-                <address_line_1_p2>empty</address_line_1_p2>
-                <address_line_1_p3>empty</address_line_1_p3>
+                <address_line_1_p2>2</address_line_1_p2>
+                <address_line_1_p3></address_line_1_p3>
                 <address_line_2>empty</address_line_2>
                 <city>city</city>
                 <country_code>country_id</country_code>
@@ -217,6 +217,7 @@
                 <checkout_payment_info><![CDATA[Cartão de Crédito <br>
 Parcela(s): {parcela_qtde}x de {parcela_valor}]]></checkout_payment_info>
                 <debug_mode>0</debug_mode>
+                <paypalbrasil_url_ipn><![CDATA[https://{store_url}/paypal/ipn]]></paypalbrasil_url_ipn>
             </paypal_plus>
              <paypal_invoice>
                 <model>esmart_paypalbrasil/invoice</model>

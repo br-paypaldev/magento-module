@@ -519,10 +519,10 @@ class Esmart_PayPalBrasil_Model_Plus_Iframe extends Mage_Payment_Block_Form
 
         $shipping = new \PayPal\Api\ShippingAddress();
 
-        $firstname = Mage::getStoreConfig('payment/paypal_plus/recipient_firstname');
+        $firstname = Mage::getStoreConfig('payment/paypal_plus/firstname');
         $firstname = $helper->getDataFromObject($addressShipping, $this->nonPersistedData, $firstname);
 
-        $lastname = Mage::getStoreConfig('payment/paypal_plus/recipient_lastname');
+        $lastname = Mage::getStoreConfig('payment/paypal_plus/lastname');
         $lastname = $helper->getDataFromObject($addressShipping, $this->nonPersistedData, $lastname);
 
         $city = Mage::getStoreConfig('payment/paypal_plus/city');
@@ -548,7 +548,7 @@ class Esmart_PayPalBrasil_Model_Plus_Iframe extends Mage_Payment_Block_Form
         $line1_p2 = Mage::getStoreConfig('payment/paypal_plus/address_line_1_p2');
         $line1_p3 = Mage::getStoreConfig('payment/paypal_plus/address_line_1_p3');
         $line2 = Mage::getStoreConfig('payment/paypal_plus/address_line_2');
-        $ship_phone = Mage::getStoreConfig('payment/paypal_plus/shipping_phone');
+        $ship_phone = Mage::getStoreConfig('payment/paypal_plus/phone');
 
         if ($line1_p1 == 'street') {
             $line1_data1 = str_replace(PHP_EOL, ', ', $addressShipping->getStreetFull());

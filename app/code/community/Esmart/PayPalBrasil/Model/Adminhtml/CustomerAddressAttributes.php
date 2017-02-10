@@ -51,7 +51,7 @@ class Esmart_PayPalBrasil_Model_Adminhtml_CustomerAddressAttributes
 
             $attributes[$attrCode] = array(
                 'value' => $attr->getData('attribute_code'),
-                'label' => $helper->__($label)
+                'label' => $helper->__($label." (%s)", $attr->getData('attribute_code'))
             );
         }
         
@@ -64,7 +64,7 @@ class Esmart_PayPalBrasil_Model_Adminhtml_CustomerAddressAttributes
         for ($count = 1; $count <= $qtyAddressLine; $count++) {
             $attributes["street{$count}"] = array(
                 'value' => $count,
-                'label' => $helper->__("Street {$count}"),
+                'label' => $helper->__("Street {$count} (street_%s)", $count),
             );
         }
 

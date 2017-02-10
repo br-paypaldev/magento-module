@@ -183,3 +183,5 @@
 "Plots Value","Valor das Parcelas"
 "Update Order Data","Atualizar Pedido"
 "Place Order","Finalizar"
+" recommend using the <b>Street</b> attribute ","Recomendado utilizar o atributo <b>Street</b> do Magento."
+"Use a Invoice solution to create accounts in a backend.","Use a solução de Invoice para solicitar pagamentos via admin."

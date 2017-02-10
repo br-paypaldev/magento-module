@@ -117,7 +117,7 @@
                         </fields>
                     </express_checkout>
                     <paypal_plus type="group" translate="label comment">
-                        <label>Checkout Transparente</label>
+                        <label>PayPal Plus (Checkout Transparente)</label>
                         <frontend_type>text</frontend_type>
                         <show_in_default>1</show_in_default>
                         <show_in_website>1</show_in_website>
@@ -341,6 +341,24 @@
                                         <show_in_store>1</show_in_store>
                                     </order_failure>                                  
 
+                                    <heading_ipn translate="label">
+                                        <label>IPN (Instant Payment Notification)</label>
+                                        <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
+                                        <sort_order>47</sort_order>
+                                        <show_in_default>1</show_in_default>
+                                        <show_in_website>1</show_in_website>
+                                        <show_in_store>1</show_in_store>
+                                    </heading_ipn> 
+                                    <paypalbrasil_url_ipn translate="label">
+                                        <label>URL de IPN</label>
+                                        <frontend_type>text</frontend_type>
+                                        <config_path>payment/paypal_plus/paypalbrasil_url_ipn</config_path>
+                                        <tooltip><![CDATA[A URL de IPN deverá ser configurada em sua conta PayPal para poder receber as notificações de pagamentos, revisões e reversões por fraude.<br /> Substituir {store_url} pela URL da loja, exemplo:<strong> https://www.exemplo.com.br/paypal/ipn</strong>]]> </tooltip>
+                                        <sort_order>48</sort_order>
+                                        <show_in_default>1</show_in_default>
+                                        <show_in_website>1</show_in_website>
+                                        <show_in_store>1</show_in_store>
+                                    </paypalbrasil_url_ipn>
                                 </fields>
                             </paypal_plus_required>
                             <paypal_plus_required>
@@ -418,17 +436,6 @@
                                                 <show_in_store>1</show_in_store>
                                             </cnpj>
 
-                                            <phone translate="label">
-                                                <label>Telefone</label>
-                                                <frontend_type>select</frontend_type>
-                                                <source_model>esmart_paypalbrasil/adminhtml_CustomerAddressAttributes</source_model>
-                                                <config_path>payment/paypal_plus/phone</config_path>
-                                                <sort_order>56</sort_order>
-                                                <show_in_default>1</show_in_default>
-                                                <show_in_website>1</show_in_website>
-                                                <show_in_store>1</show_in_store>
-                                            </phone>
-
                                             <heading_shipping translate="label">
                                                 <label>To / Do (Shipping Information)</label>
                                                 <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
@@ -437,28 +444,6 @@
                                                 <show_in_website>1</show_in_website>
                                                 <show_in_store>1</show_in_store>
                                             </heading_shipping>
-
-                                            <recipient_firstname translate="label">
-                                                <label>Recipient Firstname</label>
-                                                <frontend_type>select</frontend_type>
-                                                <source_model>esmart_paypalbrasil/adminhtml_CustomerAddressAttributes</source_model>
-                                                <config_path>payment/paypal_plus/recipient_firstname</config_path>
-                                                <sort_order>71</sort_order>
-                                                <show_in_default>1</show_in_default>
-                                                <show_in_website>1</show_in_website>
-                                                <show_in_store>1</show_in_store>
-                                            </recipient_firstname>
-
-                                            <recipient_lastname translate="label">
-                                                <label>Recipient Lastname</label>
-                                                <frontend_type>select</frontend_type>
-                                                <source_model>esmart_paypalbrasil/adminhtml_CustomerAddressAttributes</source_model>
-                                                <config_path>payment/paypal_plus/recipient_lastname</config_path>
-                                                <sort_order>72</sort_order>
-                                                <show_in_default>1</show_in_default>
-                                                <show_in_website>1</show_in_website>
-                                                <show_in_store>1</show_in_store>
-                                            </recipient_lastname>
 
                                             <line1_p1 translate="label">
                                                 <label>Line 1 Address  - Address Full </label>
@@ -481,7 +466,6 @@
                                                 <show_in_default>1</show_in_default>
                                                 <show_in_website>1</show_in_website>
                                                 <show_in_store>1</show_in_store>
-                                                <comment><![CDATA[Custom address attribute]]></comment>
                                             </line1_p2>
 
                                             <line1_p3 translate="label">
@@ -493,7 +477,6 @@
                                                 <show_in_default>1</show_in_default>
                                                 <show_in_website>1</show_in_website>
                                                 <show_in_store>1</show_in_store>
-                                                <comment><![CDATA[Custom address attribute]]></comment>
                                             </line1_p3>
 
                                             <line2 translate="label">
@@ -505,19 +488,18 @@
                                                 <show_in_default>1</show_in_default>
                                                 <show_in_website>1</show_in_website>
                                                 <show_in_store>1</show_in_store>
-                                                 <comment><![CDATA[ if there is any address information specified set here. or not using this attribute set Empty ]]></comment>
                                             </line2>
 
-                                             <shipping_phone translate="label">
-                                                <label>Shipping Telefone</label>
+                                            <phone translate="label">
+                                                <label>Telefone</label>
                                                 <frontend_type>select</frontend_type>
                                                 <source_model>esmart_paypalbrasil/adminhtml_CustomerAddressAttributes</source_model>
-                                                <config_path>payment/paypal_plus/shipping_phone</config_path>
+                                                <config_path>payment/paypal_plus/phone</config_path>
                                                 <sort_order>77</sort_order>
                                                 <show_in_default>1</show_in_default>
                                                 <show_in_website>1</show_in_website>
                                                 <show_in_store>1</show_in_store>
-                                            </shipping_phone>
+                                            </phone>
 
                                             <city translate="label">
                                                 <label>City</label>
@@ -650,7 +632,7 @@
                     </express_checkout>
 
                     <paypal_invoice type="group" translate="label comment">
-                        <label>Paypal Invoice</label>
+                        <label>Invoice</label>
                         <frontend_type>text</frontend_type>
                         <show_in_default>1</show_in_default>
                         <show_in_website>1</show_in_website>
@@ -658,7 +640,7 @@
                         <sort_order>70</sort_order>
                         <group>paypal_payment_solutions</group>
                         <frontend_model>paypal/adminhtml_system_config_fieldset_payment</frontend_model>
-                        <frontend_class>pp-method-ppplus</frontend_class>
+                        <frontend_class>pp-method-invoice</frontend_class>
                         <include>1</include>
                         <comment>Use a Invoice solution to create accounts in a backend.</comment>
                         <activity_path>payment/paypal_invoice/active</activity_path>
@@ -727,6 +709,14 @@
                         </fields>
                     </paypal_invoice>
 
+                     <wps_express>
+                        <backend_config>
+                            <BR>
+                                <include>0</include>
+                                <sort_order>30</sort_order>
+                            </BR>
+                            </backend_config>
+                     </wps_express>
                 </paypal_payments>
             </groups>
         </payment>
