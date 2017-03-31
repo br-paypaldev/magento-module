@@ -127,22 +127,6 @@ class Esmart_PayPalBrasil_Model_Plus extends Mage_Payment_Model_Method_Abstract
     }
 
     /**
-     * Check whether payment method can be used
-     *
-     * TODO: payment method instance is not supposed to know about quote
-     *
-     * @param Mage_Sales_Model_Quote|null $quote
-     *
-     * @return bool
-     */
-    public function isAvailable($quote = null)
-    {
-        return Mage::getStoreConfig('payment/paypal_plus/active');
-    }
-
-    
-
-    /**
      * Get OAuth credential
      *
      * @return PayPal\Auth\OAuthTokenCredential

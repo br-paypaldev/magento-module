@@ -50,15 +50,15 @@ if (typeof window.paypalCheckoutReady === "undefined"){
 			IDS = new Array();
 		}
 
-		if ($('paypal-save-button')!=undefined){
-			IDS.push('paypal-save-button');
+		if ($('checkout-onepage-buttom')!=undefined){
+			IDS.push('checkout-onepage-buttom');
 		}
 
 		paypal.checkout.setup(PayPalLightboxConfig.merchantid, {
 			environment: PayPalLightboxConfig.environment,
 			button: IDS,
 			click: function (e) { 
-
+				
 				if(!e.target.id.match('ec_shortcut') && !$(e.target).up().id.match('ec_shortcut')){
 					if (payment.currentMethod != 'paypal_express'){
 						return;
@@ -66,7 +66,7 @@ if (typeof window.paypalCheckoutReady === "undefined"){
 				}				
 
 				e.preventDefault();				
-				
+				Event.stop(e);
 				var urlConnect = PayPalLightboxConfig.setExpressCheckout
 
 				paypal.checkout.initXO();
