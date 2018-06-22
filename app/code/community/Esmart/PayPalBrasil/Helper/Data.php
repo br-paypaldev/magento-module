@@ -393,4 +393,17 @@ JS;
 
         return $nonPersistedData->getData($index);
     }
+
+    /**
+     * 100 character  limit for  the address
+     *
+     * @param string $addres
+     * @return string
+     */
+    public static function limitAddres($addres)
+    {
+        return nl2br(
+            substr($addres, 0, 100)
+        );
+    }
 }

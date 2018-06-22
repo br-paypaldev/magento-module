@@ -280,36 +280,6 @@
                                         <show_in_store>0</show_in_store>
                                     </checkout_payment_info>
 
-                                    <heading_web_profiler translate="label">
-                                        <label>Web Profiler</label>
-                                        <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
-                                        <sort_order>40</sort_order>
-                                        <show_in_default>1</show_in_default>
-                                        <show_in_website>1</show_in_website>
-                                        <show_in_store>1</show_in_store>
-                                    </heading_web_profiler>
-
-                                    <profiler_name translate="label">
-                                        <label>Profiler Name</label>
-                                        <config_path>payment/paypal_plus/profiler_name</config_path>
-                                        <frontend_model>esmart_paypalbrasil/adminhtml_profilername</frontend_model>
-                                        <frontend_type>text</frontend_type>
-                                        <sort_order>41</sort_order>
-                                        <show_in_default>1</show_in_default>
-                                        <show_in_website>1</show_in_website>
-                                        <show_in_store>1</show_in_store>
-                                    </profiler_name>
-
-                                    <profiler_id translate="label">
-                                        <label>Profiler ID</label>
-                                        <config_path>payment/paypal_plus/profiler_id</config_path>
-                                        <frontend_type>text</frontend_type>
-                                        <sort_order>42</sort_order>
-                                        <show_in_default>1</show_in_default>
-                                        <show_in_website>1</show_in_website>
-                                        <show_in_store>1</show_in_store>
-                                    </profiler_id>
-
                                     <heading_order translate="label">
                                         <label>Order</label>
                                         <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
@@ -339,26 +309,7 @@
                                         <show_in_default>1</show_in_default>
                                         <show_in_website>1</show_in_website>
                                         <show_in_store>1</show_in_store>
-                                    </order_failure>                                  
-
-                                    <heading_ipn translate="label">
-                                        <label>IPN (Instant Payment Notification)</label>
-                                        <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
-                                        <sort_order>47</sort_order>
-                                        <show_in_default>1</show_in_default>
-                                        <show_in_website>1</show_in_website>
-                                        <show_in_store>1</show_in_store>
-                                    </heading_ipn> 
-                                    <paypalbrasil_url_ipn translate="label">
-                                        <label>URL de IPN</label>
-                                        <frontend_type>text</frontend_type>
-                                        <config_path>payment/paypal_plus/paypalbrasil_url_ipn</config_path>
-                                        <tooltip><![CDATA[A URL de IPN deverá ser configurada em sua conta PayPal para poder receber as notificações de pagamentos, revisões e reversões por fraude.<br /> Substituir {store_url} pela URL da loja, exemplo:<strong> https://www.exemplo.com.br/paypal/ipn</strong>]]> </tooltip>
-                                        <sort_order>48</sort_order>
-                                        <show_in_default>1</show_in_default>
-                                        <show_in_website>1</show_in_website>
-                                        <show_in_store>1</show_in_store>
-                                    </paypalbrasil_url_ipn>
+                                    </order_failure>
                                 </fields>
                             </paypal_plus_required>
                             <paypal_plus_required>
@@ -436,60 +387,6 @@
                                                 <show_in_store>1</show_in_store>
                                             </cnpj>
 
-                                            <heading_shipping translate="label">
-                                                <label>To / Do (Shipping Information)</label>
-                                                <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
-                                                <sort_order>70</sort_order>
-                                                <show_in_default>1</show_in_default>
-                                                <show_in_website>1</show_in_website>
-                                                <show_in_store>1</show_in_store>
-                                            </heading_shipping>
-
-                                            <line1_p1 translate="label">
-                                                <label>Line 1 Address  - Address Full </label>
-                                                <frontend_type>select</frontend_type>
-                                                <source_model>esmart_paypalbrasil/adminhtml_CustomerAddressAttributes</source_model>
-                                                <config_path>payment/paypal_plus/address_line_1_p1</config_path>
-                                                <sort_order>73</sort_order>
-                                                <show_in_default>1</show_in_default>
-                                                <show_in_website>1</show_in_website>
-                                                <show_in_store>1</show_in_store>
-                                                <comment><![CDATA[ recommend using the <b>Street</b> attribute ]]></comment>
-                                            </line1_p1>
-
-                                            <line1_p2 translate="label">
-                                                <label>Line Address 1 - Complement 1</label>
-                                                <frontend_type>select</frontend_type>
-                                                <source_model>esmart_paypalbrasil/adminhtml_CustomerAddressAttributes</source_model>
-                                                <config_path>payment/paypal_plus/address_line_1_p2</config_path>
-                                                <sort_order>74</sort_order>
-                                                <show_in_default>1</show_in_default>
-                                                <show_in_website>1</show_in_website>
-                                                <show_in_store>1</show_in_store>
-                                            </line1_p2>
-
-                                            <line1_p3 translate="label">
-                                                <label>Line Address 1 - Complement 2</label>
-                                                <frontend_type>select</frontend_type>
-                                                <source_model>esmart_paypalbrasil/adminhtml_CustomerAddressAttributes</source_model>
-                                                <config_path>payment/paypal_plus/address_line_1_p3</config_path>
-                                                <sort_order>75</sort_order>
-                                                <show_in_default>1</show_in_default>
-                                                <show_in_website>1</show_in_website>
-                                                <show_in_store>1</show_in_store>
-                                            </line1_p3>
-
-                                            <line2 translate="label">
-                                                <label>Line Address 2 - Adress Complement Suport</label>
-                                                <frontend_type>select</frontend_type>
-                                                <source_model>esmart_paypalbrasil/adminhtml_CustomerAddressAttributes</source_model>
-                                                <config_path>payment/paypal_plus/address_line_2</config_path>
-                                                <sort_order>76</sort_order>
-                                                <show_in_default>1</show_in_default>
-                                                <show_in_website>1</show_in_website>
-                                                <show_in_store>1</show_in_store>
-                                            </line2>
-
                                             <phone translate="label">
                                                 <label>Telefone</label>
                                                 <frontend_type>select</frontend_type>
@@ -547,11 +444,11 @@
                                         </fields>
                                     </ppplus_attributes>
                                 </fields>
-                            </paypal_plus_required>                            
+                            </paypal_plus_required>
                         </fields>
                     </paypal_plus>
                     <express_checkout>
-                        <fields>                           
+                        <fields>
                             <express_checkout_required>
                                 <fields>
                                     <incontext type="group" translate="label comment">
@@ -576,18 +473,18 @@
                                                 <show_in_default>1</show_in_default>
                                                 <show_in_website>1</show_in_website>
                                                 <show_in_store>0</show_in_store>
-                                                <comment>Enable only if Express Checkout were configured.</comment>                
+                                                <comment>Enable only if Express Checkout were configured.</comment>
                                             </enable>
-                                            
+
                                             <merchantid translate="label">
                                                 <label>Merchant ID</label>
-                                                <frontend_type>text</frontend_type> 
+                                                <frontend_type>text</frontend_type>
                                                 <frontend_model>esmart_paypalbrasil/adminhtml_system_config_form_field_merchant</frontend_model>
                                                 <sort_order>30</sort_order>
                                                 <show_in_default>1</show_in_default>
                                                 <show_in_website>1</show_in_website>
-                                                <show_in_store>1</show_in_store>    
-                                                <comment>This input has a MerchantId of Express Checkout Account.</comment>                        
+                                                <show_in_store>1</show_in_store>
+                                                <comment>This input has a MerchantId of Express Checkout Account.</comment>
                                             </merchantid>
                                         </fields>
                                     </incontext>
@@ -614,7 +511,7 @@
                                                 <show_in_website>1</show_in_website>
                                                 <show_in_store>0</show_in_store>
                                                 <comment>Enable only if Express Checkout were configured.</comment>
-                                                <tooltip>For users who have itens on the shopping cart, it will be display a fast purchase button on the login and onboarding page where the user will be able to purchase with his PayPal account without the need to have an account on the store.</tooltip>          
+                                                <tooltip>For users who have itens on the shopping cart, it will be display a fast purchase button on the login and onboarding page where the user will be able to purchase with his PayPal account without the need to have an account on the store.</tooltip>
                                             </enable>
                                             <heading_Login translate="label">
                                                 <label><![CDATA[<strong style="color:red">Warning!</strong> This solution will only work if the e-commerce accepts guest payments.]]></label>
@@ -722,3 +619,4 @@
         </payment>
     </sections>
 </config>
+

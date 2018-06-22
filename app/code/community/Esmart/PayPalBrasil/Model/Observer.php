@@ -34,12 +34,6 @@ class Esmart_PayPalBrasil_Model_Observer
             return $this;
         }
 
-        $profilerId = Mage::getStoreConfig('payment/paypal_plus/profiler_id');
-        if (empty($profilerId)) {
-            $model = Mage::getModel('esmart_paypalbrasil/plus');
-            $model->createWebProfiler();
-        }
-
         return $this;
     }
 

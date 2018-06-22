@@ -169,7 +169,7 @@ class Esmart_PayPalBrasil_Model_Paypal_Validate
 
     /* validação CPF CNPJ */
 
-    public function validateCpf($cpf)
+    public static function validateCpf($cpf)
     {
         // Verifica se um número foi informado
         if (empty($cpf)) {

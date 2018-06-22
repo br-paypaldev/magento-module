@@ -56,7 +56,7 @@ if (typeof EsmartPaypalBrasilPPPlus !== 'object') {
                             payerTaxIdType     : responseContent.success.payerTaxIdType,
                             rememberedCards    : responseContent.success.rememberedCards
                         });
-                        
+
                         EsmartPaypalBrasilBtnContinue.enable();
                         $$("div#paypal_plus_loading")[0].hide();
                         return true;
@@ -82,12 +82,57 @@ if (typeof EsmartPaypalBrasilPPPlus !== 'object') {
             return false;
         },
 
+        switchCase: function (err) {
+            switch (err) {
+                case "INTERNAL_SERVICE_ERROR": //javascript fallthrough
+                case "SOCKET_HANG_UP": //javascript fallthrough
+                case "socket hang up": //javascript fallthrough
+                case "connect ECONNREFUSED": //javascript fallthrough
+                case "connect ETIMEDOUT": //javascript fallthrough
+                case "UNKNOWN_INTERNAL_ERROR": //javascript fallthrough
+                case "fiWalletLifecycle_unknown_error": //javascript fallthrough
+                case  "Failed to decrypt term info": //javascript fallthrough
+                case "RESOURCE_NOT_FOUND": //javascript fallthrough
+                case "INTERNAL_SERVER_ERROR":
+                    EsmartPaypalBrasilPPPlus.showAlert("Ocorreu um erro inesperado, por favor tente novamente.");
+                    this.generateIframe();
+                    break;
+                case "RISK_N_DECLINE": //javascript fallthrough
+                case "NO_VALID_FUNDING_SOURCE_OR_RISK_REFUSED": //javascript fallthrough
+                case "TRY_ANOTHER_CARD": //javascript fallthrough
+                case "NO_VALID_FUNDING_INSTRUMENT":
+                    EsmartPaypalBrasilPPPlus.showAlert ("Seu pagamento não foi aprovado. Por favor utilize outro cartão, caso o problema persista entre em contato com o PayPal (0800-047-4482)."); //pt_BR
+                    this.generateIframe();
+                    break;
+                case "CARD_ATTEMPT_INVALID":
+                    EsmartPaypalBrasilPPPlus.showAlert ("Ocorreu um erro inesperado, por favor tente novamente."); //pt_BR
+                    this.generateIframe();
+                    break;
+                case "INVALID_OR_EXPIRED_TOKEN":
+                    EsmartPaypalBrasilPPPlus.showAlert ("A sua sessão expirou, por favor tente novamente."); //pt_BR
+                    this.generateIframe();
+                    break;
+                case "CHECK_ENTRY":
+                    EsmartPaypalBrasilPPPlus.showAlert ("Por favor revise os dados de Cartão de Crédito inseridos."); //pt_BR
+                    this.generateIframe();
+                    break;
+                default: //unknown error & reload payment flow
+                    EsmartPaypalBrasilPPPlus.showAlert ("Ocorreu um erro inesperado, por favor tente novamente."); //pt_BR
+                    this.generateIframe();
+            }
+        },
+
         handler : function (event) {
 
             var data = event.data;
 
             if (data.isJSON()) {
                data = data.evalJSON();
+            }
+
+            if (typeof data.cause !== 'undefined') {
+                var err = ppplusError = data.cause.replace (/['"]+/g,"");
+                this.switchCase(err);
             }
 
             switch (data.action) {

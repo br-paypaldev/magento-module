@@ -181,50 +181,6 @@ class Esmart_PayPalBrasil_Model_Plus extends Mage_Payment_Model_Method_Abstract
     }
 
     /**
-     * Create and return WebProfiler
-     *
-     * @return void
-     */
-    public function createWebProfiler()
-    {
-        $config = new Mage_Core_Model_Config();
-
-        $helper = Mage::helper('esmart_paypalbrasil');
-
-        $profilerName = Mage::getStoreConfig('payment/paypal_plus/profiler_name');
-
-        if (empty($profilerName)) {
-            $profilerName = $helper->getProfilerNameSuggestion();
-            $config->saveConfig('payment/paypal_plus/profiler_name', $profilerName);
-        }
-
-        $webProfile = new \PayPal\Api\WebProfile();
-        $webProfile->setName($profilerName)
-            ->setFlowConfig($this->createFlowConfig())
-            ->setPresentation($this->createPresentation($profilerName))
-            ->setInputFields($this->createInputFields());
-
-        try {
-            $profiler = $webProfile->create($this->getApiContext());
-
-            $profilerId = $profiler->getId();
-            $config->saveConfig('payment/paypal_plus/profiler_id', $profilerId);
-        } catch (Exception $e) {
-            $data = json_decode($e->getData());
-            $config->saveConfig('payment/paypal_plus/profiler_id', null);
-
-            $helper->logException(__FILE__, __CLASS__, __FUNCTION__, __LINE__, self::LOG_FILENAME, $e);
-
-            if($data->name == 'VALIDATION_ERROR'){
-                Mage::throwException('(Paypal Plus) Já existe um perfil com este nome cadastrado.');
-            }else{
-                Mage::throwException('(Paypal Plus) Ocorreu um erro inespedado, verifique os Logs.');
-            }
-
-        }
-    }
-
-    /**
      * Create and return FlowConfig
      *
      * @return PayPal\Api\FlowConfig

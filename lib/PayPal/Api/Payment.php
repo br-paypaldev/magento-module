@@ -30,6 +30,7 @@ use PayPal\Transport\PayPalRestCall;
  * @property string state
  * @property \PayPal\Api\RedirectUrls redirect_urls
  * @property string experience_profile_id
+ * @property array application_context
  */
 class Payment extends PayPalResourceModel
 {
@@ -323,6 +324,29 @@ class Payment extends PayPalResourceModel
     public function getExperienceProfileId()
     {
         return $this->experience_profile_id;
+    }
+
+    /**
+     * Identifier for the payment experience.
+     *
+     * @param \PayPal\Api\Transaction[] $application_context
+     *
+     * @return $this
+     */
+    public function setApplicationContext(array $application_context)
+    {
+        $this->application_context = $application_context;
+        return $this;
+    }
+
+    /**
+     * Identifier for the payment experience.
+     *
+     * @return \PayPal\Api\Transaction[]
+     */
+    public function getApplicationContext()
+    {
+        return $this->application_context;
     }
 
     /**

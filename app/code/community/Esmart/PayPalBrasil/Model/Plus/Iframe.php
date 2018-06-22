@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Smart E-commerce do Brasil Tecnologia LTDA
  *
@@ -23,7 +24,7 @@
  */
 class Esmart_PayPalBrasil_Model_Plus_Iframe extends Mage_Payment_Block_Form
 {
-	/**
+    /**
      * Non-persisted data
      * @var Varien_Object
      */
@@ -77,7 +78,8 @@ class Esmart_PayPalBrasil_Model_Plus_Iframe extends Mage_Payment_Block_Form
 
         Esmart_PayPalBrasil_Model_Plus_Paypal_Autoload::register();
     }
-	/**
+
+    /**
      * Set non-persisted data
      *
      * @param array $postData
@@ -122,39 +124,39 @@ class Esmart_PayPalBrasil_Model_Plus_Iframe extends Mage_Payment_Block_Form
         $helper = $this->_helper();
 
         /** @var Mage_Sales_Model_Quote $quote */
-        $quote  = $helper->getQuote($quote);
+        $quote = $helper->getQuote($quote);
 
         /**
-         * @var Mage_Customer_Model_Customer                               $customer
+         * @var Mage_Customer_Model_Customer $customer
          * @var Mage_Sales_Model_Quote_Address|Mage_Customer_Model_Address $address
          */
-        $customer   = $quote->getCustomer();
-        $address    = $quote->getBillingAddress();
+        $customer = $quote->getCustomer();
+        $address = $quote->getBillingAddress();
 
-        $firstname  = $this->_getFirstname($address);
-        $lastname   = $this->_getLastname($address);
-        $email      = $this->_getEmail($address);
+        $firstname = $this->_getFirstname($address);
+        $lastname = $this->_getLastname($address);
+        $email = strtolower($this->_getEmail($address));
         $payerTaxId = $this->_getPayerTaxId($address);
-        $phone      = $this->_getTelephone($address);
+        $phone = $this->_getTelephone($address);
 
         $return = array(
             'payerFirstName' => $firstname,
-            'payerLastName'  => $lastname,
-            'payerEmail'     => $email,
+            'payerLastName' => $lastname,
+            'payerEmail' => $email,
             'payerTaxIdType' => $helper->checkIsCpfOrCnpj($payerTaxId),
-            'payerTaxId'     => $payerTaxId,
-            'payerPhone'     => $phone,
-            'rememberedCards'=> $customer->getPpalRememberedCards(),
+            'payerTaxId' => $payerTaxId,
+            'payerPhone' => $phone,
+            'rememberedCards' => $customer->getPpalRememberedCards(),
         );
 
         Esmart_PayPalBrasil_Model_Debug::appendContent('[RETURN getCustomerInformation()]', 'createPayment', $return);
         #Esmart_PayPalBrasil_Model_Debug::appendContent('[MAGENTO CUSTOMER DATA]', 'createPayment', $customer->toArray());
 
-        if(!Esmart_PayPalBrasil_Model_Paypal_Validate::is(array($firstname,$lastname), 'OnlyWords', true) ||
-           !Esmart_PayPalBrasil_Model_Paypal_Validate::is($email, 'AddressMail', false) ||
-           !Esmart_PayPalBrasil_Model_Paypal_Validate::is($phone, 'OnlyNumbers', true) ||
-           !Esmart_PayPalBrasil_Model_Paypal_Validate::isValidTaxvat($payerTaxId)){
-            throw new Exception("getCustomerInformation Exception", 1);            
+        if (!Esmart_PayPalBrasil_Model_Paypal_Validate::is(array($firstname, $lastname), 'OnlyWords', true) ||
+            !Esmart_PayPalBrasil_Model_Paypal_Validate::is($email, 'AddressMail', false) ||
+            !Esmart_PayPalBrasil_Model_Paypal_Validate::is($phone, 'OnlyNumbers', true) ||
+            !Esmart_PayPalBrasil_Model_Paypal_Validate::isValidTaxvat($payerTaxId)) {
+            throw new Exception("getCustomerInformation Exception", 1);
         }
 
         return $return;
@@ -218,10 +220,10 @@ class Esmart_PayPalBrasil_Model_Plus_Iframe extends Mage_Payment_Block_Form
     protected function _getPayerTaxId(Mage_Sales_Model_Quote_Address $address)
     {
         /**
-         * @var Mage_Sales_Model_Quote       $quote
+         * @var Mage_Sales_Model_Quote $quote
          * @var Mage_Customer_Model_Customer $customer
          */
-        $quote    = $this->_getQuote($address);
+        $quote = $this->_getQuote($address);
         $customer = $quote ? $quote->getCustomer() : null;
 
         $payerTaxId = $this->_helper()->getCpfCnpjOrTaxvat($customer, $this->nonPersistedData);
@@ -271,7 +273,7 @@ class Esmart_PayPalBrasil_Model_Plus_Iframe extends Mage_Payment_Block_Form
 
         $data = array(
             'approvalUrl' => $payment->getApprovalLink(),
-            'mode'        => $this->getMode(),
+            'mode' => $this->getMode(),
         );
 
         Esmart_PayPalBrasil_Model_Debug::appendContent('[APPROVAL URL]', 'createPayment', $data);
@@ -292,30 +294,35 @@ class Esmart_PayPalBrasil_Model_Plus_Iframe extends Mage_Payment_Block_Form
 
         $quote = $helper->getQuote($quote);
 
+        if ($quote->getIsVirtual() == 1) {
+            $shippingPreference = 'NO_SHIPPING';
+        } else {
+            $shippingPreference = 'SET_PROVIDED_ADDRESS';
+        }
+
         $transaction = $this->createTransaction($quote);
 
         $payment = new PayPal\Api\Payment();
-
-        $profileId = Mage::getStoreConfig('payment/paypal_plus/profiler_id');
-
-        $data = array('profile_id' => $profileId);
-        Esmart_PayPalBrasil_Model_Debug::appendContent('[PROFILE]', 'createPayment', $data);
 
         $payment->setIntent(self::INTENT_PAYMENT)
             ->setPayer($this->createPayer())
             ->setRedirectUrls($this->createRedirectUrls())
             ->setTransactions(array($transaction))
-            ->setExperienceProfileId($profileId);
+            ->setApplicationContext(array(
+                'brand_name' => Mage::getStoreConfig('general/store_information/name', Mage::app()->getStore()),
+                'shipping_preference' => $shippingPreference,
+                'locale' => 'PT-BR'
+            ));
 
         try {
             Esmart_PayPalBrasil_Model_Debug::appendContent(
                 '[CREATE PAYMENT REQUEST]', 'createPayment',
                 array(var_export($payment->toArray(), true))
             );
-            
+
             $payment->create($this->getApiContext());
 
-             Esmart_PayPalBrasil_Model_Debug::appendContent(
+            Esmart_PayPalBrasil_Model_Debug::appendContent(
                 '[CREATE PAYMENT RESPONSE]', 'createPayment',
                 array(var_export($payment->toArray(), true))
             );
@@ -324,7 +331,7 @@ class Esmart_PayPalBrasil_Model_Plus_Iframe extends Mage_Payment_Block_Form
                 ->setAdditionalInformation('paypal_plus_payment_id', $payment->getId())
                 ->setAdditionalInformation('paypal_plus_payment_state', $payment->getState())
                 ->save();
-                
+
         } catch (Exception $e) {
             throw new Exception("Call createPayment Exception", 1);
         }
@@ -357,7 +364,8 @@ class Esmart_PayPalBrasil_Model_Plus_Iframe extends Mage_Payment_Block_Form
         $transaction->setAmount($this->createAmount($quote))
             ->setPaymentOptions($this->createPaymentOptions())
             ->setItemList($this->createItemList($quote))
-            ->setCustom($customInfo);
+            ->setCustom($customInfo)
+            ->setNotifyUrl(Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_WEB) . 'paypal/ipn');
         $transaction->setInvoiceNumber($InvoiceNumber);
 
         return $transaction;
@@ -381,7 +389,7 @@ class Esmart_PayPalBrasil_Model_Plus_Iframe extends Mage_Payment_Block_Form
 
         $data = array(
             'Base Currency' => $quote->getBaseCurrencyCode(),
-            'Total'         => $quote->getGrandTotal(),
+            'Total' => $quote->getGrandTotal(),
         );
         #Esmart_PayPalBrasil_Model_Debug::appendContent('[CREATE AMOUNT]', 'createPayment', $data);
 
@@ -417,7 +425,7 @@ class Esmart_PayPalBrasil_Model_Plus_Iframe extends Mage_Payment_Block_Form
             $data[] = $objItem->toJSON();
         }
 
-        $totals   = $quote->getTotals();
+        $totals = $quote->getTotals();
         if (isset($totals['discount'])) {
             $objItem = new PayPal\Api\Item();
 
@@ -460,7 +468,7 @@ class Esmart_PayPalBrasil_Model_Plus_Iframe extends Mage_Payment_Block_Form
         return $paymentOptions;
     }
 
-        /**
+    /**
      * Create and return Details
      *
      * @param Mage_Sales_Model_Quote $quote Quote object
@@ -472,7 +480,7 @@ class Esmart_PayPalBrasil_Model_Plus_Iframe extends Mage_Payment_Block_Form
         /** @var PayPal\Api\Details $details */
         $details = new PayPal\Api\Details();
 
-        $totals   = $quote->getTotals();
+        $totals = $quote->getTotals();
 
         $shipping = isset($totals['shipping']) ? $totals['shipping'] : null;
         if ($shipping instanceof Mage_Sales_Model_Quote_Address_Total) {
@@ -493,7 +501,7 @@ class Esmart_PayPalBrasil_Model_Plus_Iframe extends Mage_Payment_Block_Form
 
         $data = array(
             'Shipping' => $details->getShipping(),
-            'Tax'      => $details->getTax(),
+            'Tax' => $details->getTax(),
             'Subtotal' => $details->getSubtotal(),
         );
         #Esmart_PayPalBrasil_Model_Debug::appendContent('[CREATE AMOUNT - DETAILS]', 'createPayment', $data);
@@ -513,7 +521,7 @@ class Esmart_PayPalBrasil_Model_Plus_Iframe extends Mage_Payment_Block_Form
         /** @var Esmart_PayPalBrasil_Helper_Data $helper */
         $helper = Mage::helper('esmart_paypalbrasil');
 
-        $quote  = $helper->getQuote($quote);
+        $quote = $helper->getQuote($quote);
 
         $addressShipping = $quote->getShippingAddress();
 
@@ -544,76 +552,61 @@ class Esmart_PayPalBrasil_Model_Plus_Iframe extends Mage_Payment_Block_Form
         }
         /* address street, number , complement and neighborhood info*/
 
-        $line1_p1 = Mage::getStoreConfig('payment/paypal_plus/address_line_1_p1');
-        $line1_p2 = Mage::getStoreConfig('payment/paypal_plus/address_line_1_p2');
-        $line1_p3 = Mage::getStoreConfig('payment/paypal_plus/address_line_1_p3');
-        $line2 = Mage::getStoreConfig('payment/paypal_plus/address_line_2');
         $ship_phone = Mage::getStoreConfig('payment/paypal_plus/phone');
-
-        if ($line1_p1 == 'street') {
-            $line1_data1 = str_replace(PHP_EOL, ', ', $addressShipping->getStreetFull());
-        }elseif (!empty($line1_p1)){
-            $line1_data1 = $helper->getDataFromObject($addressShipping, $this->nonPersistedData, $line1_p1);
-        }
-        if ($line1_p1){ $line1 = "{$line1_data1}"; }
-        
-        if($line1_p1 == 'street' || empty($line1_p2)){
-            $line1_p2 = true;
-        }elseif (!empty($line1_p2)) {
-            $line1_data2 = $helper->getDataFromObject($addressShipping, $this->nonPersistedData, $line1_p2);
-            if ($line1_data2) { $line1 = $line1 . ", {$line1_data2}"; }            
-        }
-        
-        if (!empty($line1_p3)) {
-            $line1_p3 = $helper->getDataFromObject($addressShipping, $this->nonPersistedData, $line1_p3);
-            if ($line1_p3) { $line1 = $line1 . ", {$line1_p3}"; }            
-        }
-        
-        if (!empty($line2)) {
-            $line2 = $helper->getDataFromObject($addressShipping, $this->nonPersistedData, $line2);
-            /* set shipping*/
-            $shipping->setLine2($line2);
-        }
-       
         if (!empty($ship_phone)) {
             $ship_phone = $helper->getDataFromObject($addressShipping, $this->nonPersistedData, $ship_phone);
         }
 
-       
-         
+        $numberOfLines = Mage::getStoreConfig('customer/address/street_lines');
+
+        switch ($numberOfLines) {
+            case 2:
+                $line1 = $helper->limitAddres($addressShipping->getStreet(1));
+                $line2 = $helper->limitAddres($addressShipping->getStreet(2));
+                break;
+            case 3:
+                $line1 = $helper->limitAddres($addressShipping->getStreet(1));
+                $line2 = $helper->limitAddres($addressShipping->getStreet(2) . ' ' . $addressShipping->getStreet(3));
+                break;
+            case 4:
+
+                $line1 = $helper->limitAddres($addressShipping->getStreet(1));
+                $line2 = $helper->limitAddres($addressShipping->getStreet(2) . ' ' . $addressShipping->getStreet(3) . ' ' . $addressShipping->getStreet(4));
+                break;
+            default:
+                $line1 = $helper->limitAddres($addressShipping->getStreetFull());
+        }
+
+
+        if(!empty($line2)){
+            $shipping->setLine2($line2);
+        }
+
         $shipping->setRecipientName("{$firstname} {$lastname}")
             ->setCity($city)
             ->setCountryCode($countryCode)
             ->setPostalCode($postalCode)
-            ->setLine1($line1)            
+            ->setLine1($line1)
             ->setPhone($ship_phone)
             ->setState($state);
 
         $data = array(
             'Recipient Name' => $shipping->getRecipientName(),
-            'Line 1'         => $shipping->getLine1(),
-            'Line 2'         => $shipping->getLine2(),
-            'City'           => $shipping->getCity(),
-            'Phone'          => $shipping->getPhone(),
-            'Postal Code'    => $shipping->getPostalCode(),
-            'Country Code'   => $shipping->getCountryCode(),
-            'State'          => $shipping->getState(),
+            'Line 1' => $helper->limitAddres($shipping->getLine1()),
+            'Line 2' => $shipping->getLine2(),
+            'City' => $shipping->getCity(),
+            'Phone' => $shipping->getPhone(),
+            'Postal Code' => $shipping->getPostalCode(),
+            'Country Code' => $shipping->getCountryCode(),
+            'State' => $shipping->getState(),
         );
-        
+
         Esmart_PayPalBrasil_Model_Debug::appendContent('[PAYPAL SHIPPING ADDRESS]', 'createPayment', $data);
 
         Esmart_PayPalBrasil_Model_Debug::appendContent('[MAGENTO ADDRESS DATA]', 'createPayment', $addressShipping->toArray());
 
-        if(!Esmart_PayPalBrasil_Model_Paypal_Validate::is(array($firstname, $lastname, $city, $state), 'OnlyWords', true) ||
-           !Esmart_PayPalBrasil_Model_Paypal_Validate::is($ship_phone, 'OnlyNumbers', true) ||
-           empty($line1_data1) || empty($line1_p2)){
-            throw new Exception("[SHIPPING ADDRESS] Exception", 2);            
-        }
-
         return $shipping;
     }
-
-
 
 
     /**
@@ -641,7 +634,7 @@ class Esmart_PayPalBrasil_Model_Plus_Iframe extends Mage_Payment_Block_Form
     protected function createRedirectUrls()
     {
         $redirectUrls = new PayPal\Api\RedirectUrls();
-        $baseUrl      = Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_WEB);
+        $baseUrl = Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_WEB);
 
         $redirectUrls->setReturnUrl("$baseUrl/ExecutePayment.php?success=true")
             ->setCancelUrl("$baseUrl/ExecutePayment.php?success=false");
@@ -657,14 +650,14 @@ class Esmart_PayPalBrasil_Model_Plus_Iframe extends Mage_Payment_Block_Form
     public function getApiContext()
     {
         /** @var PayPal\Rest\ApiContext $apiContext */
-        $apiContext  = new PayPal\Rest\ApiContext($this->getOAuthCredential());
+        $apiContext = new PayPal\Rest\ApiContext($this->getOAuthCredential());
 
         $mode = array(
             'mode' => $this->getMode(),
         );
 
         $apiContext->setConfig($mode);
-        $apiContext->addRequestHeader("PayPal-Partner-Attribution-Id" , 'Magento_Cart_CE_BR_PPPlus');
+        $apiContext->addRequestHeader("PayPal-Partner-Attribution-Id", 'Magento_Cart_CE_BR_PPPlus');
 
         Esmart_PayPalBrasil_Model_Debug::appendContent('[OPERATION MODE]', 'default', $mode);
 
@@ -678,11 +671,11 @@ class Esmart_PayPalBrasil_Model_Plus_Iframe extends Mage_Payment_Block_Form
      */
     public function getOAuthCredential()
     {
-        $helper    = Mage::helper('core');
-        $clientId  = $helper->decrypt(Mage::getStoreConfig('payment/paypal_plus/app_client_id'));
+        $helper = Mage::helper('core');
+        $clientId = $helper->decrypt(Mage::getStoreConfig('payment/paypal_plus/app_client_id'));
         $appSecret = $helper->decrypt(Mage::getStoreConfig('payment/paypal_plus/app_secret'));
 
-        $oAuthToken =  new PayPal\Auth\OAuthTokenCredential($clientId, $appSecret);
+        $oAuthToken = new PayPal\Auth\OAuthTokenCredential($clientId, $appSecret);
 
         return $oAuthToken;
     }
@@ -705,8 +698,8 @@ class Esmart_PayPalBrasil_Model_Plus_Iframe extends Mage_Payment_Block_Form
 
     /**
      * @param Mage_Sales_Model_Quote_Address $address
-     * @param string                         $defaultFieldId
-     * @param string                         $configFieldId
+     * @param string $defaultFieldId
+     * @param string $configFieldId
      *
      * @return null|string
      */
@@ -755,7 +748,7 @@ class Esmart_PayPalBrasil_Model_Plus_Iframe extends Mage_Payment_Block_Form
         foreach ($addressTypes as $addressType) {
             foreach ($index as $idx) {
                 $address = Mage::app()->getRequest()->getParam($addressType);
-                $data    = isset($address[$idx]) && $address[$idx] ? $address[$idx] : null;
+                $data = isset($address[$idx]) && $address[$idx] ? $address[$idx] : null;
 
                 if (!empty($data)) {
                     return $data;

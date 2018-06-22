@@ -4,7 +4,7 @@
  *  :) design/frontend/base/default/layout/esmart/paypalbrasil.xml
  *
  *  AUX js/esmart/paypalbrasil/Esmart_PaypalBrasilPrototype.js
- *  
+ *
  * @package     js
  */
 //document.observe("dom:loaded", function() {
@@ -15,7 +15,7 @@
     // clean paypal radio buttons when Dom:load
     if( $('p_method_paypal_plus').checked){ $('p_method_paypal_plus').checked = false };
 
-    // listen all click events and a condition to id element 
+    // listen all click events and a condition to id element
     $('checkout-payment-method-load').on('click', 'input.radio', function(event, element) {
         if(event.target.id == 'p_method_paypal_plus') {
 
@@ -37,14 +37,16 @@
                     // has a observing in this button that call before onclick :/
                     BtnFireCheckout.stopObserving('click');
 
-                    // set element on object and get a onclick method 
+                    // set element on object and get a onclick method
                     EsmartPaypalBrasilBtnContinue.setElement(BtnFireCheckout, true);
+
+                    EsmartPaypalBrasilBtnContinue.clickEventMethod =  EsmartPaypalBrasilBtnContinue.clickEventMethod.replace("return false;", "");
 
                     // active addEventListeners
                     EsmartPaypalBrasilPPPlus.init();
                 }
 
-                // generate a IFrame           
+                // generate a IFrame
                 EsmartPaypalBrasilPPPlus.generateIframe();
 
             }catch(e) {
