@@ -294,41 +294,17 @@ class Esmart_PayPalBrasil_Model_Plus_Iframe extends Mage_Payment_Block_Form
 
         $quote = $helper->getQuote($quote);
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-        $shippingPreference = $quote->isVirtual() ? 'NO_SHIPPING' : 'SET_PROVIDED_ADDRESS';
-=======
         if ($quote->getIsVirtual() == 1) {
             $shippingPreference = 'NO_SHIPPING';
         } else {
             $shippingPreference = 'SET_PROVIDED_ADDRESS';
         }
->>>>>>> 0e07f6463507df45d764448809df9f71050211da
 
->>>>>>> 979e8fc0c813ef7b2177982986df82ea2c690ce9
         $transaction = $this->createTransaction($quote);
 
         $payment = new PayPal\Api\Payment();
 
         $payment->setIntent(self::INTENT_PAYMENT)
-<<<<<<< HEAD
-<<<<<<< HEAD
-            ->setPayer($this->createPayer())
-            ->setRedirectUrls($this->createRedirectUrls())
-            ->setTransactions(array($transaction))
-            ->setExperienceProfileId($profileId);
-=======
-                ->setPayer($this->createPayer())
-                ->setRedirectUrls($this->createRedirectUrls())
-                ->setTransactions(array($transaction))
-                ->setApplicationContext(array(
-                    'brand_name' => Mage::getStoreConfig('general/store_information/name', Mage::app()->getStore()),
-                    'shipping_preference' => $shippingPreference,
-                    'locale' => 'PT-BR'
-        ));
->>>>>>> 979e8fc0c813ef7b2177982986df82ea2c690ce9
-=======
             ->setPayer($this->createPayer())
             ->setRedirectUrls($this->createRedirectUrls())
             ->setTransactions(array($transaction))
@@ -337,7 +313,6 @@ class Esmart_PayPalBrasil_Model_Plus_Iframe extends Mage_Payment_Block_Form
                 'shipping_preference' => $shippingPreference,
                 'locale' => 'PT-BR'
             ));
->>>>>>> 0e07f6463507df45d764448809df9f71050211da
 
         try {
             Esmart_PayPalBrasil_Model_Debug::appendContent(
