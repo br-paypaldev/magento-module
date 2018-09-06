@@ -19,15 +19,15 @@ class PayPalHttpConfig
      * @var array
      */
     public static $defaultCurlOptions = array(
-        CURLOPT_SSLVERSION => 1,
+        CURLOPT_SSLVERSION => 6,
         CURLOPT_CONNECTTIMEOUT => 10,
-        CURLOPT_RETURNTRANSFER => TRUE,
+        CURLOPT_RETURNTRANSFER => true,
         CURLOPT_TIMEOUT => 60,    // maximum number of seconds to allow cURL functions to execute
         CURLOPT_USERAGENT => 'PayPal-PHP-SDK',
         CURLOPT_HTTPHEADER => array(),
         CURLOPT_SSL_VERIFYHOST => 2,
         CURLOPT_SSL_VERIFYPEER => 1,
-        CURLOPT_SSL_CIPHER_LIST => 'TLSv1'
+        CURLOPT_SSL_CIPHER_LIST => 'TLSv1:TLSv1.2'
         //Allowing TLSv1 cipher list.
         //Adding it like this for backward compatibility with older versions of curl
     );
