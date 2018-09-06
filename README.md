@@ -37,15 +37,15 @@ Este módulo é compatível com as versões do Magento 1.7.2 até 1.9.x.
 
 Para o PayPal Plus, atualmente este módulo trabalha com os seguintes módulos OneStepCheckout:
 1. Firecheckout
-2. MOIP v1
 3. Inovarti (OSC6 Brasil)
 4. Amasty
 5. Esmart Checkout
 6. AheadWorks OneStepCheckout
+7. iPagare
 
 ## Instalação
 
-Copie as pastas "app, js, lib, skin" para dentro do diretório da sua instalação Magento.
+Copie as pastas "app, js, lib, skin" para dentro do diretório da sua instalação Magento e limpe o cache.
 
 ## Configuração
 ### - Credenciais de API
