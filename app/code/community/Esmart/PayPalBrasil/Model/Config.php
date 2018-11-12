@@ -285,4 +285,21 @@ class Esmart_PayPalBrasil_Model_Config extends Mage_Paypal_Model_Config
         }
     }
 
+    /**
+     * Payment actions source getter
+     *
+     * @return array
+     */
+    public function getPaymentActions()
+    {
+        $paymentActions = array(
+            self::PAYMENT_ACTION_SALE => Mage::helper('paypal')->__('Sale'),
+            self::PAYMENT_ACTION_AUTH => Mage::helper('paypal')->__('Authorization')
+        );
+        if (!is_null($this->_methodCode) && $this->_methodCode == self::METHOD_WPP_EXPRESS) {
+            $paymentActions[self::PAYMENT_ACTION_ORDER] = Mage::helper('paypal')->__('Order');
+        }
+        return $paymentActions;
+    }
+
 }

@@ -82,7 +82,7 @@
                                                 <show_in_website>0</show_in_website>
                                                 <show_in_store>0</show_in_store>
                                             </express_checkout_billing_agreement>
-                                             <express_checkout_frontend>                                               
+                                             <express_checkout_frontend>
                                                 <fields>
                                                     <logo_footer translate="label comment">
                                                         <label>PayPal Footer Logo</label>
@@ -258,7 +258,7 @@
                                     </module_title>
 
                                     <paypal_custom>
-                                        <label>Painel Paypal</label>
+                                        <label>Nome da Loja</label>
                                         <config_path>payment/paypal_plus/paypal_custom</config_path>
                                         <sort_order>32</sort_order>
                                         <show_in_default>1</show_in_default>
@@ -565,7 +565,7 @@
                                         <show_in_store>1</show_in_store>
                                     </heading_credential>
 
-                                    
+
                                     <app_client_id extends="//paypal_payments/payflow_advanced//api_username">
                                         <label>App Client Id</label>
                                         <config_path>payment/paypal_invoice/app_client_id</config_path>
@@ -602,7 +602,7 @@
                                         <show_in_store>1</show_in_store>
                                     </sandbox_flag>
 
-            
+
                         </fields>
                     </paypal_invoice>
 

@@ -4,7 +4,7 @@
  *  :) design/frontend/base/default/layout/esmart/paypalbrasil.xml
  *
  *  AUX js/esmart/paypalbrasil/Esmart_PaypalBrasilPrototype.js
- *  
+ *
  * @package     js
  */
 //document.observe("dom:loaded", function() {
@@ -15,31 +15,41 @@
     //if (!EsmartPaypalBrasilBtnContinue.btnCheckout) {
         if($('p_method_paypal_plus').checked){ $('p_method_paypal_plus').checked = false };
     //}
-    // listen all click events and a condition to id element 
+    // listen all click events and a condition to id element
     $('p_method_paypal_plus').on('click', 'input.radio', function(event, element) {
-        if(event.target.id == 'p_method_paypal_plus') {
-            try{
-                // ask if already have a object.btnCheckout
-                if (!EsmartPaypalBrasilBtnContinue.btnCheckout) {
-                    // button checkout
-                    var BtnInovartiCheckout = $('onestepcheckout-place-order-button');
+        //Form.validate('onestepcheckout-general-form');
 
-                    // set element on object and get a onclick method or clone a button
-                    EsmartPaypalBrasilBtnContinue.setElement(BtnInovartiCheckout, false);
+        new Ajax.Request('/onestepcheckout/ajax/saveAddress/', {
+            method: 'post',
+            parameters: $('onestepcheckout-general-form').serialize(true),
+            async: false,
+            onSuccess: function (response) {
+                if(event.target.id == 'p_method_paypal_plus') {
+                    try{
+                        // ask if already have a object.btnCheckout
+                        if (!EsmartPaypalBrasilBtnContinue.btnCheckout) {
+                            // button checkout
+                            var BtnInovartiCheckout = $('onestepcheckout-place-order-button');
 
-                    // active addEventListeners
-                    EsmartPaypalBrasilPPPlus.init();
+                            // set element on object and get a onclick method or clone a button
+                            EsmartPaypalBrasilBtnContinue.setElement(BtnInovartiCheckout, false);
+
+                            // active addEventListeners
+                            EsmartPaypalBrasilPPPlus.init();
+                        }
+
+                        // generate a IFrame
+                        EsmartPaypalBrasilPPPlus.generateIframe();
+
+                    }catch(e) {
+                        var message = "Checkout Inovarti com problema.";
+                        if( $('p_method_paypal_plus').checked){ $('p_method_paypal_plus').checked = false };
+                        console.log(message);
+                        alert(message);
+                    }
                 }
-
-                // generate a IFrame           
-                EsmartPaypalBrasilPPPlus.generateIframe();
-
-            }catch(e) {
-                var message = "Checkout Inovarti com problema.";
-                if( $('p_method_paypal_plus').checked){ $('p_method_paypal_plus').checked = false };
-                console.log(message);
-                alert(message);
             }
-        }
+        });
+
     });
 //});

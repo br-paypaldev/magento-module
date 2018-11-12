@@ -19,7 +19,7 @@ $('p_method_paypal_plus').on('click', 'input.radio', function(event, element) {
             // ask if already have a object.btnCheckout
             if (!EsmartPaypalBrasilBtnContinue.btnCheckout) {
                 // button checkout
-                var BtnAwCheckout = $('aw-onestepcheckout-place-order-button');
+                var BtnAwCheckout = $('aw-onestepcheckout-place-order').select('button').first();
 
                 BtnAwCheckout.addClassName('aw-onestepcheckout-place-order-button');
                 $$('.aw-onestepcheckout-place-order-please-wait').first().setStyle({'display':'none'});
@@ -30,7 +30,8 @@ $('p_method_paypal_plus').on('click', 'input.radio', function(event, element) {
                 // active addEventListeners
                 EsmartPaypalBrasilPPPlus.init();
             }
-
+            $('paypal_plus_loading').show();
+            $('payment_form_paypal_plus').show();
             // generate a IFrame
             EsmartPaypalBrasilPPPlus.generateIframe();
 

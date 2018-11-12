@@ -19,6 +19,7 @@ Este módulo contém os principais produtos PayPal para o mercado Brasileiro:
 Para o correto funcionamento das soluções, é necessário verificar que a sua loja e servidor suporte alguns recursos:
 1. Para o checkout transparente (PayPal Plus), a sua loja precisa ter suporte ao TAX_VAT, portanto antes de ativar a solução garanta que a sua loja está devidamente configurada para suportar este campo;
 2. O servidor precisa ter suporte à TLS 1.2 ou superior e HTTPS 1.1 [(Referência Oficial)](https://www.paypal.com/sg/webapps/mpp/tls-http-upgrade).
+3. O modo de compilação precisa estar desligado para o correto funcionamento do módulo.
 
 ## PayPal Plus (Checkout Transparente)
 

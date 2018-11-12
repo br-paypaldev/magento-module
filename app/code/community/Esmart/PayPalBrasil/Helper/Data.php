@@ -37,13 +37,6 @@ class Esmart_PayPalBrasil_Helper_Data extends Mage_Core_Helper_Data
     const JS_EVENTS_DEFAULT = 'esmart/paypalbrasil/Esmart_PaypalBrasilPrototype.events.default.js';
 
     /**
-     * JS events MOIP
-     * @const string
-     */
-    #const JS_EVENTS_MOIP = 'esmart/paypalbrasil/Esmart_PaypalBrasil.events.moip.js';
-    const JS_EVENTS_MOIP = 'esmart/paypalbrasil/Esmart_PaypalBrasilPrototype.events.moip.js';
-
-    /**
      * JS events INOVARTI
      * @const string
      */
@@ -74,6 +67,14 @@ class Esmart_PayPalBrasil_Helper_Data extends Mage_Core_Helper_Data
      * @const string
      */
     const JS_EVENTS_AHEADWORKS = 'esmart/paypalbrasil/Esmart_PaypalBrasilPrototype.events.aheadworks.js';
+
+    /**
+     * JS events AHEADWORKS
+     * @const string
+     */
+    #const JS_EVENTS_VENDAMAIS = 'esmart/paypalbrasil/Esmart_PaypalBrasilPrototype.events.vendamais.js';
+    const JS_EVENTS_VENDAMAIS = 'esmart/paypalbrasil/Esmart_PaypalBrasilPrototype.events.vendamais.js';
+
 
     /**
      * @var string

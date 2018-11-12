@@ -159,7 +159,7 @@ class Esmart_PayPalBrasil_Model_Plus extends Mage_Payment_Model_Method_Abstract
         $apiContext->setConfig($mode);
         $apiContext->addRequestHeader("PayPal-Partner-Attribution-Id" , 'Magento_Cart_CE_BR_PPPlus');
 
-        Esmart_PayPalBrasil_Model_Debug::appendContent('[OPERATION MODE]', 'default', $mode);
+        Esmart_PayPalBrasil_Model_Debug::appendContent('[Plus][OPERATION MODE]', 'default', $mode);
 
         return $apiContext;
     }    
@@ -224,7 +224,7 @@ class Esmart_PayPalBrasil_Model_Plus extends Mage_Payment_Model_Method_Abstract
         return $inputFields;
     }
 
-    /**
+   /**
      * Save return Paypal
      *
      * @param array
@@ -232,7 +232,7 @@ class Esmart_PayPalBrasil_Model_Plus extends Mage_Payment_Model_Method_Abstract
     public function saveReturnPaypal(array $data)
     {
 
-        Esmart_PayPalBrasil_Model_Debug::appendContent('[DATA FORM IFRAME]', 'executePayment', $data);
+        Esmart_PayPalBrasil_Model_Debug::appendContent('[Plus][DATA FORM IFRAME]', 'executePayment', $data);
 
         if (is_null($data) || !($data['payerId'])) {
             throw new Exception('Prezado cliente, ocorreu um erro inesperado, por favor tente novamente. Caso o erro persista entre em contato.');
@@ -258,6 +258,13 @@ class Esmart_PayPalBrasil_Model_Plus extends Mage_Payment_Model_Method_Abstract
             ->setAdditionalInformation('paypal_plus_checkout_state', $data['checkoutState'])
             ->setAdditionalInformation('paypal_plus_cards', $data['cards']);
 
+        $helper = Mage::helper('esmart_paypalbrasil');
+        $quote = $helper->getQuote(null);
+
+        if (!$quote->getReservedOrderId()) {
+            $quote->reserveOrderId()->save();
+        }
+
         $quotePayment->save();
     }
 
@@ -270,48 +277,65 @@ class Esmart_PayPalBrasil_Model_Plus extends Mage_Payment_Model_Method_Abstract
      *
      * @return Mage_Payment_Model_Abstract
      */
-    public function order(Varien_Object $payment, $amount)
+public function order(Varien_Object $payment, $amount)
     {
         parent::order($payment, $amount);
 
         /** @var Esmart_PayPalBrasil_Helper_Data $helper */
         $helper = Mage::helper('esmart_paypalbrasil');
+        $quote = $helper->getQuote(null);
 
-        
-            $order = $payment->getOrder();
+        // Data to transactions
+        $invoice = $quote->getReservedOrderId();
+        $nameStore = Mage::getStoreConfig('payment/paypal_plus/paypal_custom');
+        $transactionText = 'Pedido '.$invoice.' - '.$nameStore;
 
-            $payment = $order->getPayment();
+        // Get data on order and payment
+        $order = $payment->getOrder();
+        $payment = $order->getPayment();
 
-            $apiContext = $this->getApiContext();
+        $apiContext = $this->getApiContext();
+        $paypalPayment = \PayPal\Api\Payment::get($payment->getAdditionalInformation('paypal_plus_payment_id'), $apiContext);
 
-            $paypalPayment = \PayPal\Api\Payment::get($payment->getAdditionalInformation('paypal_plus_payment_id'), $apiContext);
+        // Create Amount
+        $model = Mage::getModel('esmart_paypalbrasil/plus_iframe');
+        $amountTransaction = $model->createAmount($quote);
 
-            $paymentExecution = new \PayPal\Api\PaymentExecution();
-            $paymentExecution->setPayerId($payment->getAdditionalInformation('paypal_plus_payer_id'));
+        // Set new data on transaction
+        $transaction = new \PayPal\Api\Transaction();
+        $transaction->setAmount($amountTransaction);
+        $transaction->setDescription($transactionText);
+        $transaction->setCustom($transactionText);
+        $transaction->setInvoiceNumber($invoice);
+
+        // Payment Execution
+        $paymentExecution = new \PayPal\Api\PaymentExecution();
+        $paymentExecution->setPayerId($payment->getAdditionalInformation('paypal_plus_payer_id'));
+        $paymentExecution->setTransactions(array($transaction));
 
 
-        Esmart_PayPalBrasil_Model_Debug::appendContent('[EXECUTE PAYMENT REQUEST]', 'executePayment', array(var_export($paymentExecution->toArray(), true)));
-            
-             if (!$paymentExecution->getPayerId()) {
-                    Esmart_PayPalBrasil_Model_Debug::writeLog();
-                    Mage::throwException('Prezado cliente, ocorreu um erro inesperado, por favor tente novamente. Caso o erro persista entre em contato.');
-             }
+       Esmart_PayPalBrasil_Model_Debug::appendContent('[Plus][EXECUTE PAYMENT REQUEST]', 'executePayment', array(var_export($paymentExecution->toArray(), true)));
 
-        try {  
+        if (!$paymentExecution->getPayerId()) {
+            Esmart_PayPalBrasil_Model_Debug::writeLog();
+            Mage::throwException('Prezado cliente, ocorreu um erro inesperado, por favor tente novamente. Caso o erro persista entre em contato.');
+        }
+
+        try {
+
             // Execute the payment
             $paypalPayment->execute($paymentExecution, $apiContext);
 
-            Esmart_PayPalBrasil_Model_Debug::appendContent('[EXECUTE PAYMENT RESPONSE]', 'executePayment', array(var_export($paypalPayment->toArray(), true)));
+            Esmart_PayPalBrasil_Model_Debug::appendContent('[Plus][EXECUTE PAYMENT RESPONSE]', 'executePayment', array(var_export($paypalPayment->toArray(), true)));
 
-           
-             
+
             $transactions = $paypalPayment->getTransactions();
 
-            $saleId       = null;
+            $saleId = null;
 
             if ($transactions) {
                 /** @var \PayPal\Api\Transaction $transaction */
-                $transaction     = $transactions[0];
+                $transaction = $transactions[0];
 
                 $relatedResources = $transaction->getRelatedResources();
 
@@ -337,12 +361,12 @@ class Esmart_PayPalBrasil_Model_Plus extends Mage_Payment_Model_Method_Abstract
 
             if (!$invoice->getTotalQty()) {
                 Mage::throwException(Mage::helper('core')->__('Cannot create an invoice without products.'));
-            }            
+            }
 
             /* create a invoice pendent */
             $invoice->register();
 
-             $order->addRelatedObject($invoice); /* better than Mage::getModel('core/resource_transaction')*/
+            $order->addRelatedObject($invoice); /* better than Mage::getModel('core/resource_transaction')*/
 
             /* logic of "payment review" */
             if ($state == 'pending') {
@@ -350,17 +374,17 @@ class Esmart_PayPalBrasil_Model_Plus extends Mage_Payment_Model_Method_Abstract
                 $payment->setIsTransactionClosed(false);
                 $payment->setIsTransactionPending(true);
                 return $this;
-            }            
-           
+            }
+
             /* logic of "payment review" */
             if ($this->canCapture()) { /* same to set ($captureCase == self::CAPTURE_ONLINE) */
                 $invoice->capture();
             }
-           
+
 
             $payment->setSkipOrderProcessing(true);
 
-        } catch(Exception $e) {
+        } catch (Exception $e) {
 
             $errorData = Mage::helper('core')->jsonDecode($e->getData());
             $cancel = Mage::getModel('esmart_paypalbrasil/cancel', $errorData);
@@ -372,7 +396,7 @@ class Esmart_PayPalBrasil_Model_Plus extends Mage_Payment_Model_Method_Abstract
             $errorData['invoice_number'] = $order->getIncrementId();
             $e->setData(json_encode($errorData));
             $helper->logException(__FILE__, __CLASS__, __FUNCTION__, __LINE__, self::LOG_FILENAME, $e);
-            
+
             Esmart_PayPalBrasil_Model_Debug::writeLog();
             Mage::throwException('Sua transação não pode ser concluida devido a problemas com seu meio de pagamento, tente novamente com outro cartão.');
         }
@@ -381,7 +405,6 @@ class Esmart_PayPalBrasil_Model_Plus extends Mage_Payment_Model_Method_Abstract
 
         return $this;
     }
-
 
     /**
      * @return Mage_Sales_Model_Quote

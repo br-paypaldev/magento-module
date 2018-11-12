@@ -47,6 +47,9 @@ class Esmart_PayPalBrasil_Model_Debug
      */
     public static function appendContent($details, $type = 'default', $contentData = array())
     {
+
+        //$debugClassName = debug_backtrace();
+
         if (!Mage::getStoreConfigFlag('payment/paypal_plus/debug_mode')) {
             return;
         }
@@ -55,7 +58,7 @@ class Esmart_PayPalBrasil_Model_Debug
             self::$content[$type] = array();
         }
 
-        self::$content[$type][] = $details;
+        self::$content[$type][] = $details.' - '.date('d/m/Y H:i:s');
 
         foreach ($contentData as $key => $content) {
             $string = "- ";

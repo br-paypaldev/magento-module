@@ -105,7 +105,7 @@ class Esmart_PayPalBrasil_Model_Plus_Iframe extends Mage_Payment_Block_Form
 
         if ($firstCall) {
             $data = $this->nonPersistedData->toArray();
-            Esmart_PayPalBrasil_Model_Debug::appendContent('[FRONTEND FORM DATA]', 'createPayment', $data);
+            Esmart_PayPalBrasil_Model_Debug::appendContent('[Plus][FRONTEND FORM DATA]', 'createPayment', $data);
         }
 
         return $this;
@@ -149,8 +149,7 @@ class Esmart_PayPalBrasil_Model_Plus_Iframe extends Mage_Payment_Block_Form
             'rememberedCards' => $customer->getPpalRememberedCards(),
         );
 
-        Esmart_PayPalBrasil_Model_Debug::appendContent('[RETURN getCustomerInformation()]', 'createPayment', $return);
-        #Esmart_PayPalBrasil_Model_Debug::appendContent('[MAGENTO CUSTOMER DATA]', 'createPayment', $customer->toArray());
+        Esmart_PayPalBrasil_Model_Debug::appendContent('[Plus][RETURN getCustomerInformation()]', 'createPayment', $return);
 
         if (!Esmart_PayPalBrasil_Model_Paypal_Validate::is(array($firstname, $lastname), 'OnlyWords', true) ||
             !Esmart_PayPalBrasil_Model_Paypal_Validate::is($email, 'AddressMail', false) ||
@@ -276,7 +275,7 @@ class Esmart_PayPalBrasil_Model_Plus_Iframe extends Mage_Payment_Block_Form
             'mode' => $this->getMode(),
         );
 
-        Esmart_PayPalBrasil_Model_Debug::appendContent('[APPROVAL URL]', 'createPayment', $data);
+        Esmart_PayPalBrasil_Model_Debug::appendContent('[Plus][APPROVAL URL]', 'createPayment', $data);
 
         return $data;
     }
@@ -316,14 +315,14 @@ class Esmart_PayPalBrasil_Model_Plus_Iframe extends Mage_Payment_Block_Form
 
         try {
             Esmart_PayPalBrasil_Model_Debug::appendContent(
-                '[CREATE PAYMENT REQUEST]', 'createPayment',
+                '[Plus][CREATE PAYMENT REQUEST]', 'createPayment',
                 array(var_export($payment->toArray(), true))
             );
 
             $payment->create($this->getApiContext());
 
             Esmart_PayPalBrasil_Model_Debug::appendContent(
-                '[CREATE PAYMENT RESPONSE]', 'createPayment',
+                '[Plus][CREATE PAYMENT RESPONSE]', 'createPayment',
                 array(var_export($payment->toArray(), true))
             );
 
@@ -351,22 +350,11 @@ class Esmart_PayPalBrasil_Model_Plus_Iframe extends Mage_Payment_Block_Form
         /** @var PayPal\Api\Transaction $transaction */
         $transaction = new PayPal\Api\Transaction();
 
-        if (!$quote->getReservedOrderId()) {
-            $quote->reserveOrderId()->save();
-        }
-        $InvoiceNumber = $quote->getReservedOrderId();
-        $data = array('order' => $quote->getReservedOrderId());
-        #Esmart_PayPalBrasil_Model_Debug::appendContent('[QUOTE MAGENTO]', 'createPayment', $data);
-
-        $customInfo = array(Mage::getStoreConfig('payment/paypal_plus/paypal_custom'), $quote->getReservedOrderId());
-        $customInfo = vsprintf(self::CUSTOM_BASE_INFORMATION, $customInfo);
-
         $transaction->setAmount($this->createAmount($quote))
             ->setPaymentOptions($this->createPaymentOptions())
             ->setItemList($this->createItemList($quote))
-            ->setCustom($customInfo)
             ->setNotifyUrl(Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_WEB) . 'paypal/ipn');
-        $transaction->setInvoiceNumber($InvoiceNumber);
+
 
         return $transaction;
     }
@@ -378,7 +366,7 @@ class Esmart_PayPalBrasil_Model_Plus_Iframe extends Mage_Payment_Block_Form
      *
      * @return PayPal\Api\Amount
      */
-    protected function createAmount(Mage_Sales_Model_Quote $quote)
+    public function createAmount(Mage_Sales_Model_Quote $quote)
     {
         /** @var PayPal\Api\Amount $amount */
         $amount = new PayPal\Api\Amount();
@@ -403,7 +391,7 @@ class Esmart_PayPalBrasil_Model_Plus_Iframe extends Mage_Payment_Block_Form
      *
      * @return PayPal\Api\ItemList
      */
-    protected function createItemList(Mage_Sales_Model_Quote $quote)
+    public function createItemList(Mage_Sales_Model_Quote $quote)
     {
         $itemList = new PayPal\Api\ItemList();
 
@@ -439,7 +427,7 @@ class Esmart_PayPalBrasil_Model_Plus_Iframe extends Mage_Payment_Block_Form
             $data[] = $objItem->toJSON();
         }
 
-        Esmart_PayPalBrasil_Model_Debug::appendContent('[CREATE ITEM LIST]', 'createPayment', $data);
+        Esmart_PayPalBrasil_Model_Debug::appendContent('[Plus][CREATE ITEM LIST]', 'createPayment', $data);
 
         // append shipping information
         $itemList->setShippingAddress($this->createShippingAddress($quote));
@@ -601,9 +589,9 @@ class Esmart_PayPalBrasil_Model_Plus_Iframe extends Mage_Payment_Block_Form
             'State' => $shipping->getState(),
         );
 
-        Esmart_PayPalBrasil_Model_Debug::appendContent('[PAYPAL SHIPPING ADDRESS]', 'createPayment', $data);
+        Esmart_PayPalBrasil_Model_Debug::appendContent('[Plus][PAYPAL SHIPPING ADDRESS]', 'createPayment', $data);
 
-        Esmart_PayPalBrasil_Model_Debug::appendContent('[MAGENTO ADDRESS DATA]', 'createPayment', $addressShipping->toArray());
+        Esmart_PayPalBrasil_Model_Debug::appendContent('[Plus][MAGENTO ADDRESS DATA]', 'createPayment', $addressShipping->toArray());
 
         return $shipping;
     }
@@ -659,7 +647,7 @@ class Esmart_PayPalBrasil_Model_Plus_Iframe extends Mage_Payment_Block_Form
         $apiContext->setConfig($mode);
         $apiContext->addRequestHeader("PayPal-Partner-Attribution-Id", 'Magento_Cart_CE_BR_PPPlus');
 
-        Esmart_PayPalBrasil_Model_Debug::appendContent('[OPERATION MODE]', 'default', $mode);
+        Esmart_PayPalBrasil_Model_Debug::appendContent('[Plus][OPERATION MODE]', 'default', $mode);
 
         return $apiContext;
     }
@@ -780,3 +768,5 @@ class Esmart_PayPalBrasil_Model_Plus_Iframe extends Mage_Payment_Block_Form
         return Mage::helper('esmart_paypalbrasil');
     }
 }
+
+

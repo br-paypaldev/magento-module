@@ -28,7 +28,7 @@ class Esmart_PayPalBrasil_Model_Paypal_Validate
      * @var array
      */
     protected static $_validators = array(
-        'OnlyWords' => '/^[[:alpha:]\s\'"\-_&@!?()\[\]-]*$/u', 
+        'OnlyWords' => '/^[[:alpha:]\s\'."\-_&@!?()\[\]-]*$/u',
         'OnlyNumbers' => "/^[0-9-]+$/u",
         'AddressMail' => "/^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,})$/",
         'hasNumeric' => "/[0-9]/",
@@ -266,3 +266,4 @@ class Esmart_PayPalBrasil_Model_Paypal_Validate
         return $dv1 == $cnpj[12] && $dv2 == $cnpj[13] ? true : false;
     }
 }
+

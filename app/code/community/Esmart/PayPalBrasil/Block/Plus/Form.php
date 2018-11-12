@@ -68,10 +68,10 @@ class Esmart_PayPalBrasil_Block_Plus_Form extends Mage_Payment_Block_Form
 
         /** @var Esmart_PayPalBrasil_Helper_Data $helper */
         $helper = Mage::helper('esmart_paypalbrasil');
-        $uniq = md5(uniqid(rand(), true));
+        $uniq = '';
         $scriptblock->setText(
             sprintf(
-                '<script src="%s?%s" type="text/javascript"></script>
+                '<script src="%s%s" type="text/javascript"></script>
                  <script src="%s" type="text/javascript"></script>',
                 Mage::getStoreConfig('payment/paypal_plus/js_address'),
                 $uniq,
@@ -82,3 +82,4 @@ class Esmart_PayPalBrasil_Block_Plus_Form extends Mage_Payment_Block_Form
         return $scriptblock;
     }
 }
+

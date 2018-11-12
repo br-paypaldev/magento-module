@@ -148,6 +148,11 @@
 		</reference>
 	</catalog_product_view>
 
+	<!-- iPAGARE venda mais Handle -->
+	<idecheckoutvm_index>
+		<update handle="PayPalBrasil_Append_Checkouts"/>
+	</idecheckoutvm_index>
+
 	<!-- FireCheckout Handle -->
 	<firecheckout_index_index>
 		<update handle="PayPalBrasil_Append_Checkouts"/>
@@ -157,11 +162,6 @@
 	<esmart_smartcheckout_index_index>
 		<update handle="PayPalBrasil_Append_Checkouts"/>
 	</esmart_smartcheckout_index_index>
-
-	<!-- Amasty/Default/MOIP checkout -->
-	<checkout_onepage_index>
-		<update handle="PayPalBrasil_Append_Checkouts"/>
-	</checkout_onepage_index>
 
 	<!-- Innovarti checkout -->
 	<onestepcheckout_index_index>
