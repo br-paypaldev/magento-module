@@ -4,7 +4,7 @@
  *  :) design/frontend/base/default/layout/esmart/paypalbrasil.xml
  *
  *  AUX js/esmart/paypalbrasil/Esmart_PaypalBrasilPrototype.js
- *  
+ *
  * @package     js
  */
 $('p_method_paypal_plus').stopObserving('click');
@@ -28,8 +28,10 @@ $('checkout-step-payment').on('click', 'input.radio', function(event, element) {
                 EsmartPaypalBrasilPPPlus.init();
             }
 
-            // generate a IFrame           
-            EsmartPaypalBrasilPPPlus.generateIframe();
+            if(EsmartPaypalBrasilPPPlus.iframe_loaded === null){
+                // generate a IFrame
+                EsmartPaypalBrasilPPPlus.generateIframe();
+            }
 
         }catch(e) {
             var message = "Checkout Default com problema.";
@@ -37,12 +39,18 @@ $('checkout-step-payment').on('click', 'input.radio', function(event, element) {
             console.log(message);
             alert(message);
         }
+    }else{
+        EsmartPaypalBrasilPPPlus.iframe_loaded = null;
+        if(obj.installments == true) {
+            $('paypal_plus_instalments').setValue(0);
+            $('paypal_plus_iframe').setValue('');
+        }
     }
 });
 
 // clean a iframe and inputs.radio of payments 
 $$("div.step-title").each( function(el) {
-    el.observe('click', function(){  
+    el.observe('click', function(){
         $('checkout-step-payment').select('input.radio').each(function(el){ el.checked = false});
         $$("ul#payment_form_paypal_plus")[0].hide();
         $('paypal_plus_iframe').update('').removeAttribute('style');

@@ -71,12 +71,28 @@ class Esmart_PayPalBrasil_Model_Plus_Iframe extends Mage_Payment_Block_Form
      */
     const MODE_LIVE = 'live';
 
+    /*
+     * Installment
+     * @var  $installment Installment value
+     */
+    protected $installment;
+
+    /*
+    * Installment cost
+    * @var  $costOfInstallment value calculete of cost the installment
+    */
+    protected $costOfInstallment;
+
+
+    protected $configInstallments;
+
 
     function __construct()
     {
         $this->nonPersistedData = new Varien_Object();
 
         Esmart_PayPalBrasil_Model_Plus_Paypal_Autoload::register();
+        $this->configInstallments = Mage::getModel('esmart_paypalbrasil/installments_config');
     }
 
     /**
@@ -118,7 +134,7 @@ class Esmart_PayPalBrasil_Model_Plus_Iframe extends Mage_Payment_Block_Form
      *
      * @return array
      */
-    public function getCustomerInformation($quote = null)
+    public function getCustomerInformation($quote = null,$installment = null)
     {
         /** @var Esmart_PayPalBrasil_Helper_Data $helper */
         $helper = $this->_helper();
@@ -146,7 +162,7 @@ class Esmart_PayPalBrasil_Model_Plus_Iframe extends Mage_Payment_Block_Form
             'payerTaxIdType' => $helper->checkIsCpfOrCnpj($payerTaxId),
             'payerTaxId' => $payerTaxId,
             'payerPhone' => $phone,
-            'rememberedCards' => $customer->getPpalRememberedCards(),
+            'rememberedCards' => $customer->getPpalRememberedCards()
         );
 
         Esmart_PayPalBrasil_Model_Debug::appendContent('[Plus][RETURN getCustomerInformation()]', 'createPayment', $return);
@@ -159,6 +175,39 @@ class Esmart_PayPalBrasil_Model_Plus_Iframe extends Mage_Payment_Block_Form
         }
 
         return $return;
+    }
+
+
+
+    /**
+     * Get customer information to use in JS with installmets
+     *
+     * @param Mage_Sales_Model_Quote $quote (Quote object (Mage_Sales_Model_Quote) | Quote ID | null)
+     *
+     * @return array
+     */
+    public function getCustomerInformationInstallments(Mage_Sales_Model_Quote $quote, $installment, $payerInfo)
+    {
+
+        if( empty($installment) || empty($payerInfo)){
+            return;
+        }
+
+//        $installmentModel = Mage::getModel('esmart_paypalbrasil/installments');
+//        $installmentModel->cleanInstallments($quote);
+
+        $quote->getPayment()->setAdditionalInformation('paypal_plus_installments',$installment);
+
+        $configInstallments = Mage::getStoreConfig('payment/paypal_plus/instalments_active');
+
+        if($configInstallments){
+            $addInstallment =  array(
+                'merchantInstallmentSelectionOptional'=>false,
+                'merchantInstallmentSelection' => $installment
+            );
+        }
+
+        return array_merge($payerInfo,$addInstallment);
     }
 
     /**
@@ -290,7 +339,6 @@ class Esmart_PayPalBrasil_Model_Plus_Iframe extends Mage_Payment_Block_Form
     public function createPayment($quote = null)
     {
         $helper = Mage::helper('esmart_paypalbrasil');
-
         $quote = $helper->getQuote($quote);
 
         if ($quote->getIsVirtual() == 1) {
@@ -329,6 +377,7 @@ class Esmart_PayPalBrasil_Model_Plus_Iframe extends Mage_Payment_Block_Form
             $quote->getPayment()
                 ->setAdditionalInformation('paypal_plus_payment_id', $payment->getId())
                 ->setAdditionalInformation('paypal_plus_payment_state', $payment->getState())
+                ->setAdditionalInformation('paypal_plus_installments', $this->getInstallment())
                 ->save();
 
         } catch (Exception $e) {
@@ -350,13 +399,58 @@ class Esmart_PayPalBrasil_Model_Plus_Iframe extends Mage_Payment_Block_Form
         /** @var PayPal\Api\Transaction $transaction */
         $transaction = new PayPal\Api\Transaction();
 
-        $transaction->setAmount($this->createAmount($quote))
-            ->setPaymentOptions($this->createPaymentOptions())
-            ->setItemList($this->createItemList($quote))
-            ->setNotifyUrl(Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_WEB) . 'paypal/ipn');
+        $payment = $quote->getPayment();
+        $cost = $this->getCostOfInstallment($quote);
 
+
+        if(!empty($payment->getAdditionalInformation('paypal_plus_installments')) ||
+            ($cost > 0) &&
+            ($this->configInstallments->getStatusInstallments() == true)
+        )
+        {
+            $transaction->setAmount($this->createAmountInstallment($quote))
+                ->setPaymentOptions($this->createPaymentOptions())
+                ->setItemList($this->createItemList($quote))
+                ->setNotifyUrl(Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_WEB) . 'paypal/ipn');
+        }else{
+
+            $transaction->setAmount($this->createAmount($quote))
+                ->setPaymentOptions($this->createPaymentOptions())
+                ->setItemList($this->createItemList($quote))
+                ->setNotifyUrl(Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_WEB) . 'paypal/ipn');
+        }
 
         return $transaction;
+    }
+
+    /**
+     * Create and return Amount
+     *
+     * @param Mage_Sales_Model_Quote $quote Quote object
+     *
+     * @return PayPal\Api\Amount
+     */
+    public function createAmountInstallment(Mage_Sales_Model_Quote $quote, Mage_Sales_Model_Order $order = null)
+    {
+        $cost = $this->getCostOfInstallment($quote);
+
+        $installmentGrandTotal = $this->getGranTotalClean($quote) + $cost;
+
+        /** @var PayPal\Api\Amount $amount */
+        $amount = new PayPal\Api\Amount();
+
+        $amount->setCurrency($quote->getBaseCurrencyCode())
+            ->setTotal($installmentGrandTotal)
+            ->setDetails($this->createDetailsInstallmets($quote, $order));
+
+        $data = array(
+            'Base Currency' => $quote->getBaseCurrencyCode(),
+            'Total' => $installmentGrandTotal,
+        );
+
+        Esmart_PayPalBrasil_Model_Debug::appendContent('[CREATE AMOUNT Installment]', 'createPayment', $data);
+
+        return $amount;
     }
 
     /**
@@ -379,7 +473,7 @@ class Esmart_PayPalBrasil_Model_Plus_Iframe extends Mage_Payment_Block_Form
             'Base Currency' => $quote->getBaseCurrencyCode(),
             'Total' => $quote->getGrandTotal(),
         );
-        #Esmart_PayPalBrasil_Model_Debug::appendContent('[CREATE AMOUNT]', 'createPayment', $data);
+        Esmart_PayPalBrasil_Model_Debug::appendContent('[CREATE AMOUNT]', 'createPayment', $data);
 
         return $amount;
     }
@@ -391,11 +485,13 @@ class Esmart_PayPalBrasil_Model_Plus_Iframe extends Mage_Payment_Block_Form
      *
      * @return PayPal\Api\ItemList
      */
-    public function createItemList(Mage_Sales_Model_Quote $quote)
+    protected function createItemList(Mage_Sales_Model_Quote $quote)
     {
         $itemList = new PayPal\Api\ItemList();
 
         $quoteItems = $quote->getAllVisibleItems();
+
+        $payment = $quote->getPayment();
 
         $data = array();
 
@@ -413,6 +509,8 @@ class Esmart_PayPalBrasil_Model_Plus_Iframe extends Mage_Payment_Block_Form
             $data[] = $objItem->toJSON();
         }
 
+
+
         $totals = $quote->getTotals();
         if (isset($totals['discount'])) {
             $objItem = new PayPal\Api\Item();
@@ -427,11 +525,29 @@ class Esmart_PayPalBrasil_Model_Plus_Iframe extends Mage_Payment_Block_Form
             $data[] = $objItem->toJSON();
         }
 
+
+        // Cost of installment
+        if(($payment->getAdditionalInformation('paypal_plus_installments_cost') > 0) &&
+            ($this->configInstallments->getStatusInstallments() == true)
+        ) {
+
+            $objItem = new PayPal\Api\Item();
+            $objItem->setName(__('Juros'))
+                ->setCurrency($quote->getBaseCurrencyCode())
+                ->setQuantity(1)
+                ->setPrice($payment->getAdditionalInformation('paypal_plus_installments_cost'));
+
+            $itemList->addItem($objItem);
+
+            $data[] = $objItem->toJSON();
+        }
+
         Esmart_PayPalBrasil_Model_Debug::appendContent('[Plus][CREATE ITEM LIST]', 'createPayment', $data);
 
-        // append shipping information
-        $itemList->setShippingAddress($this->createShippingAddress($quote));
-
+        if ($quote->getIsVirtual() != 1) {
+            // append shipping information
+            $itemList->setShippingAddress($this->createShippingAddress($quote));
+        }
         return $itemList;
     }
 
@@ -496,6 +612,105 @@ class Esmart_PayPalBrasil_Model_Plus_Iframe extends Mage_Payment_Block_Form
 
         return $details;
     }
+
+    /**
+     * Create and return Details
+     *
+     * @param Mage_Sales_Model_Quote $quote Quote object
+     *
+     * @return PayPal\Api\Details
+     */
+    protected function createDetailsInstallmets(Mage_Sales_Model_Quote $quote, Mage_Sales_Model_Order $order = null)
+    {
+        $totals = $quote->getTotals();
+        $payment = $quote->getPayment();
+        $cost = $payment->getAdditionalInformation('paypal_plus_installments_cost');
+
+        if(empty($cost)) {
+            $costTo = isset($totals['esmart_paypalbrasil_cost']) ? $totals['esmart_paypalbrasil_cost'] : null;
+            if ($costTo instanceof Mage_Sales_Model_Quote_Address_Total) {
+                if($cost == 0 ){
+                    $totals['esmart_paypalbrasil_cost']->setValue(0);
+                }
+                $cost = $totals['esmart_paypalbrasil_cost']->getValue();
+            }
+        }
+
+        /** @var PayPal\Api\Details $details */
+        $details = new PayPal\Api\Details();
+
+        $shipping = isset($totals['shipping']) ? $totals['shipping'] : null;
+        if ($shipping instanceof Mage_Sales_Model_Quote_Address_Total) {
+            $details->setShipping($shipping->getValue());
+        }
+
+        $tax = isset($totals['tax']) ? $totals['tax'] : null;
+        if ($tax instanceof Mage_Sales_Model_Quote_Address_Total) {
+            $details->setTax($tax->getValue());
+        }
+
+        $discount = 0;
+        if (isset($totals['discount'])) {
+            $discount = $totals['discount']->getValue();
+        }
+
+        $details->setSubtotal($totals['subtotal']->getValue() + $discount + $cost);
+
+        $data = array(
+            'Shipping' => $details->getShipping(),
+            'Tax' => $details->getTax(),
+            'Subtotal' => $details->getSubtotal(),
+        );
+        Esmart_PayPalBrasil_Model_Debug::appendContent('[CREATE AMOUNT - DETAILS ]', 'createDetailsInstallmets', $data);
+
+        return $details;
+    }
+
+
+    /**
+     * Create and return Details
+     *
+     * @param Mage_Sales_Model_Quote $quote Quote object
+     *
+     * @return PayPal\Api\Details
+     */
+    protected function createDetailsInstallment(Mage_Sales_Model_Quote $quote)
+    {
+        /** @var PayPal\Api\Details $details */
+        $details = new PayPal\Api\Details();
+
+        $totals = $quote->getTotals();
+        $payment = $quote->getPayment();
+
+        $shipping = isset($totals['shipping']) ? $totals['shipping'] : null;
+        if ($shipping instanceof Mage_Sales_Model_Quote_Address_Total) {
+            $details->setShipping($shipping->getValue());
+        }
+
+        $tax = isset($totals['tax']) ? $totals['tax'] : null;
+        if ($tax instanceof Mage_Sales_Model_Quote_Address_Total) {
+            $details->setTax($tax->getValue());
+        }
+
+        $discount = 0;
+        if (isset($totals['discount'])) {
+            $discount = $totals['discount']->getValue();
+        }
+
+        $cost =  $payment->getAdditionalInformation('paypal_plus_installments_cost');
+
+        $details->setSubtotal($totals['subtotal']->getValue() + $discount + $cost);
+
+        $data = array(
+            'Shipping' => $details->getShipping(),
+            'Tax' => $details->getTax(),
+            'Subtotal' => $details->getSubtotal(),
+        );
+        #Esmart_PayPalBrasil_Model_Debug::appendContent('[CREATE AMOUNT - DETAILS]', 'createPayment', $data);
+
+        return $details;
+    }
+
 
     /**
      * Get shipping information to use in JS
@@ -564,7 +779,6 @@ class Esmart_PayPalBrasil_Model_Plus_Iframe extends Mage_Payment_Block_Form
             default:
                 $line1 = $helper->limitAddres($addressShipping->getStreetFull());
         }
-
 
         if(!empty($line2)){
             $shipping->setLine2($line2);
@@ -767,6 +981,117 @@ class Esmart_PayPalBrasil_Model_Plus_Iframe extends Mage_Payment_Block_Form
     {
         return Mage::helper('esmart_paypalbrasil');
     }
+
+    /**
+     * Send a patch and returns the payment
+     *
+     * @return \PayPal\Api\Payment
+     */
+    public function patchAndGetPayment($paypalPaymentId, $invoice)
+    {
+        // Add Invoice Number
+        $invoiceNumber = new \PayPal\Api\Patch();
+        $invoiceNumber->setOp('add')
+            ->setPath('/transactions/0/invoice_number')
+            ->setValue($invoice);
+
+        // Value to custom and description
+        $text = 'Pedido '.$invoice.' - '. $this->getNameStoreFormat();
+
+        $custom = new \PayPal\Api\Patch();
+        $custom->setOp('add')
+            ->setPath('/transactions/0/custom')
+            ->setValue($text);
+
+        // Add description
+        $description = new \PayPal\Api\Patch();
+        $description->setOp('add')
+            ->setPath('/transactions/0/description')
+            ->setValue($text);
+
+        // Add patch
+        $patchRequest = new \PayPal\Api\PatchRequest();
+        $patchRequest->addPatch($invoiceNumber);
+        $patchRequest->addPatch($custom);
+        $patchRequest->addPatch($description);
+
+        try{
+            $data = $this->updatePath($patchRequest,$paypalPaymentId);
+        }catch (Exception $e){
+            throw new Exception($e->getData());
+        }
+    }
+
+    /**
+     * Getting and formatting name the store
+     *
+     * @return \PayPal\Api\Payment
+     */
+    protected function getNameStoreFormat(){
+        $name = Mage::getStoreConfig('payment/paypal_plus/paypal_custom');
+        return substr($name, 0, 100);
+    }
+
+
+    /**
+     * Restores the payment updatePath
+     *
+     * @return \PayPal\Api\Payment
+     */
+
+    protected function updatePath($patchRequest,$paypalPaymentId)
+    {
+        $payPalSdk = new \PayPal\Api\Payment();
+        $payPalSdk->setId($paypalPaymentId);
+        $res = $payPalSdk->update($patchRequest,$this->getApiContext());
+
+        return $res;
+    }
+
+    protected function getCostOfInstallment(Mage_Sales_Model_Quote $quote){
+
+        $payment = $quote->getPayment();
+        $installment = $payment->getAdditionalInformation('paypal_plus_installments');
+
+        if(is_null($installment)){
+            $cost =  $quote->getPayment()->getAdditionalInformation('paypal_plus_installments_cost');
+        }else {
+            /** @var Esmart_PayPalBrasil_Model_Installments */
+            $modelInstallments = Mage::getModel('esmart_paypalbrasil/installments');
+            $cost = $modelInstallments->calculateTotalCost($this->getGranTotalClean($quote), $installment);
+
+            $quote->getPayment()->unsAdditionalInformation('paypal_plus_installments_cost');
+            $quote->getPayment()->setAdditionalInformation('paypal_plus_installments_cost', $cost);
+        }
+        return $cost;
+    }
+
+    public function getGranTotalClean(Mage_Sales_Model_Quote $quote)
+    {
+
+        $totals = $quote->getTotals();
+
+        $shipping = isset($totals['shipping']) ? $totals['shipping'] : null;
+        $totalShipping = 0;
+        if ($shipping instanceof Mage_Sales_Model_Quote_Address_Total) {
+            $totalShipping = $shipping->getValue();
+        }
+
+        $tax = isset($totals['tax']) ? $totals['tax'] : null;
+        $totalTax = 0;
+        if ($tax instanceof Mage_Sales_Model_Quote_Address_Total) {
+            $totalTax = $tax->getValue();
+        }
+
+        $discount = 0;
+        if (isset($totals['discount'])) {
+            $discount = $totals['discount']->getValue();
+        }
+
+        $subtotal = $totals['subtotal']->getValue();
+        $grandTotal = $subtotal + $totalTax + $totalShipping + $discount;
+
+        return $grandTotal;
+    }
+
 }
-
-

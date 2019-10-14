@@ -65,6 +65,8 @@ class Esmart_PayPalBrasil_ExpressController extends Esmart_PayPalBrasil_Controll
         $data       = array();
         $helper     = Mage::helper('esmart_paypalbrasil');
         $quote      = $helper->getQuote(null);
+        $quote->getPayment()->unsAdditionalInformation();
+        $quote->collectTotals();
 
         try {
 
@@ -74,9 +76,12 @@ class Esmart_PayPalBrasil_ExpressController extends Esmart_PayPalBrasil_Controll
                 $quote->getShippingAddress()->setPaymentMethod(Esmart_PayPalBrasil_Model_Plus::CODE);
             }
 
-            $quote->collectTotals()->save();
+            $payerInfo   = $model->getCustomerInformation($quote);
 
-            $payerInfo   = $model->getCustomerInformation();
+            if(!empty($postData['installment'])){
+                $payerInfo = $model->getCustomerInformationInstallments($quote,$postData['installment'],$payerInfo);
+            }
+
             $approvalUrl = $model->getApprovalUrlPaypalPlus();
 
             $data = array_merge($payerInfo, $approvalUrl);

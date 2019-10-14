@@ -1,32 +1,46 @@
-<?php
-/**
- * Smart E-commerce do Brasil Tecnologia LTDA
- *
- * INFORMAÇÕES SOBRE LICENÇA
- *
- * Open Software License (OSL 3.0).
- * http://opensource.org/licenses/osl-3.0.php
- *
- * DISCLAIMER
- *
- * Não edite este arquivo caso você pretenda atualizar este módulo futuramente
- * para novas versões.
- *
- * @category    Esmart
- * @package     Esmart_PayPalBrasil
- * @copyright   Copyright (c) 2013 Smart E-commerce do Brasil Tecnologia LTDA. (http://www.e-smart.com.br)
- * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
- *
- * @author      Ricardo Martins <ricardo.martins@e-smart.com.br>
- * @author      Thiago H Oliveira <thiago.oliveira@e-smart.com.br>
- */
-?>
-
+<script type="text/javascript">
+    //<![CDATA[
+    window.paypalPlusBr = '<?php echo $this->paymentConfig(); ?>';
+    EsmartPaypalBrasilPPPlus.iframe_loaded = null;
+    //]]>
+</script>
 <?php
 $code = $this->getMethodCode();
+$installmentActive = $this->paymentConfig();
 ?>
-<ul class="form-list" id="payment_form_<?php echo $code?>" style="display:none;">
+<ul class="form-list" id="payment_form_<?php echo $code ?>" style="display:none;">
     <li>
+        <div class="installment_paypal_plus">
+        <?php if (json_decode($installmentActive)->installments){ ?>
+            <select id="paypal_plus_instalments" name="payment[instalments]" class="paypal_plus_instalments" style="display:none; width: 100%" onchange="callIframe()">
+                <option value="0">Selecione as parcelas para essa compra</option>
+                <?php foreach($this->installments() as $installment):?>
+                    <?php
+                    if(!empty($installment['installent_flag'])):
+                        $tax =  'Juros '.$installment['installent_flag'].'%';
+                    else:
+                        $tax =  'Sem Juros';
+                    endif;
+                    ?>
+                    <option value="<?php echo $installment['number'];?>">
+                        <?php echo $installment['number']?>x de
+                        <?php if($installment['discount_paypal'] > 0):
+                            $tax =  'Desconto de '.$installment['installment_value_total_discount'];
+                        ?>
+                            <?php echo $installment['installment_value_total_with_discount']; ?> - Total
+                            <?php echo $installment['installment_value_total_with_discount']; ?>
+                        <?php else:?>
+                            <?php echo $installment['installment_value']; ?> - Total
+                            <?php echo $installment['installment_value_total'];?>
+                        <?php endif;?>
+                        (<?php echo $tax; ?>)
+                    </option>
+                <?php endforeach;?>
+            </select>
+        <?php }else{ ?>
+            <input type="hidden" id="paypal_plus_instalments" value="">
+        <?php }?>
+        </div>
         <div id="paypal_plus_loading" class="paypal_plus_loading" style="display:none;">
             <div class="paypal_plus_loading_img"></div>
         </div>

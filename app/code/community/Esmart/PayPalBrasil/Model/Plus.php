@@ -1,25 +1,5 @@
 <?php
-/**
- * Smart E-commerce do Brasil Tecnologia LTDA
- *
- * INFORMAÇÕES SOBRE LICENÇA
- *
- * Open Software License (OSL 3.0).
- * http://opensource.org/licenses/osl-3.0.php
- *
- * DISCLAIMER
- *
- * Não edite este arquivo caso você pretenda atualizar este módulo futuramente
- * para novas versões.
- *
- * @category  Esmart
- * @package   Esmart_PayPalBrasil
- * @copyright Copyright (c) 2015 Smart E-commerce do Brasil Tecnologia LTDA. (http://www.e-smart.com.br)
- * @license   http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
- *
- * @author        Ricardo Martins <ricardo.martins@e-smart.com.br>
- * @author        Thiago H Oliveira <thiago.oliveira@e-smart.com.br>
- */
+
 class Esmart_PayPalBrasil_Model_Plus extends Mage_Payment_Model_Method_Abstract
 {
     /**
@@ -33,10 +13,6 @@ class Esmart_PayPalBrasil_Model_Plus extends Mage_Payment_Model_Method_Abstract
      * @const string
      */
     const CODE = 'paypal_plus';
-
-
-
-    
 
     /**
      * Tax ID type default
@@ -62,34 +38,27 @@ class Esmart_PayPalBrasil_Model_Plus extends Mage_Payment_Model_Method_Abstract
      */
     const MODE_LIVE = 'live';
 
-
-
     /**
      * Payment method default
      * @const string
      */
     const PROFILER_BASE_NAME = '%s #%d (Module Magento)';
 
-    
-
-    protected $_code            = self::CODE;
-    protected $_formBlockType   = 'esmart_paypalbrasil/plus_form';
-    protected $_infoBlockType   = 'esmart_paypalbrasil/plus_info';
-
-    protected $_isGateway       = true;
-    protected $_canAuthorize    = true;
-    protected $_canCapture      = true;
-    protected $_canCapturePartial       = false;
-    protected $_canRefund       = true;
-    protected $_canVoid         = true;
-    protected $_canUseInternal  = false;
-    protected $_canUseCheckout  = true;
+    protected $_code = self::CODE;
+    protected $_formBlockType = 'esmart_paypalbrasil/plus_form';
+    protected $_infoBlockType = 'esmart_paypalbrasil/plus_info';
+    protected $_isGateway = true;
+    protected $_canAuthorize = true;
+    protected $_canCapture = true;
+    protected $_canCapturePartial = false;
+    protected $_canRefund = true;
+    protected $_canVoid = true;
+    protected $_canUseInternal = false;
+    protected $_canUseCheckout = true;
     protected $_canUseForMultishipping = true;
-    protected $_canSaveCc       = false;
-    protected $_canOrder        = true;
-    protected $_canFetchTransactionInfo     = true;
-
-
+    protected $_canSaveCc = false;
+    protected $_canOrder = true;
+    protected $_canFetchTransactionInfo = true;
 
     /**
      * Website Payments Pro instance type
@@ -133,11 +102,11 @@ class Esmart_PayPalBrasil_Model_Plus extends Mage_Payment_Model_Method_Abstract
      */
     public function getOAuthCredential()
     {
-        $helper    = Mage::helper('core');
-        $clientId  = $helper->decrypt(Mage::getStoreConfig('payment/paypal_plus/app_client_id'));
+        $helper = Mage::helper('core');
+        $clientId = $helper->decrypt(Mage::getStoreConfig('payment/paypal_plus/app_client_id'));
         $appSecret = $helper->decrypt(Mage::getStoreConfig('payment/paypal_plus/app_secret'));
 
-        $oAuthToken =  new PayPal\Auth\OAuthTokenCredential($clientId, $appSecret);
+        $oAuthToken = new PayPal\Auth\OAuthTokenCredential($clientId, $appSecret);
 
         return $oAuthToken;
     }
@@ -150,19 +119,19 @@ class Esmart_PayPalBrasil_Model_Plus extends Mage_Payment_Model_Method_Abstract
     public function getApiContext()
     {
         /** @var PayPal\Rest\ApiContext $apiContext */
-        $apiContext  = new PayPal\Rest\ApiContext($this->getOAuthCredential());
+        $apiContext = new PayPal\Rest\ApiContext($this->getOAuthCredential());
 
         $mode = array(
             'mode' => $this->getMode(),
         );
 
         $apiContext->setConfig($mode);
-        $apiContext->addRequestHeader("PayPal-Partner-Attribution-Id" , 'Magento_Cart_CE_BR_PPPlus');
+        $apiContext->addRequestHeader("PayPal-Partner-Attribution-Id", 'Magento_Cart_CE_BR_PPPlus');
 
         Esmart_PayPalBrasil_Model_Debug::appendContent('[Plus][OPERATION MODE]', 'default', $mode);
 
         return $apiContext;
-    }    
+    }
 
     /**
      * Get mode SANDBOX | LIVE
@@ -224,7 +193,7 @@ class Esmart_PayPalBrasil_Model_Plus extends Mage_Payment_Model_Method_Abstract
         return $inputFields;
     }
 
-   /**
+    /**
      * Save return Paypal
      *
      * @param array
@@ -252,6 +221,26 @@ class Esmart_PayPalBrasil_Model_Plus extends Mage_Payment_Model_Method_Abstract
         /** @var Mage_Sales_Model_Quote_Payment $quotePayment */
         $quotePayment = $helper->getQuote()->getPayment();
 
+        $payment_id = $quotePayment->getAdditionalInformation('paypal_plus_payment_id');
+
+        $modelPayPalPlus = Mage::getModel('esmart_paypalbrasil/plus');
+        $creditFinancingOffered = $modelPayPalPlus->getDiscountPayPal($payment_id);
+
+        $installmentModel = Mage::getModel('esmart_paypalbrasil/installments');
+        $discountAdmin = $installmentModel->getInstallmentDiscount();
+
+        if(isset($creditFinancingOffered['discount_percentage'])) {
+
+            if ($creditFinancingOffered['discount_percentage'] != $discountAdmin) {
+                $data = array(
+                    'config_discount_paypal' => $creditFinancingOffered['discount_percentage'],
+                    'config_discount_magento' => $discountAdmin
+                );
+                Esmart_PayPalBrasil_Model_Debug::appendContent('[Plus][DATA FORM IFRAME]', 'executePaymentDiscount', $data);
+                Mage::throwException('Houve um problema com seu pagamento. Por favor entre em contato com a loja.');
+            }
+        }
+
         $quotePayment->setAdditionalInformation('paypal_plus_payer_id', $data['payerId'])
             ->setAdditionalInformation('paypal_plus_payer_status', $data['payerStatus'])
             ->setAdditionalInformation('paypal_plus_checkout_token', $data['checkoutId'])
@@ -277,7 +266,7 @@ class Esmart_PayPalBrasil_Model_Plus extends Mage_Payment_Model_Method_Abstract
      *
      * @return Mage_Payment_Model_Abstract
      */
-public function order(Varien_Object $payment, $amount)
+    public function order(Varien_Object $payment, $amount)
     {
         parent::order($payment, $amount);
 
@@ -288,7 +277,7 @@ public function order(Varien_Object $payment, $amount)
         // Data to transactions
         $invoice = $quote->getReservedOrderId();
         $nameStore = Mage::getStoreConfig('payment/paypal_plus/paypal_custom');
-        $transactionText = 'Pedido '.$invoice.' - '.$nameStore;
+        $transactionText = 'Pedido ' . $invoice . ' - ' . $nameStore;
 
         // Get data on order and payment
         $order = $payment->getOrder();
@@ -297,9 +286,23 @@ public function order(Varien_Object $payment, $amount)
         $apiContext = $this->getApiContext();
         $paypalPayment = \PayPal\Api\Payment::get($payment->getAdditionalInformation('paypal_plus_payment_id'), $apiContext);
 
-        // Create Amount
+        /** @var Esmart_PayPalBrasil_Model_Plus_Iframe $model */
         $model = Mage::getModel('esmart_paypalbrasil/plus_iframe');
-        $amountTransaction = $model->createAmount($quote);
+
+        if ($payment->getAdditionalInformation('paypal_plus_installments_cost') > 0) {
+            $amountTransaction = $model->createAmountInstallment($quote, $order);
+        } else {
+            $amountTransaction = $model->createAmount($quote);
+        }
+
+        $discount = -$payment->getAdditionalInformation('paypal_discount');
+
+        if ($discount != 0) {
+            $grandTotal = $quote->getBaseGrandTotal();
+            $discount = (-$discount);
+            $restoreTotal = round($grandTotal + $discount, 2);
+            $amountTransaction->setTotal($restoreTotal);
+        }
 
         // Set new data on transaction
         $transaction = new \PayPal\Api\Transaction();
@@ -314,7 +317,7 @@ public function order(Varien_Object $payment, $amount)
         $paymentExecution->setTransactions(array($transaction));
 
 
-       Esmart_PayPalBrasil_Model_Debug::appendContent('[Plus][EXECUTE PAYMENT REQUEST]', 'executePayment', array(var_export($paymentExecution->toArray(), true)));
+        Esmart_PayPalBrasil_Model_Debug::appendContent('[Plus][EXECUTE PAYMENT REQUEST]', 'executePayment', array(var_export($paymentExecution->toArray(), true)));
 
         if (!$paymentExecution->getPayerId()) {
             Esmart_PayPalBrasil_Model_Debug::writeLog();
@@ -366,21 +369,19 @@ public function order(Varien_Object $payment, $amount)
             /* create a invoice pendent */
             $invoice->register();
 
-            $order->addRelatedObject($invoice); /* better than Mage::getModel('core/resource_transaction')*/
+            $order->addRelatedObject($invoice);
+
+            $invoice->save();
+            $invoice->sendEmail(true);
 
             /* logic of "payment review" */
             if ($state == 'pending') {
                 Mage::getSingleton('core/session')->addNotice(Mage::helper('core')->__('Your Payment is being reviewed.'));
                 $payment->setIsTransactionClosed(false);
                 $payment->setIsTransactionPending(true);
+
                 return $this;
             }
-
-            /* logic of "payment review" */
-            if ($this->canCapture()) { /* same to set ($captureCase == self::CAPTURE_ONLINE) */
-                $invoice->capture();
-            }
-
 
             $payment->setSkipOrderProcessing(true);
 
@@ -436,7 +437,7 @@ public function order(Varien_Object $payment, $amount)
      */
     public function fetchTransactionInfo(Mage_Payment_Model_Info $payment, $transactionId)
     {
-        return  $this->_pro->fetchTransactionInfo($payment, $transactionId);
+        return $this->_pro->fetchTransactionInfo($payment, $transactionId);
     }
 
 
@@ -452,4 +453,62 @@ public function order(Varien_Object $payment, $amount)
         $this->_pro->refund($payment, $amount);
         return $this;
     }
+
+    /**
+     * Discount PayPal admin to one installment
+     *
+     * @param  $payment_id
+     * @return  paypalCreditFinancingOffered
+     */
+    public function getDiscountPayPal($payment_id)
+    {
+
+        $apiContext = $this->getApiContext();
+        $paypalPayment = \PayPal\Api\Payment::get($payment_id, $apiContext);
+        $paypalPaymentData = $paypalPayment->toArray();
+
+
+
+        if((!isset($paypalPaymentData['credit_financing_offered']['discount_amount']['value'])) && (Mage::getStoreConfig("payment/paypal_plus/instalments_active"))) {
+            /** @var Esmart_PayPalBrasil_Helper_Data $helper */
+            $helper = Mage::helper('esmart_paypalbrasil');
+            $quote = $helper->getQuote(null);
+
+            $subtotal = $quote->getShippingAddress()->getSubtotal();
+            $shipping = $quote->getShippingAddress()->getShippingAmount();
+
+            $total = $subtotal + $shipping;
+
+            $discount = Mage::getModel('esmart_paypalbrasil/installments_config')->getInstallmentDiscount();
+
+            $totalDiscount = $total * ($discount / 100);
+
+            $paypalPaymentData['credit_financing_offered']['discount_amount']['value'] = $totalDiscount;
+        }
+
+        if (!empty($paypalPaymentData['credit_financing_offered'])) {
+            return $paypalPaymentData['credit_financing_offered'];
+        } else {
+            return false;
+        }
+
+    }
+
+
+    /**
+     * Discount PayPal admin to one installment clear
+     *
+     * @param  $payment_id
+     * @return  paypalCreditFinancingOffered
+     */
+    public function clearDiscountPayPal()
+    {
+        $helper = Mage::helper('esmart_paypalbrasil');
+        $quote  = $helper->getQuote(null);
+        $quote->getPayment()->unsAdditionalInformation();
+        $quote->collectTotals();
+
+    }
 }
+
+

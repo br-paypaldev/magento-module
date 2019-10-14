@@ -25,7 +25,7 @@
 <config>
     <modules>
         <Esmart_PayPalBrasil>
-            <version>0.4.5.0</version>
+            <version>0.6.0.0</version>
         </Esmart_PayPalBrasil>
     </modules>
     <global>
@@ -70,6 +70,16 @@
                     </paypal_cancel_order_declined>
                 </observers>
             </sales_order_place_after>
+            <!-- add cost clean -->
+<!--             <controller_action_predispatch_checkout_cart_index>
+                <observers>
+                    <esmart_paypalbrasil>
+                        <class>esmart_paypalbrasil/observer</class>
+                        <method>cleanPayPalCost</method>
+                    </esmart_paypalbrasil>
+                </observers>
+            </controller_action_predispatch_checkout_cart_index> -->
+            <!-- end add cost clean -->
         </events>
         <models>
             <esmart_paypalbrasil>
@@ -108,9 +118,69 @@
                 <rewrite>
                     <express_shortcut>Esmart_PayPalBrasil_Block_Express_Shortcut</express_shortcut>
                     <express_form>Esmart_PayPalBrasil_Block_Express_Form</express_form>
+                    <sales>Esmart_PayPalBrasil_Block_Order_Item_Renderer_Default</sales>
                 </rewrite>
             </paypal>
+            <adminhtml>
+                <rewrite>
+                    <sales_order_totals>Esmart_PayPalBrasil_Block_Adminhtml_Sales_Order_Totals</sales_order_totals>
+                    <sales_order_invoice_totals>Esmart_PayPalBrasil_Block_Adminhtml_Sales_Invoice_Totals</sales_order_invoice_totals>
+                    <sales_order_creditmemo_totals>Esmart_PayPalBrasil_Block_Adminhtml_Sales_Creditmemo_Totals</sales_order_creditmemo_totals>
+                </rewrite>
+            </adminhtml>
         </blocks>
+        <!-- add cost totals -->
+        <sales>
+            <quote>
+                <totals>
+                    <esmart_paypalbrasil_cost>
+                        <class>esmart_paypalbrasil/installments_cost</class>
+                        <after>grand_total</after>
+                        <before>tax</before>
+                    </esmart_paypalbrasil_cost>
+                </totals>
+            </quote>
+            <order_invoice>
+                <totals>
+                    <esmart_paypalbrasil_cost>
+                        <class>esmart_paypalbrasil/installments_costinvoice</class>
+                        <after>grand_total</after>
+                        <before>tax</before>
+                    </esmart_paypalbrasil_cost>
+                </totals>
+            </order_invoice>
+            <order_creditmemo>
+                <totals>
+                    <esmart_paypalbrasil_cost>
+                        <class>esmart_paypalbrasil/installments_costcreditmemo</class>
+                        <after>grand_total</after>
+                        <before>tax</before>
+                    </esmart_paypalbrasil_cost>
+                </totals>
+            </order_creditmemo>
+        </sales>
+        <fieldsets>
+            <sales_convert_quote_address>
+                <esmart_paypalbrasil_cost_amount>
+                    <to_order>*</to_order>
+                    <to_invoce>*</to_invoce>
+                </esmart_paypalbrasil_cost_amount>
+                <base_esmart_paypalbrasil_cost_amount>
+                    <to_order>*</to_order>
+                    <to_invoce>*</to_invoce>
+                </base_esmart_paypalbrasil_cost_amount>
+                <esmart_paypalbrasil_discount_amount>
+                    <to_order>*</to_order>
+                    <to_invoce>*</to_invoce>
+                </esmart_paypalbrasil_discount_amount>
+                <base_esmart_paypalbrasil_discount_amount>
+                    <to_order>*</to_order>
+                    <to_invoce>*</to_invoce>
+                </base_esmart_paypalbrasil_discount_amount>
+
+            </sales_convert_quote_address>
+        </fieldsets>
+        <!-- End add cost totals -->
     </global>
     <adminhtml>
         <layout>
@@ -159,9 +229,25 @@
                 <args>
                     <modules>
                         <esmart_paypalbrasil before="Mage_Paypal">Esmart_PayPalBrasil</esmart_paypalbrasil>
+                        <!--<esmart_paypalbrasil before="Mage_Paypal_IpnController">Esmart_PayPalBrasil_Ipn</esmart_paypalbrasil>-->
                     </modules>
                 </args>
             </paypal>
+            <paypal>
+                <args>
+                    <modules>
+                        <esmart_paypalbrasil before="Mage_Paypal">Esmart_PayPalBrasil</esmart_paypalbrasil>
+                    </modules>
+                </args>
+            </paypal>
+            <!-- Overwrite AW Ajax Controller to fix a issue with payment method code-->
+            <aw_onestepcheckout>
+                <args>
+                    <modules>
+                        <esmart_paypalbrasil before="AW_Onestepcheckout">Esmart_PayPalBrasil</esmart_paypalbrasil>
+                    </modules>
+                </args>
+            </aw_onestepcheckout>
         </routers>
     </frontend>
     <default>
@@ -218,6 +304,18 @@
 Parcela(s): {parcela_qtde}x de {parcela_valor}]]></checkout_payment_info>
                 <debug_mode>0</debug_mode>
                 <paypalbrasil_url_ipn><![CDATA[https://{store_url}/paypal/ipn]]></paypalbrasil_url_ipn>
+                <instalment_2>0.00</instalment_2>
+                <instalment_3>0.00</instalment_3>
+                <instalment_4>0.00</instalment_4>
+                <instalment_5>0.00</instalment_5>
+                <instalment_5>0.00</instalment_5>
+                <instalment_6>0.00</instalment_6>
+                <instalment_7>0.00</instalment_7>
+                <instalment_8>0.00</instalment_8>
+                <instalment_9>0.00</instalment_9>
+                <instalment_10>0.00</instalment_10>
+                <instalment_11>0.00</instalment_11>
+                <instalment_12>0.00</instalment_12>
             </paypal_plus>
              <paypal_invoice>
                 <model>esmart_paypalbrasil/invoice</model>

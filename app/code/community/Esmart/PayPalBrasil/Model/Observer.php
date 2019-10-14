@@ -21,6 +21,13 @@
  */
 class Esmart_PayPalBrasil_Model_Observer
 {
+
+    protected function _config()
+    {
+        /** @var Esmart_PayPalBrasil_Model_Installments_Config $config */
+        return Mage::getModel('esmart_paypalbrasil/installments_config');
+    }
+
     /**
      * Observer to create a Web Profiler in admin panel
      *
@@ -130,7 +137,6 @@ class Esmart_PayPalBrasil_Model_Observer
      */
     public function PaypalDeclinedOrder(Varien_Event_Observer $observer)
     {
-        
 
         $order  = $observer->getOrder();
 
@@ -154,6 +160,26 @@ class Esmart_PayPalBrasil_Model_Observer
     protected function _helper()
     {
         return Mage::helper('esmart_paypalbrasil');
+    }
+
+    /**
+     * Clean the values of installments
+     * @return $this
+     */
+    public function cleanPayPalCost(Varien_Event_Observer $observer)
+    {
+
+        $modelPlus= Mage::getModel('esmart_paypalbrasil/plus');
+        $modelPlus->clearDiscountPayPal();
+
+        if($this->_config()->getStatusInstallments() == false) {
+            return $this;
+        }
+
+        $installmentModel = Mage::getModel('esmart_paypalbrasil/installments');
+        $installmentModel->cleanInstallments();
+
+        return $this;
     }
     
 }

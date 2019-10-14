@@ -1,0 +1,22 @@
+<?php
+$_order  = $this->getOrder();
+$_source = $this->getSource();
+?>
+<?php if ($_source->getEsmartPaypalbrasilCostAmount() > 0): ?>
+    <tr>
+        <td <?php echo $this->getLabelProperties()?>>
+            <?php echo Mage::helper('esmart_paypalbrasil')->getTextCost(); ?>
+        </td>
+        <td <?php echo $this->getValueProperties()?>><?php echo $_order->formatPrice($_source->getEsmartPaypalbrasilCostAmount()) ?></td>
+    </tr>
+<?php endif; ?>
+<?php if ($_source->getEsmartPaypalbrasilDiscountAmount() != 0): ?>
+    <tr>
+        <td <?php echo $this->getLabelProperties()?>>
+            <?php echo Mage::helper('esmart_paypalbrasil')->getTextDiscount(); ?>
+        </td>
+        <td <?php echo $this->getValueProperties()?>><?php echo $_order->formatPrice(-$_source->getEsmartPaypalbrasilDiscountAmount()) ?></td>
+    </tr>
+<?php endif; ?>
+
+

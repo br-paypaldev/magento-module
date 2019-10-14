@@ -1,26 +1,4 @@
 <?xml version="1.0"?>
-<!--
-/**
- * Smart E-commerce do Brasil Tecnologia LTDA
- *
- * INFORMAÇÕES SOBRE LICENÇA
- *
- * Open Software License (OSL 3.0).
- * http://opensource.org/licenses/osl-3.0.php
- *
- * DISCLAIMER
- *
- * Não edite este arquivo caso você pretenda atualizar este módulo futuramente
- * para novas versões.
- *
- * @category    Esmart
- * @package     Esmart_PayPalBrasil
- * @copyright   Copyright (c) 2013 Smart E-commerce do Brasil Tecnologia LTDA. (http://www.e-smart.com.br)
- * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
- *
- * @author         Tiago Sampaio <tiago.sampaio@e-smart.com.br>
- */
--->
 <config>
     <sections>
         <payment>
@@ -82,7 +60,7 @@
                                                 <show_in_website>0</show_in_website>
                                                 <show_in_store>0</show_in_store>
                                             </express_checkout_billing_agreement>
-                                             <express_checkout_frontend>
+                                            <express_checkout_frontend>
                                                 <fields>
                                                     <logo_footer translate="label comment">
                                                         <label>PayPal Footer Logo</label>
@@ -96,7 +74,7 @@
                                                         <show_in_store>1</show_in_store>
                                                         <shared>1</shared>
                                                     </logo_footer>
-                                                     <logo_productview translate="label comment">
+                                                    <logo_productview translate="label comment">
                                                         <label>PayPal Product View Logo</label>
                                                         <comment>Displays on Product View.</comment>
                                                         <config_path>paypal/style/logo_productview</config_path>
@@ -129,190 +107,166 @@
                         <include>1</include>
                         <comment>Use a transparent solution and your customer no longer need to leave your store to make a payment.</comment>
                         <activity_path>payment/paypal_plus/active</activity_path>
-                        <!--<learn_more_link>https://www.paypal.com/webapps/mpp/referral/paypal-express-checkout?partner_id=NB9WWHYEMVUMS</learn_more_link>-->
                         <fields>
-                            <paypal_plus_required type="group" translate="label">
-                                <label>Required PayPal Settings</label>
-                                <frontend_type>text</frontend_type>
+                            <enable_ppplus translate="label">
+                                <label>Enable this Solution</label>
+                                <config_path>payment/paypal_plus/active</config_path>
+                                <frontend_type>select</frontend_type>
+                                <source_model>adminhtml/system_config_source_yesno</source_model>
+                                <sort_order>0</sort_order>
                                 <show_in_default>1</show_in_default>
                                 <show_in_website>1</show_in_website>
+                                <show_in_store>1</show_in_store>
+                                <frontend_class>paypal-enabler paypal-ec-enabler</frontend_class>
+                            </enable_ppplus>
+                            <heading_library translate="label">
+                                <label>Which is your checkout?</label>
+                                <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
+                                <sort_order>1</sort_order>
+                                <show_in_default>1</show_in_default>
+                                <show_in_website>1</show_in_website>
+                                <show_in_store>1</show_in_store>
+                            </heading_library>
+                            <oscoptions translate="label">
+                                <label>Osc Options</label>
+                                <frontend_type>select</frontend_type>
+                                <source_model>esmart_paypalbrasil/adminhtml_OscOptions</source_model>
+                                <config_path>payment/paypal_plus/oscoptions</config_path>
+                                <sort_order>2</sort_order>
+                                <show_in_default>1</show_in_default>
+                                <show_in_website>1</show_in_website>
+                                <show_in_store>1</show_in_store>
+                            </oscoptions>
+                            <js_address>
+                                <label>Endereço JS</label>
+                                <config_path>payment/paypal_plus/js_address</config_path>
+                                <frontend_type>text</frontend_type>
+                                <sort_order>3</sort_order>
+                                <show_in_default>0</show_in_default>
+                                <show_in_website>0</show_in_website>
+                                <show_in_store>0</show_in_store>
+                            </js_address>
+                            <heading_credential translate="label">
+                                <label>Credenciais</label>
+                                <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
+                                <sort_order>4</sort_order>
+                                <show_in_default>1</show_in_default>
+                                <show_in_website>1</show_in_website>
+                                <show_in_store>1</show_in_store>
+                            </heading_credential>
+                            <app_client_id extends="//paypal_payments/payflow_advanced//api_username">
+                                <label>App Client Id</label>
+                                <config_path>payment/paypal_plus/app_client_id</config_path>
+                                <sort_order>5</sort_order>
+                                <show_in_default>1</show_in_default>
+                                <show_in_website>1</show_in_website>
+                                <show_in_store>1</show_in_store>
+                            </app_client_id>
+                            <app_secret extends="//paypal_payments/payflow_advanced//api_password">
+                                <label>App Secret</label>
+                                <config_path>payment/paypal_plus/app_secret</config_path>
+                                <sort_order>6</sort_order>
+                                <show_in_default>1</show_in_default>
+                                <show_in_website>1</show_in_website>
+                                <show_in_store>1</show_in_store>
+                            </app_secret>
+                            <heading_sandbox translate="label">
+                                <label>Sandbox</label>
+                                <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
+                                <sort_order>7</sort_order>
+                                <show_in_default>1</show_in_default>
+                                <show_in_website>1</show_in_website>
+                                <show_in_store>1</show_in_store>
+                            </heading_sandbox>
+                            <sandbox_flag extends="//paypal_payments/payflow_advanced//express//sandbox_flag">
+                                <config_path>payment/paypal_plus/sandbox_flag</config_path>
+                                <sort_order>8</sort_order>
+                                <show_in_default>1</show_in_default>
+                                <show_in_website>1</show_in_website>
+                                <show_in_store>1</show_in_store>
+                            </sandbox_flag>
+                            <debug_flag translate="label">
+                                <label>Debug Mode</label>
+                                <config_path>payment/paypal_plus/debug_mode</config_path>
+                                <frontend_type>select</frontend_type>
+                                <source_model>adminhtml/system_config_source_yesno</source_model>
+                                <sort_order>9</sort_order>
+                                <show_in_default>1</show_in_default>
+                                <show_in_website>1</show_in_website>
+                                <show_in_store>1</show_in_store>
+                            </debug_flag>
+                            <heading_customizations translate="label">
+                                <label>Customizações Visuais</label>
+                                <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
                                 <sort_order>10</sort_order>
-                                <frontend_model>paypal/adminhtml_system_config_fieldset_expanded</frontend_model>
-                                <fields>
-
-                                    <enable_ppplus translate="label">
-                                        <label>Enable this Solution</label>
-                                        <config_path>payment/paypal_plus/active</config_path>
-                                        <frontend_type>select</frontend_type>
-                                        <source_model>adminhtml/system_config_source_yesno</source_model>
-                                        <sort_order>0</sort_order>
-                                        <show_in_default>1</show_in_default>
-                                        <show_in_website>1</show_in_website>
-                                        <show_in_store>1</show_in_store>
-                                        <frontend_class>paypal-enabler paypal-ec-enabler</frontend_class>
-                                    </enable_ppplus>
-
-                                    <heading_library translate="label">
-                                        <label>Which is your checkout?</label>
-                                        <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
-                                        <sort_order>10</sort_order>
-                                        <show_in_default>1</show_in_default>
-                                        <show_in_website>1</show_in_website>
-                                        <show_in_store>1</show_in_store>
-                                    </heading_library>
-
-                                    <oscoptions translate="label">
-                                        <label>Osc Options</label>
-                                        <frontend_type>select</frontend_type>
-                                        <source_model>esmart_paypalbrasil/adminhtml_OscOptions</source_model>
-                                        <config_path>payment/paypal_plus/oscoptions</config_path>
-                                        <sort_order>12</sort_order>
-                                        <show_in_default>1</show_in_default>
-                                        <show_in_website>1</show_in_website>
-                                        <show_in_store>1</show_in_store>
-                                    </oscoptions>
-
-
-                                    <js_address>
-                                        <label>Endereço JS</label>
-                                        <config_path>payment/paypal_plus/js_address</config_path>
-                                        <frontend_type>text</frontend_type>
-                                        <sort_order>11</sort_order>
-                                        <show_in_default>0</show_in_default>
-                                        <show_in_website>0</show_in_website>
-                                        <show_in_store>0</show_in_store>
-                                    </js_address>
-
-                                    <heading_credential translate="label">
-                                        <label>Credenciais</label>
-                                        <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
-                                        <sort_order>20</sort_order>
-                                        <show_in_default>1</show_in_default>
-                                        <show_in_website>1</show_in_website>
-                                        <show_in_store>1</show_in_store>
-                                    </heading_credential>
-
-                                    <app_client_id extends="//paypal_payments/payflow_advanced//api_username">
-                                        <label>App Client Id</label>
-                                        <config_path>payment/paypal_plus/app_client_id</config_path>
-                                        <sort_order>21</sort_order>
-                                        <show_in_default>1</show_in_default>
-                                        <show_in_website>1</show_in_website>
-                                        <show_in_store>1</show_in_store>
-                                    </app_client_id>
-
-                                    <app_secret extends="//paypal_payments/payflow_advanced//api_password">
-                                        <label>App Secret</label>
-                                        <config_path>payment/paypal_plus/app_secret</config_path>
-                                        <sort_order>22</sort_order>
-                                        <show_in_default>1</show_in_default>
-                                        <show_in_website>1</show_in_website>
-                                        <show_in_store>1</show_in_store>
-                                    </app_secret>
-
-                                    <heading_sandbox translate="label">
-                                        <label>Sandbox</label>
-                                        <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
-                                        <sort_order>23</sort_order>
-                                        <show_in_default>1</show_in_default>
-                                        <show_in_website>1</show_in_website>
-                                        <show_in_store>1</show_in_store>
-                                    </heading_sandbox>
-
-                                     <sandbox_flag extends="//paypal_payments/payflow_advanced//express//sandbox_flag">
-                                        <config_path>payment/paypal_plus/sandbox_flag</config_path>
-                                        <sort_order>24</sort_order>
-                                        <show_in_default>1</show_in_default>
-                                        <show_in_website>1</show_in_website>
-                                        <show_in_store>1</show_in_store>
-                                    </sandbox_flag>
-
-                                    <debug_flag translate="label">
-                                        <label>Debug Mode</label>
-                                        <config_path>payment/paypal_plus/debug_mode</config_path>
-                                        <frontend_type>select</frontend_type>
-                                        <source_model>adminhtml/system_config_source_yesno</source_model>
-                                        <sort_order>25</sort_order>
-                                        <show_in_default>1</show_in_default>
-                                        <show_in_website>1</show_in_website>
-                                        <show_in_store>1</show_in_store>
-                                    </debug_flag>
-
-
-                                    <heading_customizations translate="label">
-                                        <label>Customizações Visuais</label>
-                                        <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
-                                        <sort_order>30</sort_order>
-                                        <show_in_default>1</show_in_default>
-                                        <show_in_website>1</show_in_website>
-                                        <show_in_store>1</show_in_store>
-                                    </heading_customizations>
-
-                                    <module_title>
-                                        <label>Title Paypal Plus</label>
-                                        <config_path>payment/paypal_plus/title</config_path>
-                                        <sort_order>31</sort_order>
-                                        <show_in_default>1</show_in_default>
-                                        <show_in_website>1</show_in_website>
-                                        <show_in_store>1</show_in_store>
-                                    </module_title>
-
-                                    <paypal_custom>
-                                        <label>Nome da Loja</label>
-                                        <config_path>payment/paypal_plus/paypal_custom</config_path>
-                                        <sort_order>32</sort_order>
-                                        <show_in_default>1</show_in_default>
-                                        <show_in_website>1</show_in_website>
-                                        <show_in_store>1</show_in_store>
-                                    </paypal_custom>
-
-                                    <checkout_payment_info>
-                                        <label>Checkout (Review Método Pagamento)</label>
-                                        <frontend_type>textarea</frontend_type>
-                                        <config_path>payment/paypal_plus/checkout_payment_info</config_path>
-                                        <comment><![CDATA[Além de elementos HTML, utilize os seguintes elementos para obter informações referente a transação: <br>
+                                <show_in_default>1</show_in_default>
+                                <show_in_website>1</show_in_website>
+                                <show_in_store>1</show_in_store>
+                            </heading_customizations>
+                            <module_title>
+                                <label>Title Paypal Plus</label>
+                                <config_path>payment/paypal_plus/title</config_path>
+                                <sort_order>11</sort_order>
+                                <show_in_default>1</show_in_default>
+                                <show_in_website>1</show_in_website>
+                                <show_in_store>1</show_in_store>
+                            </module_title>
+                            <paypal_custom>
+                                <label>Nome da Loja</label>
+                                <config_path>payment/paypal_plus/paypal_custom</config_path>
+                                <sort_order>12</sort_order>
+                                <show_in_default>1</show_in_default>
+                                <show_in_website>1</show_in_website>
+                                <show_in_store>1</show_in_store>
+                            </paypal_custom>
+                            <checkout_payment_info>
+                                <label>Checkout (Review Método Pagamento)</label>
+                                <frontend_type>textarea</frontend_type>
+                                <config_path>payment/paypal_plus/checkout_payment_info</config_path>
+                                <comment><![CDATA[Além de elementos HTML, utilize os seguintes elementos para obter informações referente a transação: <br>
                                         <b>{parcela_qtde}</b>: retorna a quantidade de parcelas; <br>
                                         <b>{parcela_valor}</b>: retorna o valor da parcela.
                                         ]]></comment>
-                                        <sort_order>32</sort_order>
-                                        <show_in_default>0</show_in_default>
-                                        <show_in_website>0</show_in_website>
-                                        <show_in_store>0</show_in_store>
-                                    </checkout_payment_info>
-
-                                    <heading_order translate="label">
-                                        <label>Order</label>
-                                        <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
-                                        <sort_order>43</sort_order>
-                                        <show_in_default>1</show_in_default>
-                                        <show_in_website>1</show_in_website>
-                                        <show_in_store>1</show_in_store>
-                                    </heading_order>
-
-                                    <order_status translate="label">
-                                        <label>New Order Status</label>
-                                        <frontend_type>select</frontend_type>
-                                        <source_model>adminhtml/system_config_source_order_status</source_model>
-                                        <config_path>payment/paypal_plus/order_status</config_path>
-                                        <sort_order>44</sort_order>
-                                        <show_in_default>1</show_in_default>
-                                        <show_in_website>1</show_in_website>
-                                        <show_in_store>0</show_in_store>
-                                    </order_status>
-
-                                    <order_failure translate="label">
-                                        <label>Create Order With Failure</label>
-                                        <config_path>payment/paypal_plus/order_failure</config_path>
-                                        <frontend_type>select</frontend_type>
-                                        <source_model>adminhtml/system_config_source_yesno</source_model>
-                                        <sort_order>45</sort_order>
-                                        <show_in_default>1</show_in_default>
-                                        <show_in_website>1</show_in_website>
-                                        <show_in_store>1</show_in_store>
-                                    </order_failure>
-                                </fields>
-                            </paypal_plus_required>
-                            <paypal_plus_required>
+                                <sort_order>13</sort_order>
+                                <show_in_default>0</show_in_default>
+                                <show_in_website>0</show_in_website>
+                                <show_in_store>0</show_in_store>
+                            </checkout_payment_info>
+                            <heading_order translate="label">
+                                <label>Order</label>
+                                <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
+                                <sort_order>14</sort_order>
+                                <show_in_default>1</show_in_default>
+                                <show_in_website>1</show_in_website>
+                                <show_in_store>1</show_in_store>
+                            </heading_order>
+                            <order_status translate="label">
+                                <label>New Order Status</label>
+                                <frontend_type>select</frontend_type>
+                                <source_model>adminhtml/system_config_source_order_status</source_model>
+                                <config_path>payment/paypal_plus/order_status</config_path>
+                                <sort_order>15</sort_order>
+                                <show_in_default>1</show_in_default>
+                                <show_in_website>1</show_in_website>
+                                <show_in_store>0</show_in_store>
+                            </order_status>
+                            <order_failure translate="label">
+                                <label>Create Order With Failure</label>
+                                <config_path>payment/paypal_plus/order_failure</config_path>
+                                <frontend_type>select</frontend_type>
+                                <source_model>adminhtml/system_config_source_yesno</source_model>
+                                <sort_order>16</sort_order>
+                                <show_in_default>1</show_in_default>
+                                <show_in_website>1</show_in_website>
+                                <show_in_store>1</show_in_store>
+                            </order_failure>
+                            <paypal_plus_required type="group" translate="label">
+                                <label>Configurações Avançadas</label>
+                                <frontend_type>text</frontend_type>
+                                <show_in_default>1</show_in_default>
+                                <show_in_website>1</show_in_website>
+                                <sort_order>17</sort_order>
+                                <frontend_model>paypal/adminhtml_system_config_fieldset_expanded</frontend_model>
                                 <fields>
                                     <ppplus_attributes type="group" translate="label comment">
                                         <label>Attributes Settings</label>
@@ -322,7 +276,7 @@
                                         <sort_order>49</sort_order>
                                         <group>paypal_plus_required</group>
                                         <frontend_model>paypal/adminhtml_system_config_fieldset_expanded</frontend_model>
-                                    <fields>
+                                        <fields>
                                             <heading_api_config translate="label">
                                                 <label>To / Do (Checkout default)</label>
                                                 <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
@@ -331,7 +285,6 @@
                                                 <show_in_website>1</show_in_website>
                                                 <show_in_store>1</show_in_store>
                                             </heading_api_config>
-
                                             <firstname translate="label">
                                                 <label>Firstname</label>
                                                 <frontend_type>select</frontend_type>
@@ -342,7 +295,6 @@
                                                 <show_in_website>1</show_in_website>
                                                 <show_in_store>1</show_in_store>
                                             </firstname>
-
                                             <lastname translate="label">
                                                 <label>Lastname</label>
                                                 <frontend_type>select</frontend_type>
@@ -353,7 +305,6 @@
                                                 <show_in_website>1</show_in_website>
                                                 <show_in_store>1</show_in_store>
                                             </lastname>
-
                                             <email translate="label">
                                                 <label>Email</label>
                                                 <frontend_type>select</frontend_type>
@@ -364,7 +315,6 @@
                                                 <show_in_website>1</show_in_website>
                                                 <show_in_store>1</show_in_store>
                                             </email>
-
                                             <cpf translate="label">
                                                 <label>CPF</label>
                                                 <frontend_type>select</frontend_type>
@@ -375,7 +325,6 @@
                                                 <show_in_website>1</show_in_website>
                                                 <show_in_store>1</show_in_store>
                                             </cpf>
-
                                             <cnpj translate="label">
                                                 <label>CNPJ</label>
                                                 <frontend_type>select</frontend_type>
@@ -386,7 +335,6 @@
                                                 <show_in_website>1</show_in_website>
                                                 <show_in_store>1</show_in_store>
                                             </cnpj>
-
                                             <phone translate="label">
                                                 <label>Telefone</label>
                                                 <frontend_type>select</frontend_type>
@@ -397,7 +345,6 @@
                                                 <show_in_website>1</show_in_website>
                                                 <show_in_store>1</show_in_store>
                                             </phone>
-
                                             <city translate="label">
                                                 <label>City</label>
                                                 <frontend_type>select</frontend_type>
@@ -408,7 +355,6 @@
                                                 <show_in_website>1</show_in_website>
                                                 <show_in_store>1</show_in_store>
                                             </city>
-
                                             <country_code translate="label">
                                                 <label>Country Code</label>
                                                 <frontend_type>select</frontend_type>
@@ -419,7 +365,6 @@
                                                 <show_in_website>1</show_in_website>
                                                 <show_in_store>1</show_in_store>
                                             </country_code>
-
                                             <postal_code translate="label">
                                                 <label>Postal Code</label>
                                                 <frontend_type>select</frontend_type>
@@ -430,7 +375,6 @@
                                                 <show_in_website>1</show_in_website>
                                                 <show_in_store>1</show_in_store>
                                             </postal_code>
-
                                             <state translate="label">
                                                 <label>State</label>
                                                 <frontend_type>select</frontend_type>
@@ -443,6 +387,231 @@
                                             </state>
                                         </fields>
                                     </ppplus_attributes>
+                                    <ppplus_attributes2 type="group" translate="label comment">
+                                        <label>Repasse de Juros</label>
+                                        <frontend_type>text</frontend_type>
+                                        <show_in_default>1</show_in_default>
+                                        <show_in_website>1</show_in_website>
+                                        <sort_order>50</sort_order>
+                                        <group>paypal_plus_required</group>
+                                        <frontend_model>paypal/adminhtml_system_config_fieldset_expanded</frontend_model>
+                                        <fields>
+                                            <installments translate="label">
+                                                <label>Habilitar esta solução</label>
+                                                <config_path>payment/paypal_plus/instalments_active</config_path>
+                                                <frontend_type>select</frontend_type>
+                                                <source_model>adminhtml/system_config_source_yesno</source_model>
+                                                <backend_model>esmart_paypalbrasil/adminhtml_system_config_backend_installments </backend_model>
+                                                <sort_order>147</sort_order>
+                                                <show_in_default>1</show_in_default>
+                                                <show_in_website>1</show_in_website>
+                                                <show_in_store>1</show_in_store>
+                                                <tooltip>Caso tenha duvidas sobre como habilitar o parcelamento, entre em contato com o PayPal através do 0800 047 4482.</tooltip>
+                                                <frontend_class>paypal-enabler paypal-ec-enabler</frontend_class>
+                                                <comment><![CDATA[Para que essa opção funcione configure sua conta PayPal para aceitar parcelamentos.]]></comment>
+                                            </installments>
+                                            <installments_discount translate="label">
+                                                <label>Possui desconto à vista</label>
+                                                <config_path>payment/paypal_plus/instalments_discount</config_path>
+                                                <frontend_type>select</frontend_type>
+                                                <source_model>adminhtml/system_config_source_yesno</source_model>
+                                                <backend_model>esmart_paypalbrasil/adminhtml_system_config_backend_installments </backend_model>
+                                                <sort_order>148</sort_order>
+                                                <show_in_default>1</show_in_default>
+                                                <show_in_website>1</show_in_website>
+                                                <show_in_store>1</show_in_store>
+                                                <frontend_class>paypal-enabler paypal-ec-enabler</frontend_class>
+                                                <comment><![CDATA[Desconto para pagamento à vista informado na conta PayPal do lojista.]]></comment>
+                                                <depends>
+                                                    <installments>1</installments>
+                                                </depends>
+                                            </installments_discount>
+                                            <installments_discount_value translate="label">
+                                                <label>Desconto</label>sss
+                                                <config_path>payment/paypal_plus/installments_discount_value</config_path>
+                                                <sort_order>149</sort_order>
+                                                <show_in_default>1</show_in_default>
+                                                <show_in_website>1</show_in_website>
+                                                <show_in_store>1</show_in_store>
+                                                <comment><![CDATA[Valor (%) informado na conta PayPal do lojista.]]></comment>
+                                                <depends>
+                                                    <installments>1</installments>
+                                                    <installments_discount>1</installments_discount>
+                                                </depends>
+                                            </installments_discount_value>
+                                            <installments_number translate="label">
+                                                <label>Quantidade de parcelas</label>sss
+                                                <config_path>payment/paypal_plus/merchantInstallmentSelection</config_path>
+                                                <sort_order>150</sort_order>
+                                                <show_in_default>1</show_in_default>
+                                                <show_in_website>1</show_in_website>
+                                                <show_in_store>1</show_in_store>
+                                                <comment><![CDATA[Mínimo de 2 parcelas; máximo de 12 parcelas.]]></comment>
+                                                <depends>
+                                                    <installments>1</installments>
+                                                </depends>
+                                            </installments_number>
+                                            <installments_minimal translate="label">
+                                                <label>Parcela mínima</label>
+                                                <config_path>payment/paypal_plus/installments_minimal</config_path>
+                                                <sort_order>151</sort_order>
+                                                <show_in_default>1</show_in_default>
+                                                <show_in_website>1</show_in_website>
+                                                <show_in_store>1</show_in_store>
+                                                <comment><![CDATA[Valor mínimo aceito pelo PayPal é de R$5,00. Este valor pode ser alterado para quantias maiores.]]></comment>
+                                                <depends>
+                                                    <installments>1</installments>
+                                                </depends>
+                                            </installments_minimal>
+                                            <installment_2>
+                                                <label>Juros para a 2º parcela</label>
+                                                <config_path>payment/paypal_plus/instalment_2</config_path>
+                                                <sort_order>152</sort_order>
+                                                <show_in_default>1</show_in_default>
+                                                <show_in_website>1</show_in_website>
+                                                <show_in_store>1</show_in_store>
+                                                <comment>Formato x.xx</comment>
+                                                <depends>
+                                                    <installments>1</installments>
+                                                </depends>
+                                            </installment_2>
+                                            <installment_3>
+                                                <label>Juros para a 3º parcela</label>
+                                                <config_path>payment/paypal_plus/instalment_3</config_path>
+                                                <sort_order>153</sort_order>
+                                                <show_in_default>1</show_in_default>
+                                                <show_in_website>1</show_in_website>
+                                                <show_in_store>1</show_in_store>
+                                                <depends>
+                                                    <installments>1</installments>
+                                                </depends>
+                                            </installment_3>
+                                            <installment_4>
+                                                <label>Juros para a 4º parcela</label>
+                                                <config_path>payment/paypal_plus/instalment_4</config_path>
+                                                <sort_order>154</sort_order>
+                                                <show_in_default>1</show_in_default>
+                                                <show_in_website>1</show_in_website>
+                                                <show_in_store>1</show_in_store>
+                                                <depends>
+                                                    <installments>1</installments>
+                                                </depends>
+                                            </installment_4>
+                                            <installment_5>
+                                                <label>Juros para a 5º parcela</label>
+                                                <config_path>payment/paypal_plus/instalment_5</config_path>
+                                                <sort_order>155</sort_order>
+                                                <show_in_default>1</show_in_default>
+                                                <show_in_website>1</show_in_website>
+                                                <show_in_store>1</show_in_store>
+                                                <depends>
+                                                    <installments>1</installments>
+                                                </depends>
+                                            </installment_5>
+                                            <installment_6>
+                                                <label>Juros para a 6º parcela</label>
+                                                <config_path>payment/paypal_plus/instalment_6</config_path>
+                                                <sort_order>156</sort_order>
+                                                <show_in_default>1</show_in_default>
+                                                <show_in_website>1</show_in_website>
+                                                <show_in_store>1</show_in_store>
+                                                <depends>
+                                                    <installments>1</installments>
+                                                </depends>
+                                            </installment_6>
+                                            <installment_7>
+                                                <label>Juros para a 7º parcela</label>
+                                                <config_path>payment/paypal_plus/instalment_7</config_path>
+                                                <sort_order>157</sort_order>
+                                                <show_in_default>1</show_in_default>
+                                                <show_in_website>1</show_in_website>
+                                                <show_in_store>1</show_in_store>
+                                                <depends>
+                                                    <installments>1</installments>
+                                                </depends>
+                                            </installment_7>
+                                            <installment_8>
+                                                <label>Juros para a 8º parcela</label>
+                                                <config_path>payment/paypal_plus/instalment_8</config_path>
+                                                <sort_order>158</sort_order>
+                                                <show_in_default>1</show_in_default>
+                                                <show_in_website>1</show_in_website>
+                                                <show_in_store>1</show_in_store>
+                                                <depends>
+                                                    <installments>1</installments>
+                                                </depends>
+                                            </installment_8>
+                                            <installment_9>
+                                                <label>Juros para a 9º parcela</label>
+                                                <config_path>payment/paypal_plus/instalment_9</config_path>
+                                                <sort_order>159</sort_order>
+                                                <show_in_default>1</show_in_default>
+                                                <show_in_website>1</show_in_website>
+                                                <show_in_store>1</show_in_store>
+                                                <depends>
+                                                    <installments>1</installments>
+                                                </depends>
+                                            </installment_9>
+                                            <installment_10>
+                                                <label>Juros para a 10º parcela</label>
+                                                <config_path>payment/paypal_plus/instalment_10</config_path>
+                                                <sort_order>160</sort_order>
+                                                <show_in_default>1</show_in_default>
+                                                <show_in_website>1</show_in_website>
+                                                <show_in_store>1</show_in_store>
+                                                <depends>
+                                                    <installments>1</installments>
+                                                </depends>
+                                            </installment_10>
+                                            <installment_11>
+                                                <label>Juros para a 11º parcela</label>
+                                                <config_path>payment/paypal_plus/instalment_11</config_path>
+                                                <sort_order>161</sort_order>
+                                                <show_in_default>1</show_in_default>
+                                                <show_in_website>1</show_in_website>
+                                                <show_in_store>1</show_in_store>
+                                                <depends>
+                                                    <installments>1</installments>
+                                                </depends>
+                                            </installment_11>
+                                            <installment_12>
+                                                <label>Juros para a 12º parcela</label>
+                                                <config_path>payment/paypal_plus/instalment_12</config_path>
+                                                <sort_order>162</sort_order>
+                                                <show_in_default>1</show_in_default>
+                                                <show_in_website>1</show_in_website>
+                                                <show_in_store>1</show_in_store>
+                                                <depends>
+                                                    <installments>1</installments>
+                                                </depends>
+                                            </installment_12>
+                                            <heading_instalments2 translate="label">
+                                                <label>Personalização</label>
+                                                <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
+                                                <sort_order>163</sort_order>
+                                                <show_in_default>1</show_in_default>
+                                                <show_in_website>1</show_in_website>
+                                                <show_in_store>1</show_in_store>
+                                                <depends>
+                                                    <installments>1</installments>
+                                                </depends>
+                                            </heading_instalments2>
+                                            <paypal_custom>
+                                                <label>Nome de exibição</label>
+                                                <title>Juros</title>
+                                                <config_path>payment/paypal_plus/installment_text</config_path>
+                                                <sort_order>170</sort_order>
+                                                <show_in_default>1</show_in_default>
+                                                <show_in_website>1</show_in_website>
+                                                <show_in_store>1</show_in_store>
+                                                <tooltip>Valor Padrão - Juros</tooltip>
+                                                <comment><![CDATA[Texto que será exibido ao cliente no checkout.]]></comment>
+                                                <depends>
+                                                    <installments>1</installments>
+                                                </depends>
+                                            </paypal_custom>
+                                        </fields>
+                                    </ppplus_attributes2>
                                 </fields>
                             </paypal_plus_required>
                         </fields>
@@ -488,7 +657,7 @@
                                             </merchantid>
                                         </fields>
                                     </incontext>
-                                     <login_ec type="group" translate="label comment">
+                                    <login_ec type="group" translate="label comment">
                                         <label>Express Checkout Login</label>
                                         <frontend_type>text</frontend_type>
                                         <sort_order>102</sort_order>
@@ -527,7 +696,6 @@
                             </express_checkout_required>
                         </fields>
                     </express_checkout>
-
                     <paypal_invoice type="group" translate="label comment">
                         <label>Invoice</label>
                         <frontend_type>text</frontend_type>
@@ -542,81 +710,73 @@
                         <comment>Use a Invoice solution to create accounts in a backend.</comment>
                         <activity_path>payment/paypal_invoice/active</activity_path>
                         <!--<learn_more_link>https://www.paypal.com/webapps/mpp/referral/paypal-express-checkout?partner_id=NB9WWHYEMVUMS</learn_more_link>-->
-                            <fields>
+                        <fields>
 
-                                    <enable_invoice translate="label">
-                                        <label>Enable this Solution</label>
-                                        <config_path>payment/paypal_invoice/active</config_path>
-                                        <frontend_type>select</frontend_type>
-                                        <source_model>adminhtml/system_config_source_yesno</source_model>
-                                        <sort_order>0</sort_order>
-                                        <show_in_default>1</show_in_default>
-                                        <show_in_website>1</show_in_website>
-                                        <show_in_store>1</show_in_store>
-                                        <frontend_class>paypal-enabler paypal-ec-enabler</frontend_class>
-                                    </enable_invoice>
+                            <enable_invoice translate="label">
+                                <label>Enable this Solution</label>
+                                <config_path>payment/paypal_invoice/active</config_path>
+                                <frontend_type>select</frontend_type>
+                                <source_model>adminhtml/system_config_source_yesno</source_model>
+                                <sort_order>0</sort_order>
+                                <show_in_default>1</show_in_default>
+                                <show_in_website>1</show_in_website>
+                                <show_in_store>1</show_in_store>
+                                <frontend_class>paypal-enabler paypal-ec-enabler</frontend_class>
+                            </enable_invoice>
 
-                                    <heading_credential translate="label">
-                                        <label>Credenciais</label>
-                                        <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
-                                        <sort_order>20</sort_order>
-                                        <show_in_default>1</show_in_default>
-                                        <show_in_website>1</show_in_website>
-                                        <show_in_store>1</show_in_store>
-                                    </heading_credential>
+                            <heading_credential translate="label">
+                                <label>Credenciais</label>
+                                <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
+                                <sort_order>20</sort_order>
+                                <show_in_default>1</show_in_default>
+                                <show_in_website>1</show_in_website>
+                                <show_in_store>1</show_in_store>
+                            </heading_credential>
 
+                            <app_client_id extends="//paypal_payments/payflow_advanced//api_username">
+                                <label>App Client Id</label>
+                                <config_path>payment/paypal_invoice/app_client_id</config_path>
+                                <sort_order>22</sort_order>
+                                <show_in_default>1</show_in_default>
+                                <show_in_website>1</show_in_website>
+                                <show_in_store>1</show_in_store>
+                            </app_client_id>
 
-                                    <app_client_id extends="//paypal_payments/payflow_advanced//api_username">
-                                        <label>App Client Id</label>
-                                        <config_path>payment/paypal_invoice/app_client_id</config_path>
-                                        <sort_order>22</sort_order>
-                                        <show_in_default>1</show_in_default>
-                                        <show_in_website>1</show_in_website>
-                                        <show_in_store>1</show_in_store>
-                                    </app_client_id>
-
-                                    <app_secret extends="//paypal_payments/payflow_advanced//api_password">
-                                        <label>App Secret</label>
-                                        <config_path>payment/paypal_invoice/app_secret</config_path>
-                                        <sort_order>23</sort_order>
-                                        <show_in_default>1</show_in_default>
-                                        <show_in_website>1</show_in_website>
-                                        <show_in_store>1</show_in_store>
-                                    </app_secret>
-
-
-                                    <heading_sandbox translate="label">
-                                        <label>Sandbox</label>
-                                        <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
-                                        <sort_order>24</sort_order>
-                                        <show_in_default>1</show_in_default>
-                                        <show_in_website>1</show_in_website>
-                                        <show_in_store>1</show_in_store>
-                                    </heading_sandbox>
-
-                                     <sandbox_flag extends="//paypal_payments/payflow_advanced//express//sandbox_flag">
-                                        <config_path>payment/paypal_invoice/sandbox_flag</config_path>
-                                        <sort_order>25</sort_order>
-                                        <show_in_default>1</show_in_default>
-                                        <show_in_website>1</show_in_website>
-                                        <show_in_store>1</show_in_store>
-                                    </sandbox_flag>
-
-
+                            <app_secret extends="//paypal_payments/payflow_advanced//api_password">
+                                <label>App Secret</label>
+                                <config_path>payment/paypal_invoice/app_secret</config_path>
+                                <sort_order>23</sort_order>
+                                <show_in_default>1</show_in_default>
+                                <show_in_website>1</show_in_website>
+                                <show_in_store>1</show_in_store>
+                            </app_secret>
+                            <heading_sandbox translate="label">
+                                <label>Sandbox</label>
+                                <frontend_model>adminhtml/system_config_form_field_heading</frontend_model>
+                                <sort_order>24</sort_order>
+                                <show_in_default>1</show_in_default>
+                                <show_in_website>1</show_in_website>
+                                <show_in_store>1</show_in_store>
+                            </heading_sandbox>
+                            <sandbox_flag extends="//paypal_payments/payflow_advanced//express//sandbox_flag">
+                                <config_path>payment/paypal_invoice/sandbox_flag</config_path>
+                                <sort_order>25</sort_order>
+                                <show_in_default>1</show_in_default>
+                                <show_in_website>1</show_in_website>
+                                <show_in_store>1</show_in_store>
+                            </sandbox_flag>
                         </fields>
                     </paypal_invoice>
-
-                     <wps_express>
+                    <wps_express>
                         <backend_config>
                             <BR>
                                 <include>0</include>
                                 <sort_order>30</sort_order>
                             </BR>
-                            </backend_config>
-                     </wps_express>
+                        </backend_config>
+                    </wps_express>
                 </paypal_payments>
             </groups>
         </payment>
     </sections>
 </config>
-

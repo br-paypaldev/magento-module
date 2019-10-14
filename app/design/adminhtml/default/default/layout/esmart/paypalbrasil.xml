@@ -1,21 +1,101 @@
 <?xml version="1.0"?>
 <layout version="0.1.0">
-	<!-- Default layout, loads most of the pages -->
-	<default>
-
-	</default>
-
-	<adminhtml_system_config_edit>
-		<reference name="head">
-			<action method="addCss"><name>esmart/paypalbrasil/css/paypalbrasil.css</name></action>
-		</reference>
-	</adminhtml_system_config_edit>
-	
-	<adminhtml_sales_order_create_index>
-		<reference name="head">
-			<action method="addCss"><name>esmart/paypalbrasil/css/paypalbrasil.css</name></action>
-		</reference>
-	</adminhtml_sales_order_create_index>
-
-
+    <!-- Default layout, loads most of the pages -->
+    <default>
+    </default>
+    <adminhtml_system_config_edit>
+        <reference name="head">
+            <action method="addCss">
+                <name>esmart/paypalbrasil/css/paypalbrasil.css</name>
+            </action>
+        </reference>
+    </adminhtml_system_config_edit>
+    <adminhtml_sales_order_create_index>
+        <reference name="head">
+            <action method="addCss">
+                <name>esmart/paypalbrasil/css/paypalbrasil.css</name>
+            </action>
+        </reference>
+    </adminhtml_sales_order_create_index>
+    <adminhtml_sales_order_view>
+        <reference name="order_totals">
+            <block type="adminhtml/sales_order_totals_item" name="esmart_paypalbrasil_cost"
+                   template="sales/order/totals/item.phtml">
+                <action method="setSourceField">
+                    <value>esmart_paypalbrasil_discount_amount</value>
+                </action>
+                <action method="setLabel" translate="value" module="esmart_paypalbrasil">
+                    <value helper="esmart_paypalbrasil/getTextCost"></value>
+                </action>
+                <action method="setSourceField">
+                    <value>esmart_paypalbrasil_discount_amount</value>
+                </action>
+                <action method="setLabel" translate="value" module="esmart_paypalbrasil">
+                    <value helper="esmart_paypalbrasil/getTextDiscount"></value>
+                </action>
+            </block>
+        </reference>
+    </adminhtml_sales_order_view>
+    <adminhtml_sales_order_invoice_view>
+        <reference name="invoice_totals">
+            <block type="adminhtml/sales_order_totals_item" name="esmart_paypalbrasil_cost"
+                   template="sales/order/totals/item.phtml">
+                <action method="setSourceField">
+                    <value>esmart_paypalbrasil_cost_amount</value>
+                </action>
+                <action method="setLabel" translate="value" module="esmart_paypalbrasil">
+                    <value helper="esmart_paypalbrasil/getTextCost"></value>
+                </action>
+                <action method="setSourceField">
+                    <value>esmart_paypalbrasil_discount_amount</value>
+                </action>
+                <action method="setLabel" translate="value" module="esmart_paypalbrasil">
+                    <value helper="esmart_paypalbrasil/getTextDiscount"></value>
+                </action>
+            </block>
+        </reference>
+    </adminhtml_sales_order_invoice_view>
+    <adminhtml_sales_order_invoice_view>
+        <reference name="invoice_totals">
+            <block type="adminhtml/sales_order_totals_item" name="esmart_paypalbrasil_cost"
+                   template="sales/order/totals/item.phtml">
+                <action method="setSourceField">
+                    <value>esmart_paypalbrasil_cost_amount</value>
+                </action>
+                <action method="setLabel" translate="value" module="esmart_paypalbrasil">
+                    <value helper="esmart_paypalbrasil/getTextCost"></value>
+                </action>
+                <action method="setSourceField">
+                    <value>esmart_paypalbrasil_discount_amount</value>
+                </action>
+                <action method="setLabel" translate="value" module="esmart_paypalbrasil">
+                    <value helper="esmart_paypalbrasil/getTextDiscount"></value>
+                </action>
+            </block>
+        </reference>
+    </adminhtml_sales_order_invoice_view>
+    <adminhtml_sales_order_creditmemo_new>
+        <reference name="creditmemo_totals">
+            <block type="adminhtml/sales_order_totals_item" name="esmart_paypalbrasil_cost"
+                   template="sales/order/totals/item.phtml">
+                <action method="setSourceField">
+                    <value>esmart_paypalbrasil_cost_amount</value>
+                </action>
+                <action method="setLabel" translate="value" module="esmart_paypalbrasil">
+                    <value helper="esmart_paypalbrasil/getTextCost"></value>
+                </action>
+                <action method="setSourceField">
+                    <value>esmart_paypalbrasil_discount_amount</value>
+                </action>
+                <action method="setLabel" translate="value" module="esmart_paypalbrasil">
+                    <value helper="esmart_paypalbrasil/getTextDiscount"></value>
+                </action>
+            </block>
+        </reference>
+    </adminhtml_sales_order_creditmemo_new>
+    <adminhtml_sales_order_creditmemo_updateqty>
+        <reference name="creditmemo_totals">
+            <block type="adminhtml/sales_order_totals_item" name="customerbalance" template="sales/order/totals.phtml" after="-" />
+        </reference>
+    </adminhtml_sales_order_creditmemo_updateqty>
 </layout>

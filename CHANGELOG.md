@@ -1,3 +1,16 @@
+
+**1.0.3**
++ Adição de novas funcionalidades para o PayPal Plus:
+	+ Suporte ao Repasse de Juros ao consumidor final
+	+ Suporte melhor integrado ao pagamento à vista com desconto
+	+ Melhoria na comunicação  dos detalhes da compra
++ Adição de compatibilidade com os seguintes módulos de OneStepCheckout para a funcionalidade de Repasse de Juros:
+	+ iPAGARE 1.8.0
+	+ Firecheckout 4.3.6
+	+ Aheadwoks 1.3.11
+	+ Amasty 3.2.6
+	+ Inovarti 6
+
 **1.0.2**
 + Diversas otimizações e mudanças para o PayPal Plus:
 	+ Otimização na validação de caracteres do cliente

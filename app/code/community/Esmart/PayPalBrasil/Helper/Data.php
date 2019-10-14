@@ -37,6 +37,13 @@ class Esmart_PayPalBrasil_Helper_Data extends Mage_Core_Helper_Data
     const JS_EVENTS_DEFAULT = 'esmart/paypalbrasil/Esmart_PaypalBrasilPrototype.events.default.js';
 
     /**
+     * JS events default
+     * @const string
+     */
+    #const JS_EVENTS_VENDAMAIS = 'esmart/paypalbrasil/Esmart_PaypalBrasil.events.vendamais.js';
+    const JS_EVENTS_VENDAMAIS = 'esmart/paypalbrasil/Esmart_PaypalBrasilPrototype.events.vendamais.js';
+
+    /**
      * JS events INOVARTI
      * @const string
      */
@@ -67,14 +74,6 @@ class Esmart_PayPalBrasil_Helper_Data extends Mage_Core_Helper_Data
      * @const string
      */
     const JS_EVENTS_AHEADWORKS = 'esmart/paypalbrasil/Esmart_PaypalBrasilPrototype.events.aheadworks.js';
-
-    /**
-     * JS events AHEADWORKS
-     * @const string
-     */
-    #const JS_EVENTS_VENDAMAIS = 'esmart/paypalbrasil/Esmart_PaypalBrasilPrototype.events.vendamais.js';
-    const JS_EVENTS_VENDAMAIS = 'esmart/paypalbrasil/Esmart_PaypalBrasilPrototype.events.vendamais.js';
-
 
     /**
      * @var string
@@ -276,10 +275,10 @@ JS;
         $js = $this->getConfig('paypal_plus','oscoptions');
 
         if (!$js) {
-           return ($returnJSEvent ? $this->getFullJsUrl(self::JS_EVENTS_DEFAULT) : true);
+            return ($returnJSEvent ? $this->getFullJsUrl(self::JS_EVENTS_DEFAULT) : true);
         }
 
-        return $this->getFullJsUrl($js);        
+        return $this->getFullJsUrl($js);
     }
 
     /**
@@ -325,7 +324,7 @@ JS;
         if ($exception) {
 
             $message[]  = "Exception Message : {$exception->getMessage()}";
-            
+
             if (@$exception->getData()) {
                 $data = json_decode($exception->getData());
             }
@@ -407,4 +406,46 @@ JS;
             substr($addres, 0, 100)
         );
     }
+
+    /**
+     * 100 character  limit for  the address
+     *
+     * @param float $value
+     * @return string
+     */
+    public function formatValueInstallments($value, $formatBr = true){
+
+        $value = round(floor($value * 100) / 100,2);
+
+        if($formatBr){
+            return 'R$ ' . number_format($value, 2, ',', '.');
+        }
+
+        return number_format($value, 2, '.', '.');
+    }
+
+    /**
+     * Text to cost to buy
+     *
+     * @param float $value
+     * @return string
+     */
+    public function getTextCost(){
+
+        $model = Mage::getModel('esmart_paypalbrasil/installments_config');
+
+        return $model->getCustomizeText();
+    }
+
+    /**
+     * text to PayPal discount
+     *
+     * @param float $value
+     * @return string
+     */
+    public function getTextDiscount(){
+
+        return 'PayPal Desconto';
+    }
+
 }

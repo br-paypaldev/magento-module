@@ -25,19 +25,19 @@
 
 
 	<default>
-		<reference name="head">			
+		<reference name="head">
 			<action method="addJs" ifconfig="payment/incontext/enable">
 				<script>esmart/paypalbrasil/paypal-in-context-cart-product.js</script>
-			</action>	
+			</action>
 		</reference>
 
 		<reference name="before_body_end">
 			<block type="esmart_paypalbrasil/express_shortcut_incontext_js" ifconfig="payment/incontext/enable" name="paypal.incontext.js"></block>
 		</reference>
 		<reference name="footer">
-		 	 <block type="esmart_paypalbrasil/logo" name="paypal.footer.logo" template="esmart/paypalbrasil/footer_logo.phtml">
-		 	 	<action method="setLogoType"><LogoType>logo_footer</LogoType></action>
-            </block>
+			<block type="esmart_paypalbrasil/logo" name="paypal.footer.logo" template="esmart/paypalbrasil/footer_logo.phtml">
+				<action method="setLogoType"><LogoType>logo_footer</LogoType></action>
+			</block>
 		</reference>
 
 		<update handle="PayPalBrasil_Append_Blocks"/>
@@ -92,14 +92,14 @@
 
 		<!-- login in all checkouts -->
 		<reference name="content">
-        	 <block type="esmart_paypalbrasil/express_shortcut_login" name="checkout.login.paypal_express" before="-" template="esmart/paypalbrasil/express/shortcut/login.phtml"/>
+			<block type="esmart_paypalbrasil/express_shortcut_login" name="checkout.login.paypal_express" before="-" template="esmart/paypalbrasil/express/shortcut/login.phtml"/>
 		</reference>
 
 		<!-- incontext phtml set id -->
 		<reference name="checkout.onepage.payment">
 			<action method="setTemplate" ifconfig="payment/incontext/enable">
-                <template>esmart/paypalbrasil/onepage/payment.phtml</template>
-            </action>
+				<template>esmart/paypalbrasil/onepage/payment.phtml</template>
+			</action>
 		</reference>
 	</PayPalBrasil_Append_Checkouts>
 
@@ -111,21 +111,29 @@
 		</reference>
 	</PayPalBrasil_Append_AW_OneStepCheckout>
 
-	<customer_account_login translate="label">        
-        <reference name="content">
-        	 <block type="esmart_paypalbrasil/express_shortcut_login" name="checkout.login.paypal_express.login_account" template="esmart/paypalbrasil/express/shortcut/login.phtml"/>
-        </reference>
-    </customer_account_login>
+	<PayPalBrasil_Append_Inovarti_OneStepCheckout>
+		<reference name="head">
+			<action method="addCss" ifconfig="payment/paypal_plus/active">
+				<name>esmart/paypalbrasil/css/inovarti_onestepcheckout.css</name>
+			</action>
+		</reference>
+	</PayPalBrasil_Append_Inovarti_OneStepCheckout>
 
-    <customer_account_create translate="label">        
-        <reference name="content">
-        	 <block type="esmart_paypalbrasil/express_shortcut_login" name="checkout.login.paypal_express.create_account" before="-" template="esmart/paypalbrasil/express/shortcut/login.phtml"/>
-        </reference>
-    </customer_account_create>
+	<customer_account_login translate="label">
+		<reference name="content">
+			<block type="esmart_paypalbrasil/express_shortcut_login" name="checkout.login.paypal_express.login_account" template="esmart/paypalbrasil/express/shortcut/login.phtml"/>
+		</reference>
+	</customer_account_login>
 
-    <esmart_paypalbrasil_login_review>
-    	<update handle="paypal_express_review"/>
-    </esmart_paypalbrasil_login_review>
+	<customer_account_create translate="label">
+		<reference name="content">
+			<block type="esmart_paypalbrasil/express_shortcut_login" name="checkout.login.paypal_express.create_account" before="-" template="esmart/paypalbrasil/express/shortcut/login.phtml"/>
+		</reference>
+	</customer_account_create>
+
+	<esmart_paypalbrasil_login_review>
+		<update handle="paypal_express_review"/>
+	</esmart_paypalbrasil_login_review>
 
 
 	<checkout_cart_index>
@@ -142,9 +150,9 @@
 			<action method="setTemplate"><template>esmart/paypalbrasil/express/shortcut.phtml</template></action>
 		</reference>
 		<reference name="product.info.extrahint">
-		 	 <block type="esmart_paypalbrasil/logo" name="paypal.productview.logo" after="-" template="esmart/paypalbrasil/product_logo.phtml">
-		 	 	<action method="setLogoType"><LogoType>logo_productview</LogoType></action>
-            </block>
+			<block type="esmart_paypalbrasil/logo" name="paypal.productview.logo" after="-" template="esmart/paypalbrasil/product_logo.phtml">
+				<action method="setLogoType"><LogoType>logo_productview</LogoType></action>
+			</block>
 		</reference>
 	</catalog_product_view>
 
@@ -157,7 +165,7 @@
 	<firecheckout_index_index>
 		<update handle="PayPalBrasil_Append_Checkouts"/>
 	</firecheckout_index_index>
-	
+
 	<!-- SmartCheckout Handle -->
 	<esmart_smartcheckout_index_index>
 		<update handle="PayPalBrasil_Append_Checkouts"/>
@@ -166,6 +174,7 @@
 	<!-- Innovarti checkout -->
 	<onestepcheckout_index_index>
 		<update handle="PayPalBrasil_Append_Checkouts"/>
+		<update handle="PayPalBrasil_Append_Inovarti_OneStepCheckout"/>
 	</onestepcheckout_index_index>
 
 	<!-- AheadWorks checkout -->
@@ -173,5 +182,59 @@
 		<update handle="PayPalBrasil_Append_Checkouts"/>
 		<update handle="PayPalBrasil_Append_AW_OneStepCheckout"/>
 	</aw_onestepcheckout_index_index>
+
+	<sales_order_view>
+		<reference name="order_totals">
+			<block type="esmart_paypalbrasil/sales_order_cost" name="esmart_paypalbrasil_cost" template="esmart/paypalbrasil/order/cost.phtml" />
+		</reference>
+	</sales_order_view>
+
+	<sales_order_print>
+		<reference name="order_totals">
+			<block type="esmart_paypalbrasil/sales_order_cost" name="esmart_paypalbrasil_cost" template="esmart/paypalbrasil/order/cost.phtml" />
+		</reference>
+	</sales_order_print>
+
+	<sales_order_invoice>
+		<reference name="invoice_totals">
+			<block type="esmart_paypalbrasil/sales_order_cost" name="esmart_paypalbrasil_cost" template="esmart/paypalbrasil/order/cost.phtml" />
+		</reference>
+	</sales_order_invoice>
+
+	<sales_order_print_invoice>
+		<reference name="order_totals">
+			<block type="esmart_paypalbrasil/sales_order_cost" name="esmart_paypalbrasil_cost" template="esmart/paypalbrasil/order/cost.phtml" />
+		</reference>
+	</sales_order_print_invoice>
+
+	<sales_email_order_invoice_items>
+		<reference name="invoice_totals">
+			<block type="esmart_paypalbrasil/sales_order_cost" name="esmart_paypalbrasil_cost" template="esmart/paypalbrasil/order/cost.phtml" />
+		</reference>
+	</sales_email_order_invoice_items>
+
+	<sales_email_order_invoice_renderers>
+		<reference name="order_totals">
+			<block type="esmart_paypalbrasil/sales_order_cost" name="esmart_paypalbrasil_cost" template="esmart/paypalbrasil/order/cost.phtml" />
+		</reference>
+	</sales_email_order_invoice_renderers>
+
+	<sales_email_order_items>
+		<reference name="order_totals">
+			<block type="esmart_paypalbrasil/sales_order_cost" name="esmart_paypalbrasil_cost" template="esmart/paypalbrasil/order/cost.phtml" />
+		</reference>
+	</sales_email_order_items>
+
+	<sales_order_printinvoice>
+		<reference name="invoice_totals">
+			<block type="esmart_paypalbrasil/sales_order_cost" name="esmart_paypalbrasil_cost" template="esmart/paypalbrasil/order/cost.phtml" />
+		</reference>
+	</sales_order_printinvoice>
+
+	<sales_email_order_creditmemo_items>
+		<reference name="order_totals">
+			<block type="esmart_paypalbrasil/sales_order_cost" name="esmart_paypalbrasil_cost" template="esmart/paypalbrasil/order/cost.phtml" />
+		</reference>
+	</sales_email_order_creditmemo_items>
 
 </layout>
