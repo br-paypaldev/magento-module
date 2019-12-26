@@ -113,13 +113,25 @@ function billingChanged() {
 
 // ---------------------------------------------------------------------------------
 
-
-
 window.onload = function(){
-    // clean paypal radio buttons when Dom:load
-    if ($('p_method_paypal_plus').checked) {
-        $('p_method_paypal_plus').checked = false;
-    }
+    var valChecker = 0;
+    var timerPaypal = setInterval(function(timer) {
+        if ($('p_method_paypal_plus').checked) {
+            $('p_method_paypal_plus').click();
+
+            clearInterval(timerPaypal);
+
+            return true;
+        }
+
+        if (valChecker == 30) {
+            clearInterval(timerPaypal);
+        }
+
+        valChecker++;
+
+        return false;
+    }, 1000);
 };
 
 if(configIframe.installments == true) {
@@ -130,11 +142,11 @@ if(configIframe.installments == true) {
 
     // Check if address fields are fulfill and print error message in case there is something wrong
     $$("input[name='payment[method]']").invoke('observe', 'change', function (event) {
-        if(event.target.id == 'p_method_paypal_plus' ){
+        if (event.target.id == 'p_method_paypal_plus') {
             $('paypal_plus_instalments').show();
             $('payment_form_paypal_plus').show();
             $('paypal_plus_instalments').removeAttribute("disabled");
-        }else{
+        } else {
             $('payment_form_paypal_plus').hide();
             $('paypal_plus_iframe').update('').removeAttribute('style');
         }
@@ -174,15 +186,15 @@ if(configIframe.installments == true) {
                             EsmartPaypalBrasilPPPlus.iframe_loaded = null;
                             event.preventDefault();
                             return false;
-                        } 
+                        }
 
                         if (!EsmartPaypalBrasilBtnContinue.btnCheckout) {
                             // button checkout
                             var BtnAwCheckout = $('aw-onestepcheckout-place-order').select('button').first();
-        
+
                             BtnAwCheckout.addClassName('aw-onestepcheckout-place-order-button');
                             $$('.aw-onestepcheckout-place-order-please-wait').first().setStyle({'display':'none'});
-        
+
                             // set element on object and get a onclick method
                             EsmartPaypalBrasilBtnContinue.setElement(BtnAwCheckout, false);
 
@@ -190,7 +202,7 @@ if(configIframe.installments == true) {
                             awOSCForm.placeOrderButton = EsmartPaypalBrasilBtnContinue.btnClonadoCheckout;
                             awOSCForm.granTotalAmount = awOSCForm.placeOrderButton.select(".aw-onestepcheckout-place-order-amount").first();
                             awOSCForm.granTotalAmountProcess = awOSCForm.placeOrderButton.select(".aw-onestepcheckout-place-order-process").first();
-        
+
                             // active addEventListeners
                             EsmartPaypalBrasilPPPlus.init();
                         }
@@ -200,7 +212,7 @@ if(configIframe.installments == true) {
 
                         // Remove disabled attribute from PayPal Payment
                         $("p_method_paypal_plus").removeAttribute("disabled");
-                        
+
                         $('esmart-paypalbrasil-btn-submit').observe('click', function() {
                             $$('.aw-onestepcheckout-place-order-please-wait').first().setStyle({'display':'inline-block', 'top':'120'});
                         });
@@ -217,7 +229,7 @@ if(configIframe.installments == true) {
                 }
             }
         });
-        
+
     });
 
 }else{
