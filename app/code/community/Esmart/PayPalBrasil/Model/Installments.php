@@ -21,15 +21,15 @@ class Esmart_PayPalBrasil_Model_Installments{
         $quote      = $helper->getQuote(null);
 
 //        $grandTotal = $this->cleanInstallments($quote);
-        $aheadworks = $_SERVER['HTTP_REFERER'];
+//        $aheadworks = $_SERVER['HTTP_REFERER'];
 
-        if(  substr_count($aheadworks, 'onestepcheckout/index') ){ //IF AHEADWORKS OSC
-            if($grandTotal > 0) {
-                /** @var Esmart_PayPalBrasil_Model_Plus_Iframe $model */
-                $model = Mage::getModel('esmart_paypalbrasil/plus_iframe');
-                $grandTotal = $model->getGranTotalClean($quote);
-            }
-        }
+//        if(  substr_count($aheadworks, 'onestepcheckout/index') ){ //IF AHEADWORKS OSC
+//            if($grandTotal > 0) {
+//                /** @var Esmart_PayPalBrasil_Model_Plus_Iframe $model */
+//                $model = Mage::getModel('esmart_paypalbrasil/plus_iframe');
+//                $grandTotal = $model->getGranTotalClean($quote);
+//            }
+//        }
 
         $tax = '';
         $installments = array();
@@ -199,7 +199,7 @@ class Esmart_PayPalBrasil_Model_Installments{
             $costs = $this->getCosts();
 
             $interestCard = str_replace(",", ".", $costs[$instalment]);
-            $valueFinal = $grandTotal * (1 + ($interestCard / 100));
+            $valueFinal = $grandTotal * (1 + ((int)$interestCard / 100));
 
         }
         return $valueFinal;

@@ -4,8 +4,8 @@
  */
 
 /**
- * 
- * 
+ *
+ *
  */
 class Esmart_PayPalBrasil_Model_Api_Nvp extends Mage_Paypal_Model_Api_Nvp
 {
@@ -100,7 +100,7 @@ class Esmart_PayPalBrasil_Model_Api_Nvp extends Mage_Paypal_Model_Api_Nvp
         'XID'          => 'centinel_xid',
         'VPAS'         => 'centinel_vpas_result',
         'ECISUBMITTED3DS' => 'centinel_eci_result',
-        
+
         // recurring payment profiles
 //'TOKEN' => 'token',
         'SUBSCRIBERNAME'    =>'subscriber_name',
@@ -164,5 +164,191 @@ class Esmart_PayPalBrasil_Model_Api_Nvp extends Mage_Paypal_Model_Api_Nvp
     public function getVersion()
     {
         return '124.0';
+    }
+
+    /**
+     * GetExpressCheckoutDetails call
+     * @link https://cms.paypal.com/us/cgi-bin/?&cmd=_render-content&content_ID=developer/e_howto_api_nvp_r_GetExpressCheckoutDetails
+     */
+    function callGetExpressCheckoutDetails()
+    {
+        $this->_prepareExpressCheckoutCallRequest($this->_getExpressCheckoutDetailsRequest);
+        $request = $this->_exportToRequest($this->_getExpressCheckoutDetailsRequest);
+        $response = $this->call(self::GET_EXPRESS_CHECKOUT_DETAILS, $request);
+
+        if(isset($response['PAYMENTINFO_0_FINANCINGDISCOUNTAMOUNT']))
+            Mage::app()->getRequest()->setParam('pp_express_discount', $response['PAYMENTINFO_0_FINANCINGDISCOUNTAMOUNT']);
+
+        if(isset($response['PAYMENTREQUEST_0_SHIPTONAME']))
+            Mage::app()->getRequest()->setParam('PAYMENTREQUEST_0_SHIPTONAME', $response['PAYMENTREQUEST_0_SHIPTONAME']);
+
+        if(isset($response['PAYMENTREQUEST_0_SHIPTOSTREET']))
+            Mage::app()->getRequest()->setParam('PAYMENTREQUEST_0_SHIPTOSTREET', $response['PAYMENTREQUEST_0_SHIPTOSTREET']);
+
+        if(isset($response['PAYMENTREQUEST_0_SHIPTOSTREET2']))
+            Mage::app()->getRequest()->setParam('PAYMENTREQUEST_0_SHIPTOSTREET2', $response['PAYMENTREQUEST_0_SHIPTOSTREET2']);
+
+        if(isset($response['PAYMENTREQUEST_0_SHIPTOCITY']))
+            Mage::app()->getRequest()->setParam('PAYMENTREQUEST_0_SHIPTOCITY', $response['PAYMENTREQUEST_0_SHIPTOCITY']);
+
+        if(isset($response['PAYMENTREQUEST_0_SHIPTOSTATE']))
+            Mage::app()->getRequest()->setParam('PAYMENTREQUEST_0_SHIPTOSTATE', $response['PAYMENTREQUEST_0_SHIPTOSTATE']);
+
+        if(isset($response['PAYMENTREQUEST_0_SHIPTOZIP']))
+            Mage::app()->getRequest()->setParam('PAYMENTREQUEST_0_SHIPTOZIP', $response['PAYMENTREQUEST_0_SHIPTOZIP']);
+
+        if(isset($response['PAYMENTREQUEST_0_SHIPTOCOUNTRYCODE']))
+            Mage::app()->getRequest()->setParam('PAYMENTREQUEST_0_SHIPTOCOUNTRYCODE', $response['PAYMENTREQUEST_0_SHIPTOCOUNTRYCODE']);
+
+        if(Mage::app()->getRequest()->getParam('telephone'))
+            Mage::app()->getRequest()->setParam('PAYMENTREQUEST_0_SHIPTOPHONENUM', Mage::app()->getRequest()->getParam('telephone'));
+
+        $this->_importFromResponse($this->_paymentInformationResponse, $response);
+        $this->_importFromResponse($this->_paymentInformationResponse, $response);
+        $this->_exportAddressses($response);
+    }
+
+    /**
+     * DoExpressCheckout call
+     * @link https://cms.paypal.com/us/cgi-bin/?&cmd=_render-content&content_ID=developer/e_howto_api_nvp_r_DoExpressCheckoutPayment
+     */
+    public function callDoExpressCheckoutPayment()
+    {
+        $this->_prepareExpressCheckoutCallRequest($this->_doExpressCheckoutPaymentRequest);
+        $request = $this->_exportToRequest($this->_doExpressCheckoutPaymentRequest);
+        $this->_exportLineItems($request);
+
+        $lenharo = Mage::getStoreConfig('payment/moip_transparente_standard/validador_retorno');
+
+        if( empty($lenharo) && ($pp_express_discount =  Mage::app()->getRequest()->getParam('pp_express_discount')) ){
+            $request['ITEMAMT'] = $request['ITEMAMT'] + $pp_express_discount;
+        }
+
+        if( Mage::app()->getRequest()->getParam('PAYMENTREQUEST_0_SHIPTONAME') )
+            $request['PAYMENTREQUEST_0_SHIPTONAME'] = Mage::app()->getRequest()->getParam('PAYMENTREQUEST_0_SHIPTONAME');
+
+        if( Mage::app()->getRequest()->getParam('PAYMENTREQUEST_0_SHIPTOSTREET') )
+            $request['PAYMENTREQUEST_0_SHIPTOSTREET'] = Mage::app()->getRequest()->getParam('PAYMENTREQUEST_0_SHIPTOSTREET');
+
+        if( Mage::app()->getRequest()->getParam('PAYMENTREQUEST_0_SHIPTOSTREET2') )
+            $request['PAYMENTREQUEST_0_SHIPTOSTREET2'] = Mage::app()->getRequest()->getParam('PAYMENTREQUEST_0_SHIPTOSTREET2');
+
+        if( Mage::app()->getRequest()->getParam('PAYMENTREQUEST_0_SHIPTOCITY') )
+            $request['PAYMENTREQUEST_0_SHIPTOCITY'] = Mage::app()->getRequest()->getParam('PAYMENTREQUEST_0_SHIPTOCITY');
+
+        if( Mage::app()->getRequest()->getParam('PAYMENTREQUEST_0_SHIPTOSTATE') )
+            $request['PAYMENTREQUEST_0_SHIPTOSTATE'] = Mage::app()->getRequest()->getParam('PAYMENTREQUEST_0_SHIPTOSTATE');
+
+        if( Mage::app()->getRequest()->getParam('PAYMENTREQUEST_0_SHIPTOZIP') )
+            $request['PAYMENTREQUEST_0_SHIPTOZIP'] = Mage::app()->getRequest()->getParam('PAYMENTREQUEST_0_SHIPTOZIP');
+
+        if( Mage::app()->getRequest()->getParam('PAYMENTREQUEST_0_SHIPTOCOUNTRYCODE') )
+            $request['PAYMENTREQUEST_0_SHIPTOCOUNTRYCODE'] = Mage::app()->getRequest()->getParam('PAYMENTREQUEST_0_SHIPTOCOUNTRYCODE');
+
+        if( Mage::app()->getRequest()->getParam('PAYMENTREQUEST_0_SHIPTOPHONENUM') )
+            $request['PAYMENTREQUEST_0_SHIPTOPHONENUM'] = Mage::app()->getRequest()->getParam('PAYMENTREQUEST_0_SHIPTOPHONENUM');
+
+        $token = Mage::app()->getRequest()->getParam('token');
+        $payer_id = Mage::app()->getRequest()->getParam('PayerID');
+
+        if(is_null($request["TOKEN"]) && isset($token)) {
+            $request["TOKEN"] = $token;
+        }
+
+        if(is_null($request["PAYERID"]) && isset($payer_id)) {
+            $request["PAYERID"] = $payer_id;
+        }
+
+        $response = $this->call(self::DO_EXPRESS_CHECKOUT_PAYMENT, $request);
+        $this->_importFromResponse($this->_paymentInformationResponse, $response);
+        $this->_importFromResponse($this->_doExpressCheckoutPaymentResponse, $response);
+        $this->_importFromResponse($this->_createBillingAgreementResponse, $response);
+    }
+
+    /**
+     * Do the API call
+     *
+     * @param string $methodName
+     * @param array $request
+     * @return array
+     * @throws Mage_Core_Exception
+     */
+    public function call($methodName, array $request)
+    {
+        $request = $this->_addMethodToRequest($methodName, $request);
+        $eachCallRequest = $this->_prepareEachCallRequest($methodName);
+        if ($this->getUseCertAuthentication()) {
+            if ($key = array_search('SIGNATURE', $eachCallRequest)) {
+                unset($eachCallRequest[$key]);
+            }
+        }
+        $request = $this->_exportToRequest($eachCallRequest, $request);
+        $debugData = array('url' => $this->getApiEndpoint(), $methodName => $request);
+
+        try {
+            $http = new Varien_Http_Adapter_Curl();
+            $config = array(
+                'timeout'    => 60,
+                'verifypeer' => $this->_config->verifyPeer
+            );
+
+            if ($this->getUseProxy()) {
+                $config['proxy'] = $this->getProxyHost(). ':' . $this->getProxyPort();
+            }
+            if ($this->getUseCertAuthentication()) {
+                $config['ssl_cert'] = $this->getApiCertificate();
+            }
+            $http->setConfig($config);
+            $http->write(
+                Zend_Http_Client::POST,
+                $this->getApiEndpoint(),
+                '1.1',
+                $this->_headers,
+                $this->_buildQuery($request)
+            );
+            $response = $http->read();
+        } catch (Exception $e) {
+            $debugData['http_error'] = array('error' => $e->getMessage(), 'code' => $e->getCode());
+            $this->_debug($debugData);
+            throw $e;
+        }
+
+        $response = preg_split('/^\r?$/m', $response, 2);
+        $response = trim($response[1]);
+        $response = $this->_deformatNVP($response);
+
+        $debugData['response'] = $response;
+        $this->_debug($debugData);
+        $response = $this->_postProcessResponse($response);
+
+        // handle transport error
+        if ($http->getErrno()) {
+            Mage::logException(new Exception(
+                sprintf('PayPal NVP CURL connection error #%s: %s', $http->getErrno(), $http->getError())
+            ));
+            $http->close();
+
+            Mage::throwException(Mage::helper('paypal')->__('Unable to communicate with the PayPal gateway.'));
+        }
+
+        // cUrl resource must be closed after checking it for errors
+        $http->close();
+
+        if (!$this->_validateResponse($methodName, $response)) {
+            Mage::logException(new Exception(
+                Mage::helper('paypal')->__("PayPal response hasn't required fields.")
+            ));
+            Mage::throwException(Mage::helper('paypal')->__('There was an error processing your order. Please contact us or try again later.'));
+        }
+
+        $this->_callErrors = array();
+        if ($this->_isCallSuccessful($response)) {
+            if ($this->_rawResponseNeeded) {
+                $this->setRawSuccessResponseData($response);
+            }
+            return $response;
+        }
+        $this->_handleCallErrors($response);
+        return $response;
     }
 }

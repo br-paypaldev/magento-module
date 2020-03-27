@@ -76,6 +76,43 @@ class Esmart_PayPalBrasil_ExpressController extends Esmart_PayPalBrasil_Controll
                 $quote->getShippingAddress()->setPaymentMethod(Esmart_PayPalBrasil_Model_Plus::CODE);
             }
 
+            if(isset($postData["billing"])) {
+                foreach ($postData["billing"] as $billing) {
+
+                    $key = key($postData["billing"]);
+                    next($postData["billing"]);
+                    if ($key == "address_id" || $key == "quote_id") {
+                        continue;
+                    }
+
+                    if (!array_key_exists($key, $quote->getBillingAddress()->getData())) {
+                        continue;
+                    }
+
+                    if ($billing == "") {
+                        continue;
+                    }
+
+                    if (is_array($billing)) {
+                        continue;
+                    }
+
+                    if ($quote->getBillingAddress()->getData($key) != $billing) {
+                        $quote->getBillingAddress()->setData($key, $billing);
+                        $quote->getBillingAddress()->save();
+                        $quote->save();
+                    }
+
+                    if (isset($postData["billing"]["use_for_shipping"]) && $postData["billing"]["use_for_shipping"]) {
+                        if ($quote->getShippingAddress()->getData($key) != $billing) {
+                            $quote->getShippingAddress()->setData($key, $billing);
+                            $quote->getShippingAddress()->save();
+                            $quote->save();
+                        }
+                    }
+                }
+            }
+
             $payerInfo   = $model->getCustomerInformation($quote);
 
             if(!empty($postData['installment'])){
@@ -132,5 +169,15 @@ class Esmart_PayPalBrasil_ExpressController extends Esmart_PayPalBrasil_Controll
         Esmart_PayPalBrasil_Model_Debug::writeLog();
 
         $this->getResponse()->setBody(Mage::helper('core')->jsonEncode($return));
+    }
+
+    /**
+     * Check if Paypal In-Context is enabled
+     */
+    public function checkPaypalInContextAction()
+    {
+        $config = Mage::getStoreConfig('payment/incontext/enable');
+        $this->getResponse()->clearHeaders()->setHeader('Content-type','application/json',true);
+        $this->getResponse()->setBody(Mage::helper('core')->jsonEncode($config));
     }
 }

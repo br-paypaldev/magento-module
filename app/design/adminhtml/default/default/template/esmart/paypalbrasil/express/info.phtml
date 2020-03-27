@@ -1,0 +1,71 @@
+<?php
+/**
+ * @see Esmart_PayPalBrasil_Block_Payment_Info
+ */
+?>
+<p>
+    <strong><?php echo $this->escapeHtml($this->getMethod()->getTitle()) ?></strong>
+</p>
+<?php
+$info = $this->getInfo();
+$state = $info->getAdditionalInformation('paypal_payment_status');
+?>
+
+<?php if ($_specificInfo = $this->getSpecificInformation()):?>
+    <p>
+        <strong> ID do Pagador:</strong>
+        <?php echo $info->getAdditionalInformation('paypal_payer_id'); ?>
+    </p>
+    <p>
+        <strong> Email do Comprador:</strong>
+        <?php echo $info->getAdditionalInformation('paypal_payer_email'); ?>
+    </p>
+    <p>
+        <strong> Status da Transação : </strong>
+        <?php if(strtolower($state)  == 'completed'): ?>
+            <strong style="color:green;"> Pagamento Aprovado </strong>
+        <?php elseif(strtolower($state)  == 'reversed'): ?>
+            <strong style="color:red;"> Pagamento não Aprovado </strong>
+        <?php else: ?>
+            <strong style="color:orange;"> Pagamento em Análise</strong>
+            (Esta análise pode levar até 24hrs)
+        <?php endif; ?>
+    </p>
+    <p>
+        <strong> Status do Endereço do Comprador:</strong>
+        <?php echo $info->getAdditionalInformation('paypal_address_status'); ?>
+    </p>
+    <p>
+        <strong> Merchant Protection Eligibility:</strong>
+        <?php echo $info->getAdditionalInformation('paypal_protection_eligibility'); ?>
+    </p>
+    <p>
+        <strong> Last Correlation ID:</strong>
+        <?php echo $info->getAdditionalInformation('paypal_correlation_id'); ?>
+    </p>
+
+    <?php if( $info->getAdditionalInformation('buyer_tax_id') ) : ?>
+        <p>
+            <strong> CPF do Comprador:</strong>
+            <?php echo $info->getAdditionalInformation('buyer_tax_id'); ?>
+        </p>
+    <?php endif; ?>
+
+    <p>
+        <strong>Dados da Transação :</strong>
+    </p>
+    <?php if( $info->getAdditionalInformation('plots_val') ) : ?>
+        <strong>Cartão de crédito</strong> <br>
+        <small>
+            <strong>- Parcela(s): </strong>
+            <?php echo $info->getAdditionalInformation('plots') . "x de " . $info->getAdditionalInformation('plots_val') ?> <br>
+        </small>
+        <br>
+    <?php else: ?>
+        <p> Pagamento em: 1x (à vista)</p>
+    <?php endif; ?>
+
+
+<?php endif;?>
+
+<?php echo $this->getChildHtml()?>

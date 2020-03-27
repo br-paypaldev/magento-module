@@ -463,30 +463,27 @@ class Esmart_PayPalBrasil_Model_Plus extends Mage_Payment_Model_Method_Abstract
     public function getDiscountPayPal($payment_id)
     {
 
-        $apiContext = $this->getApiContext();
-        $paypalPayment = \PayPal\Api\Payment::get($payment_id, $apiContext);
-        $paypalPaymentData = $paypalPayment->toArray();
-
-
-
-        if((!isset($paypalPaymentData['credit_financing_offered']['discount_amount']['value'])) && (Mage::getStoreConfig("payment/paypal_plus/instalments_active"))) {
+        if((Mage::getStoreConfig("payment/paypal_plus/instalments_active"))) {
             /** @var Esmart_PayPalBrasil_Helper_Data $helper */
             $helper = Mage::helper('esmart_paypalbrasil');
             $quote = $helper->getQuote(null);
 
             $subtotal = $quote->getShippingAddress()->getSubtotal();
             $shipping = $quote->getShippingAddress()->getShippingAmount();
+            $discount_amount = $quote->getShippingAddress()->getDiscountAmount();
 
-            $total = $subtotal + $shipping;
+            if($discount_amount < 0) {
+                $discount_amount = $discount_amount * (-1);
+            }
+
+            $total = ($subtotal + $shipping) - $discount_amount;
 
             $discount = Mage::getModel('esmart_paypalbrasil/installments_config')->getInstallmentDiscount();
 
             $totalDiscount = $total * ($discount / 100);
 
             $paypalPaymentData['credit_financing_offered']['discount_amount']['value'] = $totalDiscount;
-        }
 
-        if (!empty($paypalPaymentData['credit_financing_offered'])) {
             return $paypalPaymentData['credit_financing_offered'];
         } else {
             return false;
@@ -508,6 +505,16 @@ class Esmart_PayPalBrasil_Model_Plus extends Mage_Payment_Model_Method_Abstract
         $quote->getPayment()->unsAdditionalInformation();
         $quote->collectTotals();
 
+    }
+
+    /**
+     * Retrieve payment method title
+     *
+     * @return string
+     */
+    public function getTitle()
+    {
+        return 'Cartão de Crédito ' . $this->getConfigData('title');
     }
 }
 

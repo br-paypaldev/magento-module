@@ -119,6 +119,14 @@
 		</reference>
 	</PayPalBrasil_Append_Inovarti_OneStepCheckout>
 
+	<PayPalBrasil_Append_MOIP_Onestepcheckout>
+		<reference name="head">
+			<action method="addCss" ifconfig="payment/paypal_plus/active">
+				<name>esmart/paypalbrasil/css/moip_onestepcheckout.css</name>
+			</action>
+		</reference>
+	</PayPalBrasil_Append_MOIP_Onestepcheckout>
+
 	<customer_account_login translate="label">
 		<reference name="content">
 			<block type="esmart_paypalbrasil/express_shortcut_login" name="checkout.login.paypal_express.login_account" template="esmart/paypalbrasil/express/shortcut/login.phtml"/>
@@ -135,6 +143,43 @@
 		<update handle="paypal_express_review"/>
 	</esmart_paypalbrasil_login_review>
 
+	<paypal_express_review translate="label">
+		<reference name="head">
+			<action method="removeItem"><type>skin_js</type><name>js/checkout/review.js</name></action>
+			<action method="addJs">
+				<script>esmart/paypalbrasil/review.js</script>
+			</action>
+		</reference>
+		<reference name="content">
+
+			<reference name="paypal.express.review">
+				<action method="setTemplate">
+					<template>esmart/paypalbrasil/express/review.phtml</template>
+				</action>
+				<block type="checkout/cart_coupon" name="paypalbrasil.express.coupon" as="paypalbrasil_coupon" template="esmart/paypalbrasil/express/coupon.phtml"/>
+			</reference>
+		</reference>
+	</paypal_express_review>
+
+	<checkout_onepage_index>
+		<reference name="content">
+			<reference name="checkout.onepage">
+				<action method="setTemplate">
+					<template>esmart/paypalbrasil/checkout/onepage.phtml</template>
+				</action>
+			</reference>
+		</reference>
+	</checkout_onepage_index>
+
+	<amscheckout_handle>
+		<reference name="content">
+			<reference name="checkout.onepage">
+				<action method="setTemplate">
+					<template>esmart/paypalbrasil/checkout/onepage_amasty.phtml</template>
+				</action>
+			</reference>
+		</reference>
+	</amscheckout_handle>
 
 	<checkout_cart_index>
 		<reference name="checkout.cart.methods.paypal_express.top">
@@ -160,6 +205,11 @@
 	<idecheckoutvm_index>
 		<update handle="PayPalBrasil_Append_Checkouts"/>
 	</idecheckoutvm_index>
+	<idecheckoutvm_index_index>
+		<reference name="head">
+			<block type="core/template" name="idecheckoutvm-rewrite" as="idecheckoutvm-rewrite" template="esmart/paypalbrasil/checkout/idecheckoutvm-rewrite.phtml" />
+		</reference>
+	</idecheckoutvm_index_index>
 
 	<!-- FireCheckout Handle -->
 	<firecheckout_index_index>
@@ -177,11 +227,22 @@
 		<update handle="PayPalBrasil_Append_Inovarti_OneStepCheckout"/>
 	</onestepcheckout_index_index>
 
+	<onestepcheckout_index_index>
+		<reference name="head">
+			<block type="core/template" name="inovarti-form-rewrite" as="inovarti-form-rewrite" template="esmart/paypalbrasil/checkout/inovarti-form-rewrite.phtml" />
+		</reference>
+	</onestepcheckout_index_index>
+
 	<!-- AheadWorks checkout -->
 	<aw_onestepcheckout_index_index>
 		<update handle="PayPalBrasil_Append_Checkouts"/>
 		<update handle="PayPalBrasil_Append_AW_OneStepCheckout"/>
 	</aw_onestepcheckout_index_index>
+
+	<!-- MOIP checkout -->
+	<checkout_onepage_index>
+		<update handle="PayPalBrasil_Append_MOIP_Onestepcheckout"/>
+	</checkout_onepage_index>
 
 	<sales_order_view>
 		<reference name="order_totals">

@@ -11,13 +11,11 @@ var configIframe = JSON.parse(window.paypalPlusBr);
 EsmartPaypalBrasilPPPlus.osc = true;
 
 $('checkout-shipping-method-load').on('click', 'input.radio', function () {
-    console.log("SHIPPING METHOD MUDOU");
     new Ajax.Request('/paypalbrasil/express/generateUrl/', {
         method: 'post',
         parameters: {addresschanged: 1},
         async: false,
         onSuccess: function (response) {
-            console.log("SHIPPING METHOD CLEAN SUCEESS");
             $('p_method_paypal_plus').checked = false;
             updateCheckout('review');
             $('p_method_paypal_plus').checked = false;
@@ -27,7 +25,7 @@ $('checkout-shipping-method-load').on('click', 'input.radio', function () {
 
 function checkFormValidation() {
     if (!amscheckoutForm.validator.validate()) {
-        resetIframe();
+        // resetIframe();
         $$('#co-payment-form .messages').each(
             function(el) {
                 el.hide();
@@ -63,7 +61,6 @@ if(configIframe.installments == true) {
                 parameters: {paymentchanged: 1},
                 async: false,
                 onSuccess: function (response) {
-                    console.log("PAYMENT METHOD CLEAN SUCEESS");
                     updateCheckout('payment_method');
                 }
             });
@@ -76,7 +73,7 @@ if(configIframe.installments == true) {
 
         if(event.target.id === 'p_method_paypal_plus' ){
             if (!amscheckoutForm.validator.validate()) {
-                resetIframe();
+                // resetIframe();
                 $("payment_form_paypal_plus").hide();
                 EsmartPaypalBrasilPPPlus.showAlert(ValidationMessage);
             }
@@ -112,7 +109,7 @@ if(configIframe.installments == true) {
                     try {
                         // check if all fields are ok
                         if (!amscheckoutForm.validator.validate()) {
-                            resetIframe();
+                            // resetIframe();
                             $$('#co-payment-form .messages').each(
                                 function(el) {
                                     el.hide();

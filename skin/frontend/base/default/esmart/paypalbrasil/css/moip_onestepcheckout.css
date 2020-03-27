@@ -1,0 +1,7 @@
+#paypal_plus_iframe iframe {
+    width: 100% !important;
+}
+
+#paypal_plus_iframe , #paypal_plus_iframe iframe {
+    min-height: 573px
+}

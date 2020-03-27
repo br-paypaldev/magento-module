@@ -170,3 +170,7 @@ div.paypal_plus_loading {
 }
 
 .paypal-logo-product { float: left; }
+
+#payment_form_paypal_plus {
+	width: 100%;
+}

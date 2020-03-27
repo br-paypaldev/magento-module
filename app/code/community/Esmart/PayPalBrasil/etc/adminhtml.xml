@@ -18,24 +18,24 @@
  * @copyright   Copyright (c) 2013 Smart E-commerce do Brasil Tecnologia LTDA. (http://www.e-smart.com.br)
  * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  *
- * @author     	Tiago Sampaio <tiago.sampaio@e-smart.com.br>
+ * @author      Tiago Sampaio <tiago.sampaio@e-smart.com.br>
  */
 -->
 <config>
-	<menu>
-		<paypalbrasil module="esmart_paypalbrasil" translate="title">
-			<title>PayPal Brasil</title>
-			<sort_order>85</sort_order>
-			<children>
-				<configure translate="title">
-					<title>Configure</title>
-					<sort_order>10</sort_order>
-					<action>adminhtml/system_config/edit/section/payment</action>
-				</configure>
-			</children>
-		</paypalbrasil>
-	</menu>
-	 <acl>
+    <menu>
+        <paypalbrasil module="esmart_paypalbrasil" translate="title">
+            <title>PayPal Brasil</title>
+            <sort_order>85</sort_order>
+            <children>
+                <configure translate="title">
+                    <title>Configure</title>
+                    <sort_order>10</sort_order>
+                    <action>adminhtml/system_config/edit/section/payment</action>
+                </configure>
+            </children>
+        </paypalbrasil>
+    </menu>
+     <acl>
         <resources>
             <admin>
                 <children>
@@ -44,10 +44,10 @@
                             <config>
                                 <children>
                                     <payment translate="title">
-                                    	<children>
-                                    		<incontext>
-                                        		<title>Paypal Express Checkout In-Context</title>
-                                        	</incontext>
+                                        <children>
+                                            <incontext>
+                                                <title>PayPal Express Checkout via Mini-Browser</title>
+                                            </incontext>
                                         </children>
                                     </payment>
                                 </children>

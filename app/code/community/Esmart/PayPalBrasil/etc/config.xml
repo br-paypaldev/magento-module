@@ -95,6 +95,7 @@
                     <api_nvp>Esmart_PayPalBrasil_Model_Api_Nvp</api_nvp>]
                     <info>Esmart_PayPalBrasil_Model_Info</info>
                     <ipn>Esmart_PayPalBrasil_Model_Ipn</ipn>
+                    <express>Esmart_PayPalBrasil_Model_Express</express>
                 </rewrite>
             </paypal>
         </models>
@@ -117,7 +118,9 @@
             <paypal>
                 <rewrite>
                     <express_shortcut>Esmart_PayPalBrasil_Block_Express_Shortcut</express_shortcut>
+                    <express_review>Esmart_PayPalBrasil_Block_Express_Review</express_review>
                     <express_form>Esmart_PayPalBrasil_Block_Express_Form</express_form>
+                    <payment_info>Esmart_PayPalBrasil_Block_Payment_Info</payment_info>
                     <sales>Esmart_PayPalBrasil_Block_Order_Item_Renderer_Default</sales>
                 </rewrite>
             </paypal>
@@ -136,7 +139,7 @@
                     <esmart_paypalbrasil_cost>
                         <class>esmart_paypalbrasil/installments_cost</class>
                         <after>grand_total</after>
-                        <before>tax</before>
+                        <!-- <before>tax</before> -->
                     </esmart_paypalbrasil_cost>
                 </totals>
             </quote>
@@ -277,7 +280,7 @@
             </paypal_billing_agreement>
             <paypal_plus>
                 <model>esmart_paypalbrasil/plus</model>
-                <title>Cartão de Crédito</title>
+                <title>Parcelado em até 12x</title>
                 <group>paypal</group>
                 <payment_action>order</payment_action>
                 <order_status>processing</order_status>
@@ -319,7 +322,7 @@ Parcela(s): {parcela_qtde}x de {parcela_valor}]]></checkout_payment_info>
             </paypal_plus>
              <paypal_invoice>
                 <model>esmart_paypalbrasil/invoice</model>
-                <title>Paypal Invoice</title>
+                <title>PayPal Invoice</title>
                 <group>paypal</group>
                 <payment_action>authorize</payment_action>           
             </paypal_invoice>

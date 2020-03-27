@@ -43,6 +43,7 @@ Para o PayPal Plus, atualmente este módulo trabalha com os seguintes módulos O
 5. Esmart Checkout
 6. AheadWorks OneStepCheckout
 7. iPagare
+8. MOIP
 
 ## Instalação
 

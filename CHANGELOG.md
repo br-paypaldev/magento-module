@@ -1,3 +1,9 @@
+**1.0.4**
++ Adição de suporte para a última versão do OneStepCheckout da MOIP
++ Diversas otimizações e bugfixes:
+	+ Descontos indevidamente sendo aplicados no Checkout Transparente
+	+ Checkout Transparente não abrindo corretamente em alguns OneStepCheckout's
+	+ PayPal Checkout via Mini-Browser não abrindo corretamente em alguns OneStepCheckout's
 
 **1.0.3**
 + Adição de novas funcionalidades para o PayPal Plus:

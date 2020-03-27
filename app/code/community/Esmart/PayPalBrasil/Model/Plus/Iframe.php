@@ -465,13 +465,19 @@ class Esmart_PayPalBrasil_Model_Plus_Iframe extends Mage_Payment_Block_Form
         /** @var PayPal\Api\Amount $amount */
         $amount = new PayPal\Api\Amount();
 
+        $subtotal = $quote->getSubtotal();
+        $shipping_amount = $quote->getShippingAddress()->getShippingAmount();
+        $discount = Mage::helper('esmart_paypalbrasil')->getCorrectDiscount($quote);
+
+        $grandTotal = ($subtotal + $shipping_amount) - $discount;
+
         $amount->setCurrency($quote->getBaseCurrencyCode())
-            ->setTotal($quote->getGrandTotal())
+            ->setTotal($grandTotal)
             ->setDetails($this->createDetails($quote));
 
         $data = array(
             'Base Currency' => $quote->getBaseCurrencyCode(),
-            'Total' => $quote->getGrandTotal(),
+            'Total' => $grandTotal,
         );
         Esmart_PayPalBrasil_Model_Debug::appendContent('[CREATE AMOUNT]', 'createPayment', $data);
 
@@ -511,14 +517,14 @@ class Esmart_PayPalBrasil_Model_Plus_Iframe extends Mage_Payment_Block_Form
 
 
 
-        $totals = $quote->getTotals();
-        if (isset($totals['discount'])) {
+        $discount = Mage::helper('esmart_paypalbrasil')->getCorrectDiscount($quote);
+        if ($discount > 0) {
             $objItem = new PayPal\Api\Item();
 
             $objItem->setName('Descontos')
                 ->setCurrency($quote->getBaseCurrencyCode())
                 ->setQuantity(1)
-                ->setPrice($totals['discount']->getValue());
+                ->setPrice($discount);
 
             $itemList->addItem($objItem);
 
@@ -596,12 +602,9 @@ class Esmart_PayPalBrasil_Model_Plus_Iframe extends Mage_Payment_Block_Form
             $details->setTax($tax->getValue());
         }
 
-        $discount = 0;
-        if (isset($totals['discount'])) {
-            $discount = $totals['discount']->getValue();
-        }
+        $discount = Mage::helper('esmart_paypalbrasil')->getCorrectDiscount($quote);
 
-        $details->setSubtotal($totals['subtotal']->getValue() + $discount);
+        $details->setSubtotal($totals['subtotal']->getValue() - $discount);
 
         $data = array(
             'Shipping' => $details->getShipping(),
@@ -747,6 +750,10 @@ class Esmart_PayPalBrasil_Model_Plus_Iframe extends Mage_Payment_Block_Form
 
         $state = Mage::getStoreConfig('payment/paypal_plus/state');
         $state = $helper->getDataFromObject($addressShipping, $this->nonPersistedData, $state);
+
+        if(is_null($state)) {
+            $state = '-';
+        }
 
         if (is_numeric($state)) {
             /** @var Mage_Directory_Model_Region $directoryRegion */

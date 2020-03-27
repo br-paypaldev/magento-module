@@ -139,4 +139,26 @@ class Esmart_PayPalBrasil_Model_Ipn extends Mage_Paypal_Model_Ipn
         $this->_order->queueOrderUpdateEmail(true);
     }
 
+    /**
+     * Process voided authorization
+     */
+    protected function _registerPaymentVoid()
+    {
+        $this->_importPaymentInformation();
+
+        $parentTxnId = $this->getRequestData('transaction_entity') == 'auth'
+            ? $this->getRequestData('txn_id') : $this->getRequestData('parent_txn_id');
+
+        $this->_order->getPayment()
+            ->setPreparedMessage($this->_createIpnComment(''))
+            ->setParentTransactionId($parentTxnId)
+            ->registerVoidNotification();
+
+        if ($this->_order->canCancel()) {
+            $this->_order->cancel();
+        }
+
+        $this->_order->save();
+    }
+
 }

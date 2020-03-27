@@ -45,7 +45,12 @@ class Esmart_PayPalBrasil_Model_Installments_Cost extends Mage_Sales_Model_Quote
             return $this;
         }
 
-        $method = $_POST['payment']['method'];
+        $method = Mage::app()->getRequest()->getParam('payment');
+        if( isset($method['method']) ) {
+            $method = $method['method'];
+        } else {
+            $method = null;
+        }
 
         if($address instanceof TM_FireCheckout_Model_Quote_Address){
             if( ($method != null) && ($method != Esmart_PayPalBrasil_Model_Plus::CODE) ){
@@ -62,7 +67,7 @@ class Esmart_PayPalBrasil_Model_Installments_Cost extends Mage_Sales_Model_Quote
                 return $this;
             }
         }else{
-            if( ( empty($_POST) ) && ($method != Esmart_PayPalBrasil_Model_Plus::CODE) ){
+            if( ( empty($_POST) ) && ($method != Esmart_PayPalBrasil_Model_Plus::CODE) && (!$payment->getAdditionalInformation('paypal_express_checkout_payer_id')) ){
                 $this->_setAmount(0);
                 $this->_setBaseAmount(0);
 
@@ -78,8 +83,8 @@ class Esmart_PayPalBrasil_Model_Installments_Cost extends Mage_Sales_Model_Quote
         }
 
         //AHEADWORKS - Clean Cost after change shipping method - just after shipping method
-        $addresschanged = $_POST['addresschanged'];
-        $paymentchanged = $_POST['paymentchanged'];
+        $addresschanged = Mage::app()->getRequest()->getParam('addresschanged');
+        $paymentchanged = Mage::app()->getRequest()->getParam('paymentchanged');
         if( $addresschanged || $paymentchanged) {
             $this->_setAmount(0);
             $this->_setBaseAmount(0);
@@ -92,7 +97,8 @@ class Esmart_PayPalBrasil_Model_Installments_Cost extends Mage_Sales_Model_Quote
             $address->setEsmartPaypalbrasilDiscountAmount(0);
             $address->setBaseEsmartPaypalbrasilDiscountAmount(0);
 
-            $grandTotal = $address->getGrandTotal();
+            $payment->save();
+            $address->save();
 
             $finalPrice =  Mage::getModel('esmart_paypalbrasil/plus_iframe')->getGranTotalClean($address->getQuote());
 
@@ -112,7 +118,13 @@ class Esmart_PayPalBrasil_Model_Installments_Cost extends Mage_Sales_Model_Quote
 
         $cost = $payment->getAdditionalInformation('paypal_plus_installments_cost');
 
-        if ($cost > 0) {
+        //Paypal Express Shortcut 1x Discount
+        $paypal_express_discount = $payment->getAdditionalInformation('paypal_express_discount');
+        if($paypal_express_discount){
+            $discountPayPal = $paypal_express_discount;
+        }
+
+        if (($cost > 0) && (($method == "paypal_plus") || ($payment->getMethod() == "paypal_plus"))) {
 
             $this->_setAmount($cost);
             $this->_setBaseAmount($cost);
@@ -127,7 +139,7 @@ class Esmart_PayPalBrasil_Model_Installments_Cost extends Mage_Sales_Model_Quote
             }
 
             Mage::getSingleton('checkout/session')->setPayPalPlusCostGrandTotal(true);
-        } elseif($discountPayPal > 0 ){
+        } elseif ((isset($discountPayPal) && ($discountPayPal > 0)) && (($method == "paypal_plus") || ($payment->getMethod() == "paypal_plus"))) {
             $payment->setAdditionalInformation('paypal_discount',$discountPayPal);
 
             $grandTotal = $address->getGrandTotal();
@@ -156,7 +168,7 @@ class Esmart_PayPalBrasil_Model_Installments_Cost extends Mage_Sales_Model_Quote
 
         if ($amt != 0) {
             $payment = $address->getQuote()->getPayment();
-            if($payment->getMethod() == "paypal_plus") {
+            if( $payment->getMethod() == "paypal_plus") {
                 $address->addTotal(
                     [
                         'code' => $this->getCode(),
@@ -164,6 +176,27 @@ class Esmart_PayPalBrasil_Model_Installments_Cost extends Mage_Sales_Model_Quote
                         'value' => -$address->getBaseEsmartPaypalbrasilDiscountAmount()
                     ]
                 );
+
+                $payment->save();
+            }
+            if( $payment->getMethod() == "paypal_express" ) {
+                $address->addTotal(
+                    [
+                        'code' => $this->getCode(),
+                        'title' => "Desconto",
+                        'value' =>  $address->getBaseEsmartPaypalbrasilDiscountAmount()
+                    ]
+                );
+
+                //Clean Paypal Express 1x Discount
+                $payment->unsAdditionalInformation('paypal_discount');
+                $address->setEsmartPaypalbrasilDiscountAmount(0);
+                $address->setBaseEsmartPaypalbrasilDiscountAmount(0);
+
+                $payment->unsAdditionalInformation('paypal_express_discount');
+
+                // End Clean Paypal Express 1x Discount
+
                 $payment->save();
             }
         }

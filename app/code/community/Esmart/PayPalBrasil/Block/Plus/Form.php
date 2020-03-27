@@ -91,12 +91,53 @@ class Esmart_PayPalBrasil_Block_Plus_Form extends Mage_Payment_Block_Form
     protected function installments(){
         $quote = Mage::getModel('checkout/cart')->getQuote();
         if($this->getData('method')) {
-            $quote->getPayment()->setMethod($this->getMethod());
+            $quote->getPayment()->setMethod($this->getMethod()->getCode());
             $quote->setTotalsCollectedFlag(false);
             $quote->collectTotals();
             $quote->save();
         }
-        $grandTotal = $quote->getGrandTotal();
+
+        $discount = 0;
+        $method = $quote->getPayment()->getMethod();
+        $subtotal = $quote->getSubtotal();
+
+        $customer_group_id = $quote->getCustomer()->getGroupId();
+        $store_id = $quote->getStoreId();
+        $website_id = Mage::getModel('core/store')->load($store_id)->getWebsiteId();
+
+        $items = $quote->getAllItems();
+        foreach ($items as $item) {
+            if(!empty($item->getAppliedRuleIds())) {
+                foreach(explode(",",$item->getAppliedRuleIds()) as $ruleId){
+                    $rule = Mage::getModel('salesrule/rule')->load($ruleId);
+                    $conditions = $rule->getConditions()->getConditions();
+                    $rule_discount = $rule->getDiscountAmount();
+                    $simple_action = $rule->getSimpleAction();
+                    if( $rule->getIsActive() && (in_array($customer_group_id, $rule->getCustomerGroupIds())) && (in_array($website_id, $rule->getWebsiteIds())) ) {
+                        foreach ($conditions as $condition) {
+                            $attribute = $condition->getAttribute();
+                            $value = $condition->getValue();
+                            if (($attribute != "payment_method") && ($value != $method)) {
+                                if ($simple_action == "by_percent") {
+                                    $discount_aux = $subtotal * ($rule_discount / 100);
+                                    $discount = $discount + $discount_aux;
+                                } else {
+                                    $discount = $discount + $rule_discount;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        $shipping_amount = $quote->getShippingAddress()->getShippingAmount();
+
+        if($discount < 0) {
+            $discount = $discount * (-1);
+        }
+
+        $grandTotal = ($subtotal + $shipping_amount) - $discount;
         $cost = $quote->getEsmartPaypalbrasilCostAmount();
 
         /** @var Esmart_PayPalBrasil_Model_Installments $model */

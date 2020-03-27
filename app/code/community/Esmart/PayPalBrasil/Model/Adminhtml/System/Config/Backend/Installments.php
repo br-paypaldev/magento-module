@@ -26,6 +26,7 @@ class Esmart_PayPalBrasil_Model_Adminhtml_System_Config_Backend_Installments ext
                    case 'esmart/paypalbrasil/Esmart_PaypalBrasilPrototype.events.amasty.js':
                    case 'esmart/paypalbrasil/Esmart_PaypalBrasilPrototype.events.aheadworks.js';
                    case 'esmart/paypalbrasil/Esmart_PaypalBrasilPrototype.events.vendamais.js';
+                   case 'esmart/paypalbrasil/Esmart_PaypalBrasilPrototype.events.moip.js';
                        break;
                    default:
                        $error = 'A funcionalidade de repasse de juros não funciona com módulo de checkout ' . $name . '.';

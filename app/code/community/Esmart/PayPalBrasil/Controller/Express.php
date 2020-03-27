@@ -134,8 +134,7 @@ class Esmart_PayPalBrasil_Controller_Express extends Mage_Paypal_Controller_Expr
 
 
     /**
-     * Return from PayPal and dispatch customer to order review page if it's necessary.
-     * Otherwise the order is placed without pass trough review page.
+     * Return from PayPal and dispatch customer to order review page
      */
     public function returnAction()
     {
@@ -189,7 +188,7 @@ class Esmart_PayPalBrasil_Controller_Express extends Mage_Paypal_Controller_Expr
                     }
                 }
 
-                if (!is_null($shippingMethod)) {
+                if (!empty($shippingMethod)) {
                     // possible bug of double collecting rates :-/
                     $shippingAddress->setShippingMethod($shippingMethod)
                         ->setCollectShippingRates(true)
@@ -197,90 +196,71 @@ class Esmart_PayPalBrasil_Controller_Express extends Mage_Paypal_Controller_Expr
                 }
             }
 
-            /**
-             * If there's no shipping method already choosen by customer it's necessary to redirect customer
-             * to order review page.
-             */
-            if (is_null($shippingMethod) || !$this->_validateShippingMethod($shippingMethod)) {
+            if ($this->_checkout->canSkipOrderReviewStep()) {
+                /**
+                 * Places the Order
+                 */
+                // prepare session to success or cancellation page
+                $session = $this->_getCheckoutSession();
+                $session->clearHelperData();
+
+                $this->_checkout->place($this->_initToken(), $shippingMethod);
+
+                // "last successful quote"
+                $quoteId = $this->_getQuote()->getId();
+                $session->setLastQuoteId($quoteId)->setLastSuccessQuoteId($quoteId);
+
+                // an order may be created
+                $order = $this->_checkout->getOrder();
+                if ($order) {
+                    $session->setLastOrderId($order->getId())
+                        ->setLastRealOrderId($order->getIncrementId());
+                    // as well a billing agreement can be created
+                    $agreement = $this->_checkout->getBillingAgreement();
+                    if ($agreement) {
+                        $session->setLastBillingAgreementId($agreement->getId());
+                    }
+
+                    /**
+                     * Forces the new order e-mail
+                     */
+                    $order->sendNewOrderEmail();
+
+                    /* @var $customer Mage_Customer_Model_Customer */
+                    $customer = $this->_getQuote()->getCustomer();
+                    if($isCustomerNew === true) {
+                        $customer->sendNewAccountEmail();
+                    }
+                }
+
+                // recurring profiles may be created along with the order or without it
+                $profiles = $this->_checkout->getRecurringPaymentProfiles();
+                if ($profiles) {
+                    $ids = array();
+                    foreach ($profiles as $profile) {
+                        $ids[] = $profile->getId();
+                    }
+                    $session->setLastRecurringProfileIds($ids);
+                }
+
+                // redirect if PayPal specified some URL (for example, to Giropay bank)
+                $url = $this->_checkout->getRedirectUrl();
+                if ($url) {
+                    $this->getResponse()->setRedirect($url);
+                    return;
+                }
+
+                $this->_initToken(false); // no need in token anymore
+                $this->_redirect('checkout/onepage/success');
+
+                return;
+            } else {
+                /**
+                 *  Redirect customer to order review page.
+                 */
                 $this->_redirect('*/*/review');
                 return;
             }
-
-            /**
-             * If there's a shipping method already set to ShippingAddres then avoid the paypal/express/review page
-             * and place the order.
-             */
-            //Obsolete since PayPal return never send POST values/parameters, and agreement will never populated here
-            /*
-             $requiredAgreements = Mage::helper('checkout')->getRequiredAgreementIds();
-            if ($requiredAgreements) {
-                $postedAgreements = array_keys($this->getRequest()->getPost('agreement', array()));
-                if (array_diff($requiredAgreements, $postedAgreements)) {
-                    Mage::throwException(
-                        Mage::helper('paypal')->__(
-                            'Please agree to all the terms and conditions before placing the order.'
-                        )
-                    );
-                }
-            }
-            */
-
-            /**
-             * Places the Order
-             */
-            $this->_checkout->place($this->_initToken(), $shippingMethod);
-
-            // prepare session to success or cancellation page
-            $session = $this->_getCheckoutSession();
-            $session->clearHelperData();
-
-            // "last successful quote"
-            $quoteId = $this->_getQuote()->getId();
-            $session->setLastQuoteId($quoteId)->setLastSuccessQuoteId($quoteId);
-
-            // an order may be created
-            $order = $this->_checkout->getOrder();
-            if ($order) {
-                $session->setLastOrderId($order->getId())
-                    ->setLastRealOrderId($order->getIncrementId());
-                // as well a billing agreement can be created
-                $agreement = $this->_checkout->getBillingAgreement();
-                if ($agreement) {
-                    $session->setLastBillingAgreementId($agreement->getId());
-                }
-
-                /**
-                 * Forces the new order e-mail
-                 */
-                $order->sendNewOrderEmail();
-
-                /* @var $customer Mage_Customer_Model_Customer */
-                $customer = $this->_getQuote()->getCustomer();
-                if($isCustomerNew === true) {
-                    $customer->sendNewAccountEmail();
-                }
-            }
-
-            // recurring profiles may be created along with the order or without it
-            $profiles = $this->_checkout->getRecurringPaymentProfiles();
-            if ($profiles) {
-                $ids = array();
-                foreach ($profiles as $profile) {
-                    $ids[] = $profile->getId();
-                }
-                $session->setLastRecurringProfileIds($ids);
-            }
-
-            // redirect if PayPal specified some URL (for example, to Giropay bank)
-            $url = $this->_checkout->getRedirectUrl();
-            if ($url) {
-                $this->getResponse()->setRedirect($url);
-                return;
-            }
-
-            $this->_initToken(false); // no need in token anymore
-            $this->_redirect('checkout/onepage/success');
-
             return;
 
         } catch (Mage_Core_Exception $e) {
@@ -290,6 +270,40 @@ class Esmart_PayPalBrasil_Controller_Express extends Mage_Paypal_Controller_Expr
             Mage::logException($e);
         }
 
+        $this->_redirect('checkout/cart');
+    }
+
+    /**
+     * Review order after returning from PayPal
+     */
+    public function reviewAction()
+    {
+        try {
+            $this->_initCheckout();
+
+            $this->_checkout->prepareOrderReview($this->_initToken());
+
+            $this->loadLayout();
+            $this->_initLayoutMessages('paypal/session');
+            $reviewBlock = $this->getLayout()->getBlock('paypal.express.review');
+
+            $reviewBlock->setQuote($this->_getQuote());
+            $reviewBlock->getChild('details')->setQuote($this->_getQuote());
+            if ($reviewBlock->getChild('shipping_method')) {
+                $reviewBlock->getChild('shipping_method')->setQuote($this->_getQuote());
+            }
+            $this->renderLayout();
+            return;
+        }
+        catch (Mage_Core_Exception $e) {
+            Mage::getSingleton('checkout/session')->addError($e->getMessage());
+        }
+        catch (Exception $e) {
+            Mage::getSingleton('checkout/session')->addError(
+                $this->__('Unable to initialize Express Checkout review.')
+            );
+            Mage::logException($e);
+        }
         $this->_redirect('checkout/cart');
     }
 
@@ -331,6 +345,18 @@ class Esmart_PayPalBrasil_Controller_Express extends Mage_Paypal_Controller_Expr
             // an order may be created
             $order = $this->_checkout->getOrder();
             if ($order) {
+
+                //Add telephone to Billing Address
+                $_telephone = Mage::app()->getRequest()->getParam('telephone');
+                $billing =  $order->getBillingAddress();
+                $billing->setData('telephone', $_telephone);
+                $billing->save();
+
+                //Add telephone to Shipping Address
+                $shipping =  $order->getShippingAddress();
+                $shipping->setData('telephone', $_telephone);
+                $shipping->save();
+
                 $session->setLastOrderId($order->getId())
                     ->setLastRealOrderId($order->getIncrementId());
                 // as well a billing agreement can be created
@@ -370,4 +396,46 @@ class Esmart_PayPalBrasil_Controller_Express extends Mage_Paypal_Controller_Expr
         $this->_redirect('*/*/review');
     }
 
+    /**
+     * Cancel Express Checkout
+     */
+    public function cancelAction()
+    {
+        try {
+            $previousUrl = Mage::helper('core/http')->getHttpReferer();
+            $baseUrl = Mage::getBaseUrl();
+            $refUrl = str_replace($baseUrl, '', $previousUrl);
+            $previousController = explode("/", $refUrl);
+            if($previousController[2] != "review") {
+                $this->_initToken(false);
+            }
+            // TODO verify if this logic of order cancelation is deprecated
+            // if there is an order - cancel it
+            $orderId = $this->_getCheckoutSession()->getLastOrderId();
+            $order = ($orderId) ? Mage::getModel('sales/order')->load($orderId) : false;
+            if ($order && $order->getId() && $order->getQuoteId() == $this->_getCheckoutSession()->getQuoteId()) {
+                $order->cancel()->save();
+                $this->_getCheckoutSession()
+                    ->unsLastQuoteId()
+                    ->unsLastSuccessQuoteId()
+                    ->unsLastOrderId()
+                    ->unsLastRealOrderId()
+                    ->addSuccess($this->__('Express Checkout and Order have been canceled.'))
+                ;
+            } elseif($previousController[2] != "review") {
+                $this->_getCheckoutSession()->addSuccess($this->__('Express Checkout has been canceled.'));
+            }
+        } catch (Mage_Core_Exception $e) {
+            $this->_getCheckoutSession()->addError($e->getMessage());
+        } catch (Exception $e) {
+            $this->_getCheckoutSession()->addError($this->__('Unable to cancel Express Checkout.'));
+            Mage::logException($e);
+        }
+
+        if(!empty(Mage::helper('core/http')->getHttpReferer())) {
+            $this->_redirectUrl(Mage::helper('core/http')->getHttpReferer());
+        } else {
+            $this->_redirect('checkout/cart');
+        }
+    }
 }

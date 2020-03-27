@@ -17,17 +17,17 @@
  * @copyright   Copyright (c) 2013 Smart E-commerce do Brasil Tecnologia LTDA. (http://www.e-smart.com.br)
  * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  *
- * @author     	Tiago Sampaio <tiago.sampaio@e-smart.com.br>
+ * @author      Tiago Sampaio <tiago.sampaio@e-smart.com.br>
  */
 
 class Esmart_PayPalBrasil_Model_Config extends Mage_Paypal_Model_Config
 {
 
     /**
-	 * Instructions for generating proper BN code
-	 *
-	 * @var array
-	 */
+     * Instructions for generating proper BN code
+     *
+     * @var array
+     */
     protected $_buildNotationPPMap = array (
         'paypal_standard'   => 'WPS',
         'paypal_express'    => 'EC',
@@ -87,7 +87,7 @@ class Esmart_PayPalBrasil_Model_Config extends Mage_Paypal_Model_Config
         }
 
         return $this->_helper()->getLogoCenterImageUrl('paypal_nf_v01', 'png');
-	}
+    }
 
 
     /**
@@ -97,12 +97,12 @@ class Esmart_PayPalBrasil_Model_Config extends Mage_Paypal_Model_Config
      */
     public function getAdditionalOptionsLogoTypes()
     {
-		$hz = $this->_helper()->__('Horizontal');
-		$vt = $this->_helper()->__('Vertical');
-		$cl = $this->_helper()->__('Colored');
-		$bw = $this->_helper()->__('Black and White');
+        $hz = $this->_helper()->__('Horizontal');
+        $vt = $this->_helper()->__('Vertical');
+        $cl = $this->_helper()->__('Colored');
+        $bw = $this->_helper()->__('Black and White');
 
-		return array(
+        return array(
              'selo_pp_parcelado10x_01' =>  $this->_helper()->__('selo_pp_parcelado10x_01'),
              'selo_pp_parcelado10x_02' =>  $this->_helper()->__('selo_pp_parcelado10x_02'),
              'selo_pp_parcelado11x_01' =>  $this->_helper()->__('selo_pp_parcelado11x_01'),
@@ -184,15 +184,15 @@ class Esmart_PayPalBrasil_Model_Config extends Mage_Paypal_Model_Config
         }
     }
 
-	/**
-	 * Gets the helper singleton instance
-	 *
-	 * @return Esmart_PayPalBrasil_Helper_Data
-	 */
-	protected function _helper()
-	{
-		return Mage::helper('esmart_paypalbrasil');
-	}
+    /**
+     * Gets the helper singleton instance
+     *
+     * @return Esmart_PayPalBrasil_Helper_Data
+     */
+    protected function _helper()
+    {
+        return Mage::helper('esmart_paypalbrasil');
+    }
 
      protected function _getSpecificConfigPath($fieldName)
     {
@@ -300,6 +300,17 @@ class Esmart_PayPalBrasil_Model_Config extends Mage_Paypal_Model_Config
             $paymentActions[self::PAYMENT_ACTION_ORDER] = Mage::helper('paypal')->__('Order');
         }
         return $paymentActions;
+    }
+
+    /**
+     * Whether to ask customer to create billing agreements
+     * Unilateral payments are incompatible with the billing agreements
+     *
+     * @return bool
+     */
+    public function shouldAskToCreateBillingAgreement()
+    {
+        return false;
     }
 
 }

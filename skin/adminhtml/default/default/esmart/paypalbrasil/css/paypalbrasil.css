@@ -26,3 +26,5 @@
 .pp-method-express> .config-heading .heading strong{ background: url("../images/selo_pp.png") no-repeat scroll 0 2px rgba(0, 0, 0, 0);  padding-left: 56px; }
 
 label[for="p_method_paypal_invoice"] { background: url('../../../images/paypal/logo-paypal.png') no-repeat; padding-left: 56px;}
+
+.pp-method-ppplus .comment { padding: 0px; }

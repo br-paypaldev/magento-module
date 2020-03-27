@@ -20,13 +20,11 @@ window.onload = function(){
 
 //IF SHIPPING METHOD CHANGES, CLEAN THE COST AND DISCOUNT OF GRAND TOTAL
 $('onestepcheckout-shipping-method').on('click', 'input.radio', function () {
-    console.log("SHIPPING METHOD MUDOU");
     new Ajax.Request('/paypalbrasil/express/generateUrl/', {
         method: 'post',
         parameters: {addresschanged: 1},
         async: false,
         onSuccess: function (response) {
-            console.log("SHIPPING METHOD CLEAN SUCEESS");
             $('p_method_paypal_plus').checked = false;
             OSCPayment.forcesavePayment();
             OSCShipment.switchToMethod(OSCShipment.currentMethod, true);
@@ -38,14 +36,13 @@ $('onestepcheckout-shipping-method').on('click', 'input.radio', function () {
 //IF PAYMENT METHOD CHANGES, CLEAN THE COST AND DISCOUNT OF GRAND TOTAL
 $('onestepcheckout-payment-method').on('click', 'input.radio', function () {
     if(!$('p_method_paypal_plus').checked){
-        console.log("PAYMENT METHOD MUDOU");
         $('payment_form_paypal_plus').hide();
+        // jQuery('#onestepcheckout-payment-method :input').attr("disabled", true);
         new Ajax.Request('/paypalbrasil/express/generateUrl/', {
             method: 'post',
             parameters: {paymentchanged: 1},
             async: false,
             onSuccess: function (response) {
-                console.log("PAYMENT METHOD CLEAN SUCEESS");
                 OSCPayment.forcesavePayment();
                 OSCPayment.switchToMethod(OSCPayment.currentMethod, true);
             }
@@ -53,7 +50,7 @@ $('onestepcheckout-payment-method').on('click', 'input.radio', function () {
     }
 });
 
-if(configIframe.installments == true) {
+if(configIframe.installments == null) {
     // Form.validate('onestepcheckout-general-form');
     $('p_method_paypal_plus').stopObserving('change');
 
@@ -63,34 +60,6 @@ if(configIframe.installments == true) {
         $('paypal_plus_instalments').setValue(0);
         $('paypal_plus_instalments').show();
         EsmartPaypalBrasilPPPlus.iframe_loaded = null;
-    });
-
-    $('p_method_paypal_plus').on('click', function () {
-
-        console.log("PAYMENT METHOD MUDOU");
-        new Ajax.Request('/paypalbrasil/express/generateUrl/', {
-            method: 'post',
-            parameters: {paymentchanged: 1},
-            async: false,
-            onSuccess: function (response) {
-                console.log("PAYMENT METHOD CLEAN SUCEESS");
-                OSCPayment.forcesavePayment();
-                OSCPayment.switchToMethod(OSCPayment.currentMethod, true);
-            }
-        });
-
-        new Ajax.Request('/paypalbrasil/onepage/updateDropdown/', {
-            method: 'post',
-            async: false,
-            onSuccess: function (response) {
-                $("onestepcheckout-payment-method").remove();
-                $("onestepcheckout-payment-method-wrapper").insert("<div id='onestepcheckout-payment-method'> </div>");
-                $("onestepcheckout-payment-method").insert(response.responseJSON.html);
-                $("p_method_paypal_plus").setAttribute( "checked","checked" );
-                $('payment_form_paypal_plus').show();
-                $('paypal_plus_instalments').show();
-            }
-        });
     });
 
     $$("#paypal_plus_instalments").invoke('observe', 'change', function (event, element) {

@@ -76,6 +76,12 @@ class Esmart_PayPalBrasil_Helper_Data extends Mage_Core_Helper_Data
     const JS_EVENTS_AHEADWORKS = 'esmart/paypalbrasil/Esmart_PaypalBrasilPrototype.events.aheadworks.js';
 
     /**
+     * JS events MOIP
+     * @const string
+     */
+    const JS_EVENTS_MOIP = 'esmart/paypalbrasil/Esmart_PaypalBrasilPrototype.events.moip.js';
+
+    /**
      * @var string
      */
     protected $_ppbUrl = 'https://www.paypal-brasil.com.br';
@@ -446,6 +452,54 @@ JS;
     public function getTextDiscount(){
 
         return 'PayPal Desconto';
+    }
+
+    /**
+     * return the correct discount value for PayPal Plus
+     *
+     * @param Mage_Sales_Model_Quote $quote
+     * @return number
+     */
+    public function getCorrectDiscount(Mage_Sales_Model_Quote $quote) {
+        $discount = 0;
+        $method = $quote->getPayment()->getMethod();
+        $subtotal = $quote->getSubtotal();
+
+        $customer_group_id = $quote->getCustomer()->getGroupId();
+        $store_id = $quote->getStoreId();
+        $website_id = Mage::getModel('core/store')->load($store_id)->getWebsiteId();
+
+        $items = $quote->getAllItems();
+        foreach ($items as $item) {
+            if(!empty($item->getAppliedRuleIds())) {
+                foreach(explode(",",$item->getAppliedRuleIds()) as $ruleId){
+                    $rule = Mage::getModel('salesrule/rule')->load($ruleId);
+                    $conditions = $rule->getConditions()->getConditions();
+                    $rule_discount = $rule->getDiscountAmount();
+                    $simple_action = $rule->getSimpleAction();
+                    if( $rule->getIsActive() && (in_array($customer_group_id, $rule->getCustomerGroupIds())) && (in_array($website_id, $rule->getWebsiteIds())) ) {
+                        foreach ($conditions as $condition) {
+                            $attribute = $condition->getAttribute();
+                            $value = $condition->getValue();
+                            if (($attribute != "payment_method") && ($value != $method)) {
+                                if ($simple_action == "by_percent") {
+                                    $discount_aux = $subtotal * ($rule_discount / 100);
+                                    $discount = $discount + $discount_aux;
+                                } else {
+                                    $discount = $discount + $rule_discount;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        if($discount < 0) {
+            $discount = $discount * (-1);
+        }
+
+        return $discount;
     }
 
 }

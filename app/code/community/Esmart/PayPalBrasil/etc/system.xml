@@ -19,6 +19,17 @@
                                     <settings_payments_advanced>
                                         <settings_express_checkout>
                                             <fields>
+                                                <visible_on_cart translate="label comment">
+                                                    <label>Display on Shopping Cart</label>
+                                                    <config_path>payment/paypal_express/visible_on_cart</config_path>
+                                                    <comment>Also affects mini-shopping cart.</comment>
+                                                    <frontend_type>select</frontend_type>
+                                                    <source_model>paypal/system_config_source_yesnoShortcut</source_model>
+                                                    <sort_order>40</sort_order>
+                                                    <show_in_default>1</show_in_default>
+                                                    <show_in_website>1</show_in_website>
+                                                    <show_in_store>1</show_in_store>
+                                                </visible_on_cart>
                                                 <settings_express_checkout_advanced>
                                                     <fields>
                                                         <avoid_review_page translate="label tooltip comment">
@@ -31,14 +42,50 @@
                                                             <show_in_default>1</show_in_default>
                                                             <show_in_website>1</show_in_website>
                                                             <show_in_store>1</show_in_store>
-                                                            <depends><transfer_shipping_options>1</transfer_shipping_options></depends>
+<!--                                                            <depends><transfer_shipping_options>1</transfer_shipping_options></depends>-->
                                                             <shared>1</shared>
-                                                            <comment>Shipping Method, comes from Paypal.</comment>
+                                                            <comment>Shipping Method, comes from PayPal.</comment>
                                                         </avoid_review_page>
                                                         <allow_ba_signup>
                                                             <show_in_default>0</show_in_default>
                                                             <show_in_website>0</show_in_website>
                                                         </allow_ba_signup>
+                                                        <visible_on_product translate="label">
+                                                            <label>Display on Product Details Page</label>
+                                                            <config_path>payment/paypal_express/visible_on_product</config_path>
+                                                            <frontend_type>select</frontend_type>
+                                                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                                                            <sort_order>5</sort_order>
+                                                            <show_in_default>1</show_in_default>
+                                                            <show_in_website>1</show_in_website>
+                                                            <show_in_store>1</show_in_store>
+                                                        </visible_on_product>
+                                                        <transfer_shipping_options translate="label tooltip comment">
+                                                            <label>Transfer Shipping Options</label>
+                                                            <config_path>payment/paypal_express/transfer_shipping_options</config_path>
+                                                            <tooltip>If this option is enabled, customer can change shipping address and shipping method on PayPal website. In live mode works via HTTPS protocol only.</tooltip>
+                                                            <comment>Notice that PayPal can handle up to 10 shipping options. That is why Magento will transfer only first 10 cheapest shipping options if there are more than 10 available.</comment>
+                                                            <frontend_type>select</frontend_type>
+                                                            <source_model>adminhtml/system_config_source_yesno</source_model>
+                                                            <sort_order>50</sort_order>
+                                                            <show_in_default>0</show_in_default>
+                                                            <show_in_website>0</show_in_website>
+                                                            <show_in_store>0</show_in_store>
+                                                            <depends><line_items_enabled>1</line_items_enabled></depends>
+                                                            <shared>1</shared>
+                                                        </transfer_shipping_options>
+                                                        <require_billing_address translate="label comment">
+                                                            <label>Require Customer's Billing Address</label>
+                                                            <comment>This feature needs be enabled first for the merchant account through PayPal technical support.</comment>
+                                                            <config_path>payment/paypal_express/require_billing_address</config_path>
+                                                            <frontend_type>select</frontend_type>
+                                                            <source_model>paypal/system_config_source_requireBillingAddress</source_model>
+                                                            <sort_order>80</sort_order>
+                                                            <show_in_default>0</show_in_default>
+                                                            <show_in_website>0</show_in_website>
+                                                            <show_in_store>0</show_in_store>
+                                                            <shared>1</shared>
+                                                        </require_billing_address>
                                                     </fields>
                                                 </settings_express_checkout_advanced>
                                             </fields>
@@ -52,8 +99,10 @@
                         <fields>
                             <settings_ec>
                                 <fields>
+                                    <visible_on_cart extends="//paypal_payments/payflow_advanced//settings_express_checkout/*/visible_on_cart" />
                                     <settings_ec_advanced>
                                         <fields>
+                                            <visible_on_product extends="//paypal_payments/payflow_advanced//settings_express_checkout//visible_on_product" />
                                             <avoid_review_page extends="//paypal_payments/payflow_advanced//settings_express_checkout//avoid_review_page" />
                                             <express_checkout_billing_agreement>
                                                 <show_in_default>0</show_in_default>
@@ -204,12 +253,13 @@
                                 <show_in_store>1</show_in_store>
                             </heading_customizations>
                             <module_title>
-                                <label>Title Paypal Plus</label>
+                                <label>Title PayPal Plus</label>
                                 <config_path>payment/paypal_plus/title</config_path>
                                 <sort_order>11</sort_order>
                                 <show_in_default>1</show_in_default>
                                 <show_in_website>1</show_in_website>
                                 <show_in_store>1</show_in_store>
+                                <tooltip>Será exibido no checkout: Cartão de Crédito (Texto do Complemento)</tooltip>
                             </module_title>
                             <paypal_custom>
                                 <label>Nome da Loja</label>
@@ -621,7 +671,7 @@
                             <express_checkout_required>
                                 <fields>
                                     <incontext type="group" translate="label comment">
-                                        <label>Express Checkout In-Context</label>
+                                        <label>PayPal Express Checkout via Mini-Browser</label>
                                         <frontend_type>text</frontend_type>
                                         <sort_order>100</sort_order>
                                         <show_in_default>1</show_in_default>
@@ -650,9 +700,9 @@
                                                 <frontend_type>text</frontend_type>
                                                 <frontend_model>esmart_paypalbrasil/adminhtml_system_config_form_field_merchant</frontend_model>
                                                 <sort_order>30</sort_order>
-                                                <show_in_default>1</show_in_default>
-                                                <show_in_website>1</show_in_website>
-                                                <show_in_store>1</show_in_store>
+                                                <show_in_default>0</show_in_default>
+                                                <show_in_website>0</show_in_website>
+                                                <show_in_store>0</show_in_store>
                                                 <comment>This input has a MerchantId of Express Checkout Account.</comment>
                                             </merchantid>
                                         </fields>
@@ -774,7 +824,94 @@
                                 <sort_order>30</sort_order>
                             </BR>
                         </backend_config>
+                        <fields>
+                            <settings_wps_express>
+                                <fields>
+                                    <visible_on_cart extends="//paypal_payments/payflow_advanced//settings_express_checkout/*/visible_on_cart" />
+                                    <settings_wps_express_advanced>
+                                        <fields>
+                                            <visible_on_product extends="//paypal_payments/payflow_advanced//settings_express_checkout//visible_on_product" />
+                                        </fields>
+                                    </settings_wps_express_advanced>
+                                </fields>
+                            </settings_wps_express>
+                        </fields>
                     </wps_express>
+                    <wpp>
+                        <fields>
+                            <wpp_settings_express_checkout>
+                                <fields>
+                                    <visible_on_cart extends="//paypal_payments/payflow_advanced//settings_express_checkout/*/visible_on_cart" />
+                                    <wpp_settings_express_checkout_advanced>
+                                        <fields>
+                                            <visible_on_product extends="//paypal_payments/payflow_advanced//settings_express_checkout//visible_on_product" />
+                                        </fields>
+                                    </wpp_settings_express_checkout_advanced>
+                                </fields>
+                            </wpp_settings_express_checkout>
+                        </fields>
+                    </wpp>
+                    <paypal_verisign_with_express_checkout>
+                        <fields>
+                            <paypal_payflow_express_checkout>
+                                <fields>
+                                    <visible_on_cart translate="label comment">
+                                        <label>Display on Shopping Cart</label>
+                                        <comment>Also affects mini-shopping cart.</comment>
+                                        <config_path>payment/paypaluk_express/visible_on_cart</config_path>
+                                        <frontend_type>select</frontend_type>
+                                        <source_model>paypal/system_config_source_yesnoShortcut</source_model>
+                                        <sort_order>50</sort_order>
+                                        <show_in_default>1</show_in_default>
+                                        <show_in_website>1</show_in_website>
+                                        <show_in_store>1</show_in_store>
+                                    </visible_on_cart>
+                                    <paypal_payflow_express_checkout_advanced>
+                                        <fields>
+                                            <visible_on_product translate="label">
+                                                <label>Display on Product Details Page</label>
+                                                <config_path>payment/paypaluk_express/visible_on_product</config_path>
+                                                <frontend_type>select</frontend_type>
+                                                <source_model>adminhtml/system_config_source_yesno</source_model>
+                                                <sort_order>5</sort_order>
+                                                <show_in_default>1</show_in_default>
+                                                <show_in_website>1</show_in_website>
+                                                <show_in_store>1</show_in_store>
+                                            </visible_on_product>
+                                        </fields>
+                                    </paypal_payflow_express_checkout_advanced>
+                                </fields>
+                            </paypal_payflow_express_checkout>
+                        </fields>
+                    </paypal_verisign_with_express_checkout>
+                    <payflow_link>
+                        <fields>
+                            <settings_payflow_link_express_checkout>
+                                <fields>
+                                    <visible_on_cart extends="//paypal_payments/payflow_advanced//settings_express_checkout/*/visible_on_cart" />
+                                    <settings_payflow_link_express_cpphs_settings_express_checkoutheckout_advanced>
+                                        <fields>
+                                            <visible_on_product extends="//paypal_payments/payflow_advanced//settings_express_checkout//visible_on_product" />
+                                        </fields>
+                                    </settings_payflow_link_express_cpphs_settings_express_checkoutheckout_advanced>
+                                </fields>
+                            </settings_payflow_link_express_checkout>
+                        </fields>
+                    </payflow_link>
+                    <payments_pro_hosted_solution_with_express_checkout>
+                        <fields>
+                            <pphs_settings_express_checkout>
+                                <fields>
+                                    <visible_on_cart extends="//paypal_payments/payflow_advanced//settings_express_checkout//visible_on_cart" />
+                                    <pphs_settings_express_checkout_advanced>
+                                        <fields>
+                                            <visible_on_product extends="//paypal_payments/payflow_advanced//settings_express_checkout//visible_on_product" />
+                                        </fields>
+                                    </pphs_settings_express_checkout_advanced>
+                                </fields>
+                            </pphs_settings_express_checkout>
+                        </fields>
+                    </payments_pro_hosted_solution_with_express_checkout>
                 </paypal_payments>
             </groups>
         </payment>

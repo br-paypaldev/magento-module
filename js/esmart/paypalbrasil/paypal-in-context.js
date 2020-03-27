@@ -113,3 +113,58 @@ document.observe("dom:loaded", function() {
 		
 	}	
 });
+
+AWOnestepcheckoutForm.prototype.placeOrder
+	= AWOnestepcheckoutForm.prototype.placeOrder.wrap(function(parentMethod) {
+	console.log("NEW PLACE ORDER");
+	if (this.validate()) {
+		this.showOverlay();
+		this.showPleaseWaitNotice();
+		this.disablePlaceOrderButton();
+		if (payment.currentMethod == "paypal_express") {
+			new Ajax.Request('/paypal/express/checkPaypalInContext/',{
+				method: 'get',
+				async: false,
+				onSuccess: function (response) {
+					//IN-CONTEXT
+					if (response.responseJSON == "1") {
+						let urlConnect = '/paypal/express/start/';
+						paypal.checkout.initXO();
+
+						new Ajax.Request(urlConnect, {
+							method: 'get',
+							async: true,
+							crossDomain: false,
+
+							onSuccess: function (token) {
+								let url = token.request.url;
+								paypal.checkout.startFlow(url);
+							},
+							onFailure: function (responseData, textStatus, errorThrown) {
+								alert("Error in ajax post" + responseData.statusText);
+								//Gracefully Close the minibrowser in case of AJAX errors
+								paypal.checkout.closeFlow();
+							}
+						});
+					} else { //REDIRECT
+						let urlConnect = '/paypal/express/start/';
+						new Ajax.Request(urlConnect, {
+							method: 'POST',
+							async: true,
+							crossDomain: false,
+							onSuccess: function (token) {
+								let url = token.request.url;
+								location.href = encodeURI(url);
+							},
+							onFailure: function (responseData, textStatus, errorThrown) {
+								alert("Error in ajax post" + responseData.statusText);
+							},
+						});
+					}
+				}
+			});
+		} else {
+			this._sendPlaceOrderRequest();
+		}
+	}
+});

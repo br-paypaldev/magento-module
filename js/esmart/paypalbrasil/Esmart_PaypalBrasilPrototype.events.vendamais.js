@@ -14,7 +14,6 @@ EsmartPaypalBrasilPPPlus.osc = true;
 //IF SHIPPING METHOD CHANGES, CLEAN THE COST AND DISCOUNT OF GRAND TOTAL
 $('checkout-shipping-method-load').stopObserving('click');
 $('checkout-shipping-method-load').on('click', 'input.radio', function () {
-    console.log("SHIPPING METHOD MUDOU");
     // setTimeout(function(){
     //     document.getElementById("p_method_paypal_plus").checked = false;
     // }, 5000);
@@ -23,7 +22,6 @@ $('checkout-shipping-method-load').on('click', 'input.radio', function () {
         parameters: {addresschanged: 1},
         async: false,
         onSuccess: function (response) {
-            console.log("SHIPPING METHOD CLEAN SUCEESS");
             uncheckPaypalPlus();
             // payment.update();
         }
@@ -32,22 +30,22 @@ $('checkout-shipping-method-load').on('click', 'input.radio', function () {
 
 function uncheckPaypalPlus(){
     console.log("uncheck paypal plus");
-    setTimeout(function(){
-        document.getElementById("p_method_paypal_plus").checked = false;
-    }, 3000);
+    if (document.getElementById("p_method_paypal_plus").checked) {
+        setTimeout(function () {
+            document.getElementById("p_method_paypal_plus").checked = false;
+        }, 2000);
+    }
 }
 
 //IF PAYMENT METHOD CHANGES, CLEAN THE COST AND DISCOUNT OF GRAND TOTAL
 $('checkout-payment-method-load').stopObserving('click');
 $('checkout-payment-method-load').on('click', 'input.radio', function () {
     if(!$('p_method_paypal_plus').checked){
-        console.log("PAYMENT METHOD MUDOU");
         new Ajax.Request('/paypalbrasil/express/generateUrl/', {
             method: 'post',
             parameters: {paymentchanged: 1},
             async: false,
             onSuccess: function (response) {
-                console.log("PAYMENT METHOD CLEAN SUCEESS");
                 payment.update();
             }
         });
@@ -72,7 +70,6 @@ var billingValidation = new Validation($("ide-checkout-form"));
 
 function is_checked() {
     if ($$("#checkout-step-shipping-method").length){
-        console.log('123');
         return !$$("input[name='shipping_method']:checked").length;
     }
 }
@@ -80,11 +77,10 @@ function is_checked() {
 window.onload = function(){
     // clean paypal radio buttons when Dom:load
     setTimeout(function(){
-        console.log($('p_method_paypal_plus').checked);
         if ($('p_method_paypal_plus').checked) {
             $('p_method_paypal_plus').checked = false;
         }
-    }, 3000);
+    }, 2000);
 };
 
 if(configIframe.installments == true) {
@@ -108,20 +104,6 @@ if(configIframe.installments == true) {
                 EsmartPaypalBrasilPPPlus.iframe_loaded = null;
             }
         }
-    });
-
-    $('p_method_paypal_plus').on('click', function () {
-        new Ajax.Request('/paypalbrasil/onepage/updateDropdown/', {
-            method: 'post',
-            async: false,
-            onSuccess: function (response) {
-                $("checkout-payment-method-load").remove();
-                $("checkout-step-payment-method").insert("<div id='checkout-payment-method-load'> </div>");
-                $("checkout-payment-method-load").insert(response.responseJSON.html);
-                $("p_method_paypal_plus").setAttribute( "checked","checked" );
-                $('paypal_plus_instalments').show();
-            }
-        });
     });
 
     // listen all click events and a condition to id element

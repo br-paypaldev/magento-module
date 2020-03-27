@@ -171,6 +171,87 @@ class Esmart_PayPalBrasil_Model_Express_Checkout extends Mage_Paypal_Model_Expre
         $payment->setAdditionalInformation(self::PAYMENT_INFO_TRANSPORT_PAYER_ID, $this->_api->getPayerId())
             ->setAdditionalInformation(self::PAYMENT_INFO_TRANSPORT_TOKEN, $token)
         ;
+
+        if( $pp_express_discount =  Mage::app()->getRequest()->getParam('pp_express_discount') ){
+            $payment->setAdditionalInformation('paypal_express_discount', $pp_express_discount);
+        }
+
         $quote->collectTotals()->save();
+    }
+
+    /**
+     * Check whether order review has enough data to initialize
+     *
+     * @param $token
+     * @throws Mage_Core_Exception
+     */
+    public function prepareOrderReview($token = null)
+    {
+       $payment = $this->_quote->getPayment();
+       if (!$payment || !$payment->getAdditionalInformation(self::PAYMENT_INFO_TRANSPORT_PAYER_ID)) {
+           Mage::throwException(Mage::helper('paypal')->__('Payer is not identified.'));
+       }
+        $this->_quote->setMayEditShippingAddress(
+            1 != $this->_quote->getPayment()->getAdditionalInformation(self::PAYMENT_INFO_TRANSPORT_SHIPPING_OVERRIDEN)
+        );
+        $this->_quote->setMayEditShippingMethod(
+            '' == $this->_quote->getPayment()->getAdditionalInformation(self::PAYMENT_INFO_TRANSPORT_SHIPPING_METHOD)
+        );
+        $this->_ignoreAddressValidation();
+        $this->_quote->collectTotals()->save();
+    }
+
+    /**
+     * Make sure addresses will be saved without validation errors
+     */
+    private function _ignoreAddressValidation()
+    {
+        $this->_quote->getBillingAddress()->setShouldIgnoreValidation(true);
+        if (!$this->_quote->getIsVirtual()) {
+            $this->_quote->getShippingAddress()->setShouldIgnoreValidation(true);
+            if (!$this->_config->requireBillingAddress && !$this->_quote->getBillingAddress()->getEmail()) {
+                $this->_quote->getBillingAddress()->setSameAsBilling(1);
+            }
+        }
+    }
+
+    /**
+     * Prepare quote for customer registration and customer order submit
+     * and restore magento customer data from quote
+     *
+     * @return Mage_Paypal_Model_Express_Checkout
+     */
+    protected function _prepareNewCustomerQuote()
+    {
+        $quote      = $this->_quote;
+        $billing    = $quote->getBillingAddress();
+        $shipping   = $quote->isVirtual() ? null : $quote->getShippingAddress();
+
+        //$customer = Mage::getModel('customer/customer');
+        $customer = $quote->getCustomer();
+        /* @var $customer Mage_Customer_Model_Customer */
+        $customerBilling = $billing->exportCustomerAddress();
+        $customer->addAddress($customerBilling);
+        $billing->setCustomerAddress($customerBilling);
+        $customerBilling->setIsDefaultBilling(true);
+        if ($shipping && !$shipping->getSameAsBilling()) {
+            $customerShipping = $shipping->exportCustomerAddress();
+            $customer->addAddress($customerShipping);
+            $shipping->setCustomerAddress($customerShipping);
+            $customerShipping->setIsDefaultShipping(true);
+        } else {
+            $customerBilling->setIsDefaultShipping(true);
+        }
+
+        Mage::helper('core')->copyFieldset('checkout_onepage_quote', 'to_customer', $quote, $customer);
+        $customer->setPassword($customer->decryptPassword($quote->getPasswordHash()));
+        $passwordCreatedTime = Mage::getSingleton('checkout/session')->getData('_session_validator_data')['session_expire_timestamp']
+            - Mage::getSingleton('core/cookie')->getLifetime();
+        $customer->setPasswordCreatedAt($passwordCreatedTime);
+        $quote->setCustomer($customer)
+            ->setCustomerId(true);
+        $quote->setPasswordHash('');
+
+        return $this;
     }
 }

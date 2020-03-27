@@ -12,13 +12,11 @@ EsmartPaypalBrasilPPPlus.osc = true;
 
 //IF SHIPPING METHOD CHANGES, CLEAN THE COST AND DISCOUNT OF GRAND TOTAL
 $('aw-onestepcheckout-shipping-method').on('click', 'input.radio', function () {
-    console.log("SHIPPING METHOD MUDOU");
     new Ajax.Request('/paypalbrasil/express/generateUrl/', {
         method: 'post',
         parameters: {addresschanged: 1},
         async: false,
         onSuccess: function (response) {
-            console.log("SHIPPING METHOD CLEAN SUCEESS");
             $('p_method_paypal_plus').checked = false;
             awOSCPayment.savePayment();
             $('p_method_paypal_plus').checked = false;
@@ -44,13 +42,11 @@ $('aw-onestepcheckout-payment-method').on('click', 'input.radio', function () {
         $('p_method_paypal_plus').checked = false;
     }else{
         if(!$('p_method_paypal_plus').checked){
-            console.log("PAYMENT METHOD MUDOU");
             new Ajax.Request('/paypalbrasil/express/generateUrl/', {
                 method: 'post',
                 parameters: {paymentchanged: 1},
                 async: false,
                 onSuccess: function (response) {
-                    console.log("PAYMENT METHOD CLEAN SUCEESS");
                     awOSCPayment.savePayment();
                 }
             });
@@ -78,7 +74,6 @@ $$("input[name='billing[city]']").invoke('observe', 'change', function (event) {
     billingChanged();
 });
 $$("input[name='billing[postcode]']").invoke('observe', 'change', function (event) {
-    console.log("CEP MUDOU");
     billingChanged();
 });
 $$("input[name='billing[telephone]']").invoke('observe', 'change', function (event) {
@@ -86,12 +81,10 @@ $$("input[name='billing[telephone]']").invoke('observe', 'change', function (eve
 });
 
 $('billing:region_id').observe('click', function() {
-    console.log("ESTADO MUDOU");
     $('p_method_paypal_plus').checked = false;
     billingChanged();
 });
 $('billing:country_id').observe('click', function() {
-    console.log("COUNTRY MUDOU");
     $('p_method_paypal_plus').checked = false;
     billingChanged();
 });

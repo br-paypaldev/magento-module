@@ -2,7 +2,7 @@ window.addEventListener("load",function() {
     EsmartPaypalBrasilPPPlus.cleanIframe();
 });
 
-var EsmartPaypalBrasilPPPlus, EsmartPaypalBrasilBtnContinue;
+var EsmartPaypalBrasilPPPlus, EsmartPaypalBrasilBtnContinue, EsmartPaypalBrasilPayerIdOk = 0;
 
 if (typeof EsmartPaypalBrasilPPPlus !== 'object') {
 
@@ -114,6 +114,12 @@ if (typeof EsmartPaypalBrasilPPPlus !== 'object') {
                 this.switchCase(err);
             }
 
+            switch (data.result) {
+                case 'error':
+                    EsmartPaypalBrasilPayerIdOk = 1;
+                break;
+            }
+
             switch (data.action) {
 
                 case 'checkout':
@@ -155,6 +161,8 @@ if (typeof EsmartPaypalBrasilPPPlus !== 'object') {
                         parameters  : dataPost,
                         async       : false,
                         onSuccess : function (response) {
+
+                            EsmartPaypalBrasilPayerIdOk = 1;
 
                             var responseContent = response.responseText.evalJSON();
                             if (responseContent.error) {
@@ -416,6 +424,9 @@ function validationOSC() {
         if(obj.installments == true) {
             $('paypal_plus_instalments').show();
         }
+        return true;
+    }
+    if(obj.oscCheckout == 'moip'){
         return true;
     }
 

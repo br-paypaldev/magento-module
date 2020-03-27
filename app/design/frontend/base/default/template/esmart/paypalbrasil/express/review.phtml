@@ -1,0 +1,213 @@
+<div class="page-title">
+    <h1><?php echo $this->__('Review Order') ?></h1>
+</div>
+<?php echo $this->getMessagesBlock()->toHtml() ?>
+<?php if ($this->getShippingAddress()): ?>
+    <div class="info-set col2-set">
+        <h2 class="legend"><?php echo $this->__('Shipping Information') ?></h2>
+        <div class="col-1">
+            <div class="box">
+                <div class="box-title">
+                    <h3><?php echo $this->__('Shipping Address') ?><span class="separator"><?php if ($this->getCanEditShippingAddress()):?> | </span><a id="address-edit" href="#"><?php echo $this->__('Edit') ?></a><?php endif;?></h3>
+                </div>
+                <div class="box-content">
+                    <address><?php echo $this->renderAddress($this->getShippingAddress())?></address>
+                </div>
+                <label for="billing:telephone">Telephone<em>*</em></label>
+                <input type="text" name="billing[telephone]" value="" title="Telephone" class="input-text required-entry" id="billing:telephone" required>
+            </div>
+        </div>
+        <div class="col-2">
+            <div class="box">
+                <div class="box-title">
+                    <h3><?php echo $this->__('Shipping Method') ?></h3>
+                </div>
+                <div class="box-content">
+                    <form method="post" id="shipping_method_form" action="<?php echo $this->escapeHtml($this->getShippingMethodSubmitUrl()) ?>">
+                        <?php if ($this->getCanEditShippingMethod() || !$this->getCurrentShippingRate()):?>
+                            <?php if ($groups = $this->getShippingRateGroups()):?>
+                                <?php $currentRate = $this->getCurrentShippingRate(); ?>
+                                <fieldset>
+                                    <select name="shipping_method" id="shipping_method" style="width:250px;" class="required-entry">
+                                        <?php if (!$currentRate):?>
+                                            <option value=""><?php echo $this->__('Please select a shipping method...') ?></option>
+                                        <?php endif;?>
+                                        <?php foreach ($groups as $code => $rates):?>
+                                            <optgroup label="<?php echo $this->escapeHtml($this->getCarrierName($code)) ?>" style="font-style:normal;">
+                                                <?php foreach ($rates as $rate):?>
+                                                    <option value="<?php echo $this->renderShippingRateValue($rate)?>"<?php echo ($currentRate === $rate) ? ' selected="selected"' : '' ;?>>
+                                                        <?php echo $this->renderShippingRateOption($rate)?>
+                                                    </option>
+                                                <?php endforeach;?>
+                                            </optgroup>
+                                        <?php endforeach;?>
+                                    </select>
+                                </fieldset>
+                                <p class="actions">
+                                    <button id="update_shipping_method_submit" type="submit" class="button"><span><span><?php echo $this->__('Update Shipping Method') ?></span></span></button>
+                                </p>
+                            <?php else: ?>
+                                <p><strong><?php echo $this->__('Sorry, no quotes are available for this order at this time.') ?></strong></p>
+                            <?php endif;?>
+                        <?php else: ?>
+                            <p><strong><?php echo $this->renderShippingRateOption($this->getCurrentShippingRate())?></strong></p>
+                        <?php endif; ?>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+<?php endif; ?>
+<div class="info-set col2-set">
+    <h2 class="legend"><?php echo $this->__('Billing Information') ?></h2>
+    <div class="col-1">
+        <div class="box">
+            <div class="box-title">
+                <h3><?php echo $this->__('Payment Method') ?>
+                </h3>
+            </div>
+            <div class="box-content">
+                <img style="width: 25%; margin-bottom: 10px;" src="<?php echo $this->getSkinUrl('esmart/paypalbrasil/image/paypal_rgb.png'); ?>">
+                <?php if($this->getParcelas()): ?>
+                    Pagamento parcelado em <?php echo $this->escapeHtml($this->getParcelas()) ?>
+                    <?php if($this->getParcelas() == 1):?>
+                        vez
+                    <?php else: ?>
+                        vezes
+                    <?php endif;?>
+                <?php else: ?>
+                    Pagamento à vista
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="info-set">
+    <h2 class="legend"><?php echo $this->__('Items in Your Shopping Cart') ?><span class="separator"> | </span><a href="<?php echo $this->getUrl('checkout/cart') ?>"><?php echo $this->__('Edit Shopping Cart') ?></a></h2>
+    <div id="details-reload">
+        <?php echo $this->getChildHtml('details') ?>
+    </div>
+</div>
+
+<?php echo $this->getChildHtml('paypalbrasil_coupon') ?>
+
+<form method="post" id="order_review_form" action="<?php echo $this->getPlaceOrderUrl() ?>" onSubmit="return validateForm();">
+    <?php echo $this->getChildHtml('agreements'); ?>
+    <div class="buttons-set buttons-set-order" id="review-buttons-container">
+        <button type="submit" id="review_button" value="<?php echo $this->__('Place Order') ?>" class="button btn-checkout"><span><span><?php echo $this->__('Place Order') ?></span></span></button>
+        <button type="button" id="review_submit" value="<?php echo $this->__('Place Order') ?>" class="button btn-checkout"><span><span><?php echo $this->__('Place Order') ?></span></span></button>
+        <span class="please-wait" id="review-please-wait" style="display:none;">
+            <img src="<?php  echo $this->getSkinUrl('images/opc-ajax-loader.gif') ?>" alt="<?php echo $this->quoteEscape($this->__('Submitting order information...')) ?>" title="<?php echo $this->quoteEscape($this->__('Submitting order information...')) ?>" class="v-middle" /> <?php echo $this->__('Submitting order information...') ?>
+        </span>
+        <input type="hidden" name="telephone" value="" title="Telephone" class="input-text required-entry " id="telephone" style="opacity: 0;">
+    </div>
+</form>
+<script type="text/javascript">
+    //<![CDATA[
+    function validateForm(){
+
+        if( document.getElementById('billing:telephone').value === "" ) {
+            alert("Telefone Inválido");
+            document.getElementById('billing:telephone').focus();
+            return false;
+        }
+
+        var telephone = document.getElementById('billing:telephone').value;
+        document.getElementById('telephone').value = telephone;
+
+        return true;
+    }
+    //]]>
+</script>
+<script type="text/javascript">
+    //<![CDATA[
+    // submit buttons are not needed when submitting with ajax
+    $('review_submit').hide();
+    if ($('update_shipping_method_submit')) {
+        $('update_shipping_method_submit').hide();
+    }
+
+    <?php if ($this->getUseAjax()):?>
+    OrderReviewController.prototype._submitOrder = function() {
+        if (this._canSubmitOrder) {
+            if (this._pleaseWait) {
+                this._pleaseWait.show();
+            }
+            new Ajax.Request(this.form.action, {
+                parameters: {isAjax: 1, method: 'POST'},
+                onSuccess: function(transport) {
+                    try{
+                        response = eval('(' + transport.responseText + ')');
+                    } catch (e) {
+                        response = {};
+                    }
+                    if (response.redirect) {
+                        setLocation(response.redirect);
+                        return;
+                    }
+                    if (response.success) {
+                        setLocation('<?php echo $this->getSuccessUrl()?>');
+                        return;
+                    } else {
+                        var msg = response.error_messages;
+                        if (typeof(msg)=='object') {
+                            msg = msg.join("\n");
+                        }
+                        if (msg) {
+                            $('review-please-wait').hide();
+                            alert(msg);
+                            return;
+                        }
+                    }
+                    $('review-please-wait').hide();
+                    alert('<?php echo $this->jsQuoteEscape($this->__('Unknown Error. Please try again later.')); ?>');
+                    return;
+                },
+                onFailure: function(){
+                    alert('<?php echo $this->jsQuoteEscape($this->__('Server Error. Please try again.')) ?>');
+                    $('review-please-wait').hide();
+                }
+            });
+        }
+    };
+    <?php endif ?>
+
+    PayPalExpressAjax = new OrderReviewController($('order_review_form'), $('review_button'),
+        $('shipping_method'), $('shipping_method_form'), 'details-reload'
+    );
+    PayPalExpressAjax.addPleaseWait($('review-please-wait'));
+    //]]>
+</script>
+<script type="text/javascript">
+    //<![CDATA[
+    Event.observe('address-edit', 'click', function(event) {
+        Event.stop(event);
+
+        let urlConnect = "<?php echo $this->getEditUrl() ?>";
+
+        paypal.checkout.initXO();
+
+        new Ajax.Request(urlConnect,{
+            method: 'get',
+            async: true,
+            crossDomain: false,
+
+            onSuccess: function (token) {
+                let url = token.request.url;
+                paypal.checkout.startFlow(url);
+            },
+            onFailure: function (responseData, textStatus, errorThrown) {
+                alert("Error in ajax post"+responseData.statusText);
+                //Gracefully Close the minibrowser in case of AJAX errors
+                paypal.checkout.closeFlow();
+            }
+        });
+    });
+    //]]>
+</script>
+<style>
+    #advice-required-entry-telephone{
+        display: none;
+    }
+</style>
