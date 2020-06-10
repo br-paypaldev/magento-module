@@ -1,3 +1,7 @@
+**1.0.5**
++ Correções de diversos bugs dos OSC's
++ Adição de uma trava para Cartões de Crédito que não permitem parcelamento quando utilizado o repasso de juros do PayPal Plus
+
 **1.0.4**
 + Adição de suporte para a última versão do OneStepCheckout da MOIP
 + Diversas otimizações e bugfixes:

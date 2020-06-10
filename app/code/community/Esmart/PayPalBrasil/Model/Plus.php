@@ -324,6 +324,20 @@ class Esmart_PayPalBrasil_Model_Plus extends Mage_Payment_Model_Method_Abstract
             Mage::throwException('Prezado cliente, ocorreu um erro inesperado, por favor tente novamente. Caso o erro persista entre em contato.');
         }
 
+        //COST TO BUYER LOCK
+        $ppcard = $payment->getAdditionalInformation('paypal_plus_cards');
+        $decoded = Mage::helper('core')->jsonDecode($ppcard);
+
+        if((isset($_POST["payment"]["instalments"])) && $decoded["termQty"] != (int)$_POST["payment"]["instalments"]) {
+            $cancel = Mage::getModel('esmart_paypalbrasil/cancel');
+
+            $createFailure = Mage::getStoreConfig('payment/paypal_plus/order_failure', Mage::app()->getStore());
+            if ($createFailure && $cancel->cancelOrder($payment)) {
+                return $this;
+            }
+            Mage::throwException(Mage::helper('core')->__('Prezado cliente, identificamos que o seu Cartão de Crédito não suporta a quantidade de parcelas escolhida.'));
+        }
+
         try {
 
             // Execute the payment

@@ -269,3 +269,32 @@ if(configIframe.installments == true) {
         })
     });
 }
+
+AWOnestepcheckoutForm.prototype._sendPlaceOrderRequest
+    = AWOnestepcheckoutForm.prototype._sendPlaceOrderRequest.wrap(function(parentMethod) {
+    console.log("NEW PLACE ORDER REQUEST");
+    if (typeof EwayPayment != 'undefined' && EwayPayment.isEwayRapidMethod(window.payment.currentMethod)) {
+        var currentForm = eCrypt.doEncrypt();
+    } else {
+        var currentForm = this.form.form;
+    }
+
+    var params = Form.serialize(currentForm, true);
+    if (AWOnestepcheckoutCore.validateParams(params)) {
+        new Ajax.Request(this.placeOrderUrl, {
+            method: 'post',
+            parameters: params,
+            onSuccess: function(transport) {
+                var json = JSON.parse(transport.responseText);
+                if(json.success === false){
+                    $$('.aw-onestepcheckout-place-order-please-wait').first().setStyle({'display':'none'});
+                }
+            },
+            onComplete: this.onComplete.bindAsEventListener(this)
+        });
+    } else {
+        this.hideOverlay();
+        this.hidePleaseWaitNotice();
+        this.enablePlaceOrderButton();
+    }
+});
